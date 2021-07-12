@@ -2,8 +2,6 @@
 #define BOARD_H
 
 #include "square.h"
-#include <iostream> // for testing
-#include <string> // for testing
 
 class Board {
     public:
