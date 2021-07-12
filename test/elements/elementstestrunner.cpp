@@ -5,7 +5,6 @@ bool testRunner() {
     bool result = true;
     result = runSquareTests() && result;
     result = runBoardTests() && result;
-    std::cout << result;
     return result;
 }
 
