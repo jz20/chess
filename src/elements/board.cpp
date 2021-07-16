@@ -1,4 +1,5 @@
 #include "board.h"
+#include "square.h"
 using namespace std;
 
 // constructor of a board with specified rows and cols
@@ -30,10 +31,3 @@ void Board::free() {
     }
     delete [] squares;
 }
-
-/*
-int main() {
-    const int rows = 8;
-    const int cols = 8;
-    
-}*/

@@ -1,6 +1,8 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+class Board;
+
 #include "square.h"
 
 class Board {
