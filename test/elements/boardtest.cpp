@@ -1,4 +1,6 @@
 #include "boardtest.h"
+#include "board.h" // from corresponding source
+#include "testutil.h" // from ..
 
 using namespace std;
 

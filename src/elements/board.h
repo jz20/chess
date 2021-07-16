@@ -1,9 +1,9 @@
 #ifndef BOARD_H
 #define BOARD_H
 
+class Board;
+
 #include "square.h"
-#include <iostream> // for testing
-#include <string> // for testing
 
 class Board {
     public:

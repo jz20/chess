@@ -1,4 +1,6 @@
 #include "elementstestrunner.h"
+#include "squaretest.h"
+#include "boardtest.h"
 
 // run the unit tests for elements
 bool testRunner() {

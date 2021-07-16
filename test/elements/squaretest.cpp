@@ -1,4 +1,6 @@
 #include "squaretest.h"
+#include "square.h" // from corresponding source
+#include "testutil.h" // from ..
 
 using namespace std;
 
