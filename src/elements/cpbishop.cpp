@@ -14,7 +14,33 @@ void Bishop::updateMoves() {
     // bottom left diagonal
     i = row - 1;
     j = col - 1;
-    while (i >= 0 && j >= 0 && board->getSquare(i, j)->isEmpty) {
-        // moves + getSquare(i, j);
+    while (i >= 0 && j >= 0 && board->getSquare(i, j)->isEmpty()) {
+        moves.push_back(board->getSquare(i, j));
+        i--;
+        j--;
+    }
+    // top left diagonal
+    i = row + 1;
+    j = col - 1;
+    while (i < rowLimit && j >= 0 && board->getSquare(i, j)->isEmpty()) {
+        moves.push_back(board->getSquare(i, j));
+        i++;
+        j--;
+    }
+    // bottom right diagonal
+    i = row - 1;
+    j = col + 1;
+    while (i >= 0 && j < colLimit && board->getSquare(i, j)->isEmpty()) {
+        moves.push_back(board->getSquare(i, j));
+        i--;
+        j++;
+    }
+    // top right diagonal
+    i = row + 1;
+    j = col + 1;
+    while (i < rowLimit && j < colLimit && board->getSquare(i, j)->isEmpty()) {
+        moves.push_back(board->getSquare(i, j));
+        i++;
+        j++;
     }
 }
