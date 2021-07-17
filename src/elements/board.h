@@ -13,6 +13,10 @@ class Board {
         Square *getSquare(int row, int col);
         // free associated memory allocations
         void free();
+        // get the number of rows
+        int getRows();
+        // get the number of columns
+        int getCols();
     private:
         int rows;
         int cols;

@@ -25,6 +25,8 @@ class Square {
         void setEmpty();
         // return whether the square is empty
         bool isEmpty();
+        // get the board
+        Board *getBoard();
     private:
         Board *board;
         int row;

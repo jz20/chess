@@ -31,3 +31,13 @@ void Board::free() {
     }
     delete [] squares;
 }
+
+// get the number of rows
+int Board::getRows() {
+    return rows;
+}
+
+// get the number of columns
+int Board::getCols() {
+    return cols;
+}

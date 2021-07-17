@@ -1,7 +1,9 @@
 #include "square.h"
+
 #include <cstddef>
 #include "board.h"
 #include "piece.h"
+
 using namespace std;
 
 // constructor of a square at specified row and col position
@@ -49,4 +51,9 @@ void Square::setEmpty() {
 // return whether the square is empty
 bool Square::isEmpty() {
     return empty;
+}
+
+// get the board
+Board *Square::getBoard() {
+    return board;
 }

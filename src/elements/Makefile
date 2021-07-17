@@ -1,13 +1,18 @@
 CC			= g++
 CPPFLAGS	= -g -Wall
 LIB			= libelements.a
-LIBOBJS		= board.o square.o
+CPLIB		= cpbishop.o
+LIBOBJS		= board.o square.o piece.o $(CPLIB)
 BUILD		= $(LIB)
 
 all:		$(BUILD)
 
 board.o:	board.h
 square.o:	square.h
+piece.o:	piece.h
+
+# cp - chess pieces
+cpbishop.o:	cpbishop.h
 
 $(LIB):		$(LIBOBJS)
 			ar rcs $(LIB) $(LIBOBJS)
