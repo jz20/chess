@@ -44,7 +44,7 @@ Player *Piece::getPlayer() {
     to the moves list
 */
 
-void Piece::upLeftDiag(std::list <Square *> *moves) {
+void Piece::upLeftDiag(list <Square *> *moves) {
     int i = square->getRow() + 1;
     int j = square->getCol() - 1;
     bool flag = true;
@@ -63,7 +63,7 @@ void Piece::upLeftDiag(std::list <Square *> *moves) {
     }
 }
 
-void Piece::downLeftDiag(std::list <Square *> *moves) {
+void Piece::downLeftDiag(list <Square *> *moves) {
     int i = square->getRow() - 1;
     int j = square->getCol() - 1;
     bool flag = true;
@@ -82,7 +82,7 @@ void Piece::downLeftDiag(std::list <Square *> *moves) {
     }
 }
 
-void Piece::upRightDiag(std::list <Square *> *moves) {
+void Piece::upRightDiag(list <Square *> *moves) {
     int i = square->getRow() + 1;
     int j = square->getCol() + 1;
     bool flag = true;
@@ -101,7 +101,7 @@ void Piece::upRightDiag(std::list <Square *> *moves) {
     }
 }
 
-void Piece::downRightDiag(std::list <Square *> *moves) {
+void Piece::downRightDiag(list <Square *> *moves) {
     int i = square->getRow() - 1;
     int j = square->getCol() + 1;
     bool flag = true;
@@ -116,6 +116,78 @@ void Piece::downRightDiag(std::list <Square *> *moves) {
             flag = false;
         }
         i--;
+        j++;
+    }
+}
+
+void Piece::upCol(list <Square *> *moves) {
+    int col = square->getCol();
+    int i = square->getRow() + 1;
+    bool flag = true;
+    Board *board = square->getBoard();
+    while (i < square->getBoard()->getRows() && flag) {
+        if (board->getSquare(i, col)->isEmpty()) {
+            moves->push_back(board->getSquare(i, col));
+        } else {
+            if (board->getSquare(i, col)->getPiece()->getPlayer() != player) {
+                moves->push_back(board->getSquare(i, col));
+            }
+            flag = false;
+        }
+        i++;
+    }
+}
+
+void Piece::downCol(list <Square *> *moves) {
+    int col = square->getCol();
+    int i = square->getRow() - 1;
+    bool flag = true;
+    Board *board = square->getBoard();
+    while (i >= 0 && flag) {
+        if (board->getSquare(i, col)->isEmpty()) {
+            moves->push_back(board->getSquare(i, col));
+        } else {
+            if (board->getSquare(i, col)->getPiece()->getPlayer() != player) {
+                moves->push_back(board->getSquare(i, col));
+            }
+            flag = false;
+        }
+        i--;
+    }
+}
+
+void Piece::leftRow(list <Square *> *moves) {
+    int row = square->getRow();
+    int j = square->getCol() - 1;
+    bool flag = true;
+    Board *board = square->getBoard();
+    while (j >= 0 && flag) {
+        if (board->getSquare(row, j)->isEmpty()) {
+            moves->push_back(board->getSquare(row, j));
+        } else {
+            if (board->getSquare(row, j)->getPiece()->getPlayer() != player) {
+                moves->push_back(board->getSquare(row, j));
+            }
+            flag = false;
+        }
+        j--;
+    }
+}
+
+void Piece::rightRow(list <Square *> *moves) {
+    int row = square->getRow();
+    int j = square->getCol() + 1;
+    bool flag = true;
+    Board *board = square->getBoard();
+    while (j < square->getBoard()->getCols() && flag) {
+        if (board->getSquare(row, j)->isEmpty()) {
+            moves->push_back(board->getSquare(row, j));
+        } else {
+            if (board->getSquare(row, j)->getPiece()->getPlayer() != player) {
+                moves->push_back(board->getSquare(row, j));
+            }
+            flag = false;
+        }
         j++;
     }
 }

@@ -37,6 +37,10 @@ class Piece {
         void downLeftDiag(std::list <Square *> *moves);
         void upRightDiag(std::list <Square *> *moves);
         void downRightDiag(std::list <Square *> *moves);
+        void upCol(std::list <Square *> *moves);
+        void downCol(std::list <Square *> *moves);
+        void leftRow(std::list <Square *> *moves);
+        void rightRow(std::list <Square *> *moves);
 };
 
 #endif
