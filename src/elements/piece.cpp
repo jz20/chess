@@ -200,8 +200,35 @@ void Piece::targetSquare(std::list <Square *> *moves, int rowOffset, int colOffs
     int colLimit = board->getCols();
     if (row  >= 0 && row < rowLimit && col >= 0 && col < colLimit
             && (board->getSquare(row, col)->isEmpty() 
-            || board->getSquare(row, col)->getPiece()->getPlayer() == player)) {
+            || board->getSquare(row, col)->getPiece()->getPlayer() != player)) {
         moves->push_back(board->getSquare(row, col));
-    }   
+    }
+}
+
+// the piece can only move to the target if it causes a capture
+void Piece::targetCaptureSquare(std::list <Square *> *moves, int rowOffset, int colOffset) {
+    int row = square->getRow() + rowOffset;
+    int col = square->getCol() + colOffset;
+    Board *board = square->getBoard();
+    int rowLimit = board->getRows();
+    int colLimit = board->getCols();
+    if (row  >= 0 && row < rowLimit && col >= 0 && col < colLimit
+            && (!(board->getSquare(row, col)->isEmpty()) 
+            && board->getSquare(row, col)->getPiece()->getPlayer() != player)) {
+        moves->push_back(board->getSquare(row, col));
+    }
+}
+        
+// the piece can only move to the target if it does not cause a capture
+void Piece::targetNonCaptureSquare(std::list <Square *> *moves, int rowOffset, int colOffset) {
+    int row = square->getRow() + rowOffset;
+    int col = square->getCol() + colOffset;
+    Board *board = square->getBoard();
+    int rowLimit = board->getRows();
+    int colLimit = board->getCols();
+    if (row  >= 0 && row < rowLimit && col >= 0 && col < colLimit
+            && board->getSquare(row, col)->isEmpty()) {
+        moves->push_back(board->getSquare(row, col));
+    }
 }
         

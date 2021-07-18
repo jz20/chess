@@ -44,6 +44,10 @@ class Piece {
         void leftRow(std::list <Square *> *moves);
         void rightRow(std::list <Square *> *moves);
         void targetSquare(std::list <Square *> *moves, int rowOffset, int colOffset);
+        // the piece can only move to the target if it causes a capture
+        void targetCaptureSquare(std::list <Square *> *moves, int rowOffset, int colOffset);
+        // the piece can only move to the target if it does not cause a capture
+        void targetNonCaptureSquare(std::list <Square *> *moves, int rowOffset, int colOffset);
 };
 
 #endif
