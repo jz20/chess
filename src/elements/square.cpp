@@ -8,8 +8,7 @@ using namespace std;
 
 // constructor of a square at specified row and col position
 // in the specified board
-Square::Square(int row, int col, Board *board) {
-    Square(row, col);
+Square::Square(int row, int col, Board *board):Square(row, col) {
     this->board = board;
 }
 

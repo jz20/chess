@@ -40,6 +40,23 @@ bool testSquareLabels() {
     return true;
 }
 
+// test that the squares in a board has the pointer to this board
+bool testSquareBoard() {
+    const int rows = 5;
+    const int cols = 5;
+    Board *board = new Board(rows, cols);
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (board->getSquare(i, j)->getBoard() != board) {
+                return false;   
+            }
+        }
+    }
+    board->free();
+    delete board;
+    return true;
+}
+
 // run the tests using the template in testutil
 // print in the standard output whether the tests were successful
 bool runBoardTests() {
@@ -48,5 +65,6 @@ bool runBoardTests() {
     TEST(testEmpty, "empty board");
     TEST(test3x15, "3 by 15");
     TEST(testSquareLabels, "square labels");
+    TEST(testSquareBoard, "square reference to board");
     return result;
 }

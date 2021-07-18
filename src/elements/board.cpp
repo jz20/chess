@@ -10,7 +10,7 @@ Board::Board(int rows, int cols) {
     for (int i = 0; i < rows; i++) {
         squares[i] = new Square *[cols];
         for (int j = 0; j < cols; j++) {
-            squares[i][j] = new Square(i, j);
+            squares[i][j] = new Square(i, j, this);
         }
     }
 }

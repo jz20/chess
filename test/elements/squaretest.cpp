@@ -35,10 +35,3 @@ bool runSquareTests() {
     TEST(testRowCol, "row col");
     return result;
 }
-
-// 0 signals success
-/*
-int main() {
-    return !runSquareTests();
-}
-*/
