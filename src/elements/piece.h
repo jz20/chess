@@ -16,7 +16,7 @@ class Piece {
         // set the square
         void setSquare(Square *square);
         // update the possible squares for a piece to move to
-        virtual void updateMoves();
+        virtual void updateMoves() {}
         // get the legal moves
         std::list <Square *> getMoves();
         // get the player

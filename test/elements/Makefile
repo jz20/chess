@@ -7,10 +7,11 @@ COMMON		= ..
 
 all:			$(BUILD)
 
-elementstestrunner:		elementstestrunner.o boardtest.o squaretest.o
+elementstestrunner:		elementstestrunner.o boardtest.o squaretest.o chesspiecestest.o
 elementstestrunner.o:	elementstestrunner.h
 boardtest.o:	boardtest.h
 squaretest.o:	squaretest.h
+chesspiecestest.o:		chesspiecestest.h
 
 clean:		
 				$(RM) $(BUILD) *.o core

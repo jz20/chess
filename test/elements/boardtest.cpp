@@ -1,5 +1,6 @@
 #include "boardtest.h"
 #include "board.h" // from corresponding source
+#include "square.h"
 #include "testutil.h" // from ..
 
 using namespace std;
