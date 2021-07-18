@@ -19,12 +19,16 @@ class Square {
         int getCol();
         // free associated memory allocations
         void free();
-        // set a specific piece at the square
+        // set the piece
         void setPiece(Piece *piece);
+        // get the piece
+        Piece *getPiece();
         // mark the square empty
         void setEmpty();
         // return whether the square is empty
         bool isEmpty();
+        // get the board
+        Board *getBoard();
     private:
         Board *board;
         int row;
