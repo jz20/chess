@@ -38,9 +38,14 @@ void Square::free() {
 }
 
 // set a specific piece at the square
-void Square::setPiece(Piece *piece){
+void Square::setPiece(Piece *piece) {
     this->piece = piece;
     this->empty = false;
+}
+
+// get the piece
+Piece *Square::getPiece() {
+    return piece;
 }
 
 // mark the square empty

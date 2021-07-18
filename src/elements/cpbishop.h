@@ -5,9 +5,6 @@
 
 class Bishop;
 
-#include <list>
-#include "square.h"
-
 class Bishop: public Piece {
     public:
         void updateMoves();
