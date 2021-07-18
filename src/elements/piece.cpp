@@ -7,16 +7,11 @@
 
 using namespace std;
 
-
-// Constructor of a piece belonging to a Player
-Piece::Piece(Player *player) {
-    this->square = NULL;
-}
-
 // Constructor of a piece belonging to a Player at a specific Square
 Piece::Piece(Square *square, Player *player) {
     this->square = square;
     this->player = player;
+    this->asKing = false;
 }
 
 // get the square
@@ -37,6 +32,11 @@ list <Square *> Piece::getMoves() {
 // get the player
 Player *Piece::getPlayer() {
     return player;
+}
+
+// return whether the piece functions as a king
+bool Piece::isAsKing() {
+    return asKing;
 }
 
 /*
@@ -191,3 +191,17 @@ void Piece::rightRow(list <Square *> *moves) {
         j++;
     }
 }
+
+void Piece::targetSquare(std::list <Square *> *moves, int rowOffset, int colOffset) {
+    int row = square->getRow() + rowOffset;
+    int col = square->getCol() + colOffset;
+    Board *board = square->getBoard();
+    int rowLimit = board->getRows();
+    int colLimit = board->getCols();
+    if (row  >= 0 && row < rowLimit && col >= 0 && col < colLimit
+            && (board->getSquare(row, col)->isEmpty() 
+            || board->getSquare(row, col)->getPiece()->getPlayer() == player)) {
+        moves->push_back(board->getSquare(row, col));
+    }   
+}
+        

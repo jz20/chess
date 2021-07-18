@@ -6,7 +6,9 @@
 class Rook;
 
 class Rook: public Piece {
+    using Piece::Piece;
     public:
+        // update the possible squares for a piece to move to
         void updateMoves();
 };
 

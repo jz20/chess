@@ -2,6 +2,7 @@
 
 #include <list>
 
+// update the possible squares for a piece to move to
 void Rook::updateMoves() {
     upCol(&moves);
     downCol(&moves);
