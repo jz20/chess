@@ -31,11 +31,6 @@ int Square::getCol() {
     return this->col;
 }
 
-// free associated memory allocations
-void Square::free() {
-    // may need to free something in the future
-}
-
 // set a specific piece at the square
 void Square::setPiece(Piece *piece) {
     this->piece = piece;

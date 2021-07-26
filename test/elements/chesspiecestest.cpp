@@ -3,6 +3,7 @@
 #include "testutil.h" // from ..
 
 #include <cstddef>
+#include <vector>
 #include "board.h"
 #include "square.h"
 #include "player.h"
@@ -29,7 +30,7 @@ using namespace std;
 // test that the piece creation is correct (knight)
 bool testCreation() {
     Knight *knight = new Knight(NULL, NULL);
-    //delete knight;
+    delete knight;
     return true;
 }
 
@@ -42,10 +43,33 @@ bool testPlacement() {
     if (board->getSquare(3, 3)->getPiece() != bishop) {
         return false;
     }
-    board->free();
     delete board;
-    //delete bishop;
+    delete bishop;
     return true;
+}
+
+// test that the bishop has the correct squares as legal moves on an empty board
+bool testBishopEmpty() {
+    return true;
+}
+
+// compare the elements of two vectors of squares disregarding the order,
+// returning true if so
+bool vectorCompare(std::vector <Square *> v1, std::vector <Square *> v2) {
+    bool found;
+    for (vector <Square *> :: iterator it1 = v1.begin(); it1 != v1.end(); ++it1) {
+        found = false;
+        for (vector <Square *> :: iterator it2 = v1.begin(); it2 != v2.end() && !found; ++it2) {
+            if (*it1 == *it2) {
+                found = true;
+                v2.erase(it2);
+            }
+        }
+        if (!found) {
+            return false;
+        }
+    }
+    return v2.empty();
 }
 
 // run the tests using the template in testutil

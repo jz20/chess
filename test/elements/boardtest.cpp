@@ -10,7 +10,6 @@ using namespace std;
 // test the creation of an empty board
 bool testEmpty() {
     Board *board = new Board(0, 0);
-    board->free();
     delete board;
     return true;
 }
@@ -18,7 +17,6 @@ bool testEmpty() {
 // test the creation of an 3 by 15 board
 bool test3x15() {
     Board *board = new Board(3, 15);
-    board->free();
     delete board;
     return true;
 }
@@ -36,7 +34,6 @@ bool testSquareLabels() {
             }
         }
     }
-    board->free();
     delete board;
     return true;
 }
@@ -53,7 +50,6 @@ bool testSquareBoard() {
             }
         }
     }
-    board->free();
     delete board;
     return true;
 }

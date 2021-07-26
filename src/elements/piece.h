@@ -11,6 +11,8 @@ class Piece {
     public:
         // Constructor of a piece belonging to a Player at a specific Square
         Piece(Square *square, Player *player);
+        // Destructor of a piece
+        virtual ~Piece() {}
         // get the square
         Square *getSquare();
         // set the square

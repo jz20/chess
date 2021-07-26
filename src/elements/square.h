@@ -17,8 +17,6 @@ class Square {
         int getRow();
         // return the col position
         int getCol();
-        // free associated memory allocations
-        void free();
         // set the piece
         void setPiece(Piece *piece);
         // get the piece
