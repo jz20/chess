@@ -1,6 +1,6 @@
 #include "cprook.h"
 
-#include <list>
+#include <vector>
 
 // update the possible squares for a piece to move to
 void Rook::updateMoves() {
