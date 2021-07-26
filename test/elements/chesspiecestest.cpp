@@ -20,6 +20,8 @@ Chess pieces:
 
 using namespace std;
 
+#define EXPECT(x, y) expected.push_back(board->getSquare(x, y));
+
 /*
     This test file includes tests for all the standard chess pieces.
 */
@@ -50,26 +52,51 @@ bool testPlacement() {
 
 // test that the bishop has the correct squares as legal moves on an empty board
 bool testBishopEmpty() {
-    return true;
+    Board *board = new Board(8, 8);
+    Bishop *bishop = new Bishop(board->getSquare(3, 5), NULL);
+    bishop->updateMoves();
+    vector <Square *> actual = bishop->getMoves();
+    vector <Square *> expected;
+    EXPECT(2, 4)
+    EXPECT(2, 6)
+    EXPECT(4, 4)
+    EXPECT(4, 6)
+    EXPECT(1, 3)
+    EXPECT(1, 7)
+    EXPECT(5, 3)
+    EXPECT(5, 7)
+    EXPECT(0, 2)
+    EXPECT(6, 2)
+    EXPECT(7, 1)
+    bool result = vectorCompare(&actual, &expected);
+    delete board;
+    delete bishop;
+    return result;
 }
 
 // compare the elements of two vectors of squares disregarding the order,
 // returning true if so
-bool vectorCompare(std::vector <Square *> v1, std::vector <Square *> v2) {
+bool vectorCompare(vector <Square *> *v1, vector <Square *> *v2) {
+    if (v1->size() != v2->size()) {
+        return false;
+    }
     bool found;
-    for (vector <Square *> :: iterator it1 = v1.begin(); it1 != v1.end(); ++it1) {
+    Square *sq1;
+    Square *sq2;
+    for (vector <Square *> :: iterator it1 = v1->begin(); it1 != v1->end(); ++it1) {
         found = false;
-        for (vector <Square *> :: iterator it2 = v1.begin(); it2 != v2.end() && !found; ++it2) {
-            if (*it1 == *it2) {
+        for (vector <Square *> :: iterator it2 = v2->begin(); it2 != v2->end() && !found; ++it2) {
+            sq1 = *it1;
+            sq2 = *it2;
+            if (sq1 == sq2) {
                 found = true;
-                v2.erase(it2);
             }
         }
         if (!found) {
             return false;
         }
     }
-    return v2.empty();
+    return true;
 }
 
 // run the tests using the template in testutil
@@ -79,5 +106,6 @@ bool runChessPiecesTests() {
     bool result = true;
     TEST(testCreation, "creation");
     TEST(testPlacement, "placement");
+    TEST(testBishopEmpty, "bishop - empty board")
     return result;
 }

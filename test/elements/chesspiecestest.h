@@ -15,7 +15,7 @@ bool testBishopEmpty();
 
 // compare the elements of two vectors of squares disregarding the order,
 // returning true if so
-bool vectorCompare(std::vector <Square *> v1, std::vector <Square *> v2);
+bool vectorCompare(std::vector <Square *> *v1, std::vector <Square *> *v2);
 
 // run the tests and output the results
 bool runChessPiecesTests();
