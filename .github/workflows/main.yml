@@ -34,5 +34,5 @@ jobs:
         run: |
           cd test/elements
           make
-          ./run
+          valgrind ./run
           make clean
