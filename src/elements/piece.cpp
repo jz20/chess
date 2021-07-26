@@ -1,6 +1,6 @@
 #include "piece.h"
 
-#include <list>
+#include <vector>
 #include <cstddef>
 #include "square.h"
 #include "player.h"
@@ -26,7 +26,7 @@ void Piece::setSquare(Square *square) {
 }
 
 // get the legal moves
-list <Square *> Piece::getMoves() {
+vector <Square *> Piece::getMoves() {
     return moves;
 }
 
