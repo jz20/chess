@@ -1,6 +1,6 @@
 #include "cppawn.h"
 
-#include <list>
+#include <vector>
 #include "board.h"
 
 // update the possible squares for a piece to move to

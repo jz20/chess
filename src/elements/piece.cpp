@@ -42,10 +42,10 @@ bool Piece::isAsKing() {
 
 /*
     The following are auxiliary function that help find the moves and add them
-    to the moves list
+    to the moves vector
 */
 
-void Piece::upLeftDiag(list <Square *> *moves) {
+void Piece::upLeftDiag(vector <Square *> *moves) {
     int i = square->getRow() + 1;
     int j = square->getCol() - 1;
     bool flag = true;
@@ -64,7 +64,7 @@ void Piece::upLeftDiag(list <Square *> *moves) {
     }
 }
 
-void Piece::downLeftDiag(list <Square *> *moves) {
+void Piece::downLeftDiag(vector <Square *> *moves) {
     int i = square->getRow() - 1;
     int j = square->getCol() - 1;
     bool flag = true;
@@ -83,7 +83,7 @@ void Piece::downLeftDiag(list <Square *> *moves) {
     }
 }
 
-void Piece::upRightDiag(list <Square *> *moves) {
+void Piece::upRightDiag(vector <Square *> *moves) {
     int i = square->getRow() + 1;
     int j = square->getCol() + 1;
     bool flag = true;
@@ -102,7 +102,7 @@ void Piece::upRightDiag(list <Square *> *moves) {
     }
 }
 
-void Piece::downRightDiag(list <Square *> *moves) {
+void Piece::downRightDiag(vector <Square *> *moves) {
     int i = square->getRow() - 1;
     int j = square->getCol() + 1;
     bool flag = true;
@@ -121,7 +121,7 @@ void Piece::downRightDiag(list <Square *> *moves) {
     }
 }
 
-void Piece::upCol(list <Square *> *moves) {
+void Piece::upCol(vector <Square *> *moves) {
     int col = square->getCol();
     int i = square->getRow() + 1;
     bool flag = true;
@@ -139,7 +139,7 @@ void Piece::upCol(list <Square *> *moves) {
     }
 }
 
-void Piece::downCol(list <Square *> *moves) {
+void Piece::downCol(vector <Square *> *moves) {
     int col = square->getCol();
     int i = square->getRow() - 1;
     bool flag = true;
@@ -157,7 +157,7 @@ void Piece::downCol(list <Square *> *moves) {
     }
 }
 
-void Piece::leftRow(list <Square *> *moves) {
+void Piece::leftRow(vector <Square *> *moves) {
     int row = square->getRow();
     int j = square->getCol() - 1;
     bool flag = true;
@@ -175,7 +175,7 @@ void Piece::leftRow(list <Square *> *moves) {
     }
 }
 
-void Piece::rightRow(list <Square *> *moves) {
+void Piece::rightRow(vector <Square *> *moves) {
     int row = square->getRow();
     int j = square->getCol() + 1;
     bool flag = true;
@@ -193,7 +193,7 @@ void Piece::rightRow(list <Square *> *moves) {
     }
 }
 
-void Piece::targetSquare(std::list <Square *> *moves, int rowOffset, int colOffset) {
+void Piece::targetSquare(std::vector <Square *> *moves, int rowOffset, int colOffset) {
     int row = square->getRow() + rowOffset;
     int col = square->getCol() + colOffset;
     Board *board = square->getBoard();
@@ -207,7 +207,7 @@ void Piece::targetSquare(std::list <Square *> *moves, int rowOffset, int colOffs
 }
 
 // the piece can only move to the target if it causes a capture
-void Piece::targetCaptureSquare(std::list <Square *> *moves, int rowOffset, int colOffset) {
+void Piece::targetCaptureSquare(std::vector <Square *> *moves, int rowOffset, int colOffset) {
     int row = square->getRow() + rowOffset;
     int col = square->getCol() + colOffset;
     Board *board = square->getBoard();
@@ -221,7 +221,7 @@ void Piece::targetCaptureSquare(std::list <Square *> *moves, int rowOffset, int 
 }
         
 // the piece can only move to the target if it does not cause a capture
-void Piece::targetNonCaptureSquare(std::list <Square *> *moves, int rowOffset, int colOffset) {
+void Piece::targetNonCaptureSquare(std::vector <Square *> *moves, int rowOffset, int colOffset) {
     int row = square->getRow() + rowOffset;
     int col = square->getCol() + colOffset;
     Board *board = square->getBoard();

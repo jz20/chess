@@ -1,6 +1,6 @@
 #include "cpking.h"
 
-#include <list>
+#include <vector>
 
 // Constructor of a king at a specific Square belonging to a player
 King::King(Square *square, Player *player):Piece(square, player) {
