@@ -20,7 +20,7 @@ Chess pieces:
 
 using namespace std;
 
-#define EXPECT(x, y) expected.push_back(board->getSquare(x, y));
+#define EXPECT(x, y) expected.push_back(board->getSquare(x, y))
 
 /*
     This test file includes tests for all the standard chess pieces.
@@ -57,20 +57,150 @@ bool testBishopEmpty() {
     bishop->updateMoves();
     vector <Square *> actual = bishop->getMoves();
     vector <Square *> expected;
-    EXPECT(2, 4)
-    EXPECT(2, 6)
-    EXPECT(4, 4)
-    EXPECT(4, 6)
-    EXPECT(1, 3)
-    EXPECT(1, 7)
-    EXPECT(5, 3)
-    EXPECT(5, 7)
-    EXPECT(0, 2)
-    EXPECT(6, 2)
-    EXPECT(7, 1)
+    EXPECT(2, 4);
+    EXPECT(2, 6);
+    EXPECT(4, 4);
+    EXPECT(4, 6);
+    EXPECT(1, 3);
+    EXPECT(1, 7);
+    EXPECT(5, 3);
+    EXPECT(5, 7);
+    EXPECT(0, 2);
+    EXPECT(6, 2);
+    EXPECT(7, 1);
     bool result = vectorCompare(&actual, &expected);
     delete board;
     delete bishop;
+    return result;
+}
+
+// test that the knight has the correct squares as legal moves on an empty board
+bool testKnightEmpty() {
+    Board *board = new Board(8, 8);
+    Knight *knight = new Knight(board->getSquare(2, 1), NULL);
+    knight->updateMoves();
+    vector <Square *> actual = knight->getMoves();
+    vector <Square *> expected;
+    EXPECT(0, 0);
+    EXPECT(0, 2);
+    EXPECT(1, 3);
+    EXPECT(3, 3);
+    EXPECT(4, 0);
+    EXPECT(4, 2);
+    bool result = vectorCompare(&actual, &expected);
+    delete board;
+    delete knight;
+    return result;
+}
+
+// test that the rook has the correct squares as legal moves on an empty board
+bool testRookEmpty() {
+    Board *board = new Board(8, 8);
+    Rook *rook = new Rook(board->getSquare(3, 6), NULL);
+    rook->updateMoves();
+    vector <Square *> actual = rook->getMoves();
+    vector <Square *> expected;
+    EXPECT(3, 0);
+    EXPECT(3, 1);
+    EXPECT(3, 2);
+    EXPECT(3, 3);
+    EXPECT(3, 4);
+    EXPECT(3, 5);
+    EXPECT(3, 7);
+    EXPECT(0, 6);
+    EXPECT(1, 6);
+    EXPECT(2, 6);
+    EXPECT(4, 6);
+    EXPECT(5, 6);
+    EXPECT(6, 6);
+    EXPECT(7, 6);
+    bool result = vectorCompare(&actual, &expected);
+    delete board;
+    delete rook;
+    return result;
+}
+
+// test that the queen has the correct squares as legal moves on an empty board
+bool testQueenEmpty() {
+    Board *board = new Board(8, 8);
+    Queen *queen = new Queen(board->getSquare(2, 4), NULL);
+    queen->updateMoves();
+    vector <Square *> actual = queen->getMoves();
+    vector <Square *> expected;
+    // rook-like moves
+    EXPECT(2, 0);
+    EXPECT(2, 1);
+    EXPECT(2, 2);
+    EXPECT(2, 3);
+    EXPECT(2, 5);
+    EXPECT(2, 6);
+    EXPECT(2, 7);
+    EXPECT(0, 4);
+    EXPECT(1, 4);
+    EXPECT(3, 4);
+    EXPECT(4, 4);
+    EXPECT(5, 4);
+    EXPECT(6, 4);
+    EXPECT(7, 4);
+    // bishop-like moves
+    EXPECT(0, 2);
+    EXPECT(1, 3);
+    EXPECT(3, 3);
+    EXPECT(4, 2);
+    EXPECT(5, 1);
+    EXPECT(6, 0);
+    EXPECT(0, 6);
+    EXPECT(1, 5);
+    EXPECT(3, 5);
+    EXPECT(4, 6);
+    EXPECT(5, 7);
+    bool result = vectorCompare(&actual, &expected);
+    delete board;
+    delete queen;
+    return result;
+}
+
+// test that the king has the correct squares as legal moves on an empty board
+bool testKingEmpty() {
+    Board *board = new Board(8, 8);
+    King *king = new King(board->getSquare(6, 5), NULL);
+    king->updateMoves();
+    vector <Square *> actual = king->getMoves();
+    vector <Square *> expected;
+    EXPECT(7, 4);
+    EXPECT(7, 5);
+    EXPECT(7, 6);
+    EXPECT(6, 4);
+    EXPECT(6, 6);
+    EXPECT(5, 4);
+    EXPECT(5, 5);
+    EXPECT(5, 6);
+    bool result = vectorCompare(&actual, &expected);
+    delete board;
+    delete king;
+    return result;
+}
+
+// test that the pawn has the correct squares as legal moves on an empty board
+bool testPawnEmpty() {
+    Board *board = new Board(8, 8);
+    Player *white = new Player(WHITE);
+    Player *black = new Player(BLACK);
+    Pawn *pawnW = new Pawn(board->getSquare(5, 6), white);
+    pawnW->updateMoves();
+    vector <Square *> actual = pawnW->getMoves();
+    vector <Square *> expected;
+    EXPECT(6, 6);
+    bool result = vectorCompare(&actual, &expected);
+    board->getSquare(5, 6)->setEmpty();
+    expected.clear();
+    Pawn *pawnB = new Pawn(board->getSquare(6, 5), black);
+    EXPECT(5, 5);
+    delete board;
+    delete pawnW;
+    delete pawnB;
+    delete white;
+    delete black;
     return result;
 }
 
@@ -106,6 +236,11 @@ bool runChessPiecesTests() {
     bool result = true;
     TEST(testCreation, "creation");
     TEST(testPlacement, "placement");
-    TEST(testBishopEmpty, "bishop - empty board")
+    TEST(testBishopEmpty, "bishop - empty board");
+    TEST(testKnightEmpty, "knight - empty board");
+    TEST(testRookEmpty, "rook - empty board");
+    TEST(testQueenEmpty, "queen - empty board");
+    TEST(testKingEmpty, "king - empty board");
+    TEST(testPawnEmpty, "pawn - empty board");
     return result;
 }
