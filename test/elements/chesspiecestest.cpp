@@ -20,7 +20,7 @@ Chess pieces:
 
 using namespace std;
 
-#define EXPECT(x, y) expected.push_back(board->getSquare(x, y))
+#define EXPECT(y, x) expected.push_back(board->getSquare(y, x))
 
 /*
     This test file includes tests for all the standard chess pieces.
@@ -204,6 +204,144 @@ bool testPawnEmpty() {
     return result;
 }
 
+// test that the pieces has the correct squares as legal moves when interacting
+// with other pieces, without considering special rules
+
+/*
+     +-+-+-+-+-+-+-+-+
+7(8) |R| | | | |K| |R|
+6(7) |P|P| | |Q|P|P| |
+5(6) | |p|P| | | |N| |
+4(5) |p| | | | | | |P|
+3(4) | | |n| | | | | |
+2(3) | | | |b| | | |p|
+1(2) | | |p| | |p|p| |
+0(1) | |r| |q|r| |k| |
+     +-+-+-+-+-+-+-+-+
+      0 1 2 3 4 5 6 7
+      a b c d e f g h
+*/
+
+#define BPIECE(y, x, name, Type) \
+        Piece *name = new Type(board->getSquare(y, x), black); \
+        board->getSquare(y, x)->setPiece(name); \
+        black->addPiece(name);
+
+#define WPIECE(y, x, name, Type) \
+        Piece *name = new Type(board->getSquare(y, x), white); \
+        board->getSquare(y, x)->setPiece(name); \
+        white->addPiece(name);
+
+#define VERIFY(name) \
+        if (!vectorCompare(&actual, &expected)) { \
+            cout << "failure at " << name << "\n"; \
+            result = false; \
+        }   \
+        expected.clear();
+
+bool testBoardInteraction() {
+    // board setup
+    Board *board = new Board(8, 8);
+    Player *white = new Player(WHITE);
+    Player *black = new Player(BLACK);
+    WPIECE(0, 1, wr1, Rook);
+    WPIECE(0, 3, wq, Queen);
+    WPIECE(0, 4, wr2, Rook);
+    WPIECE(0, 6, wk, King);
+    WPIECE(1, 2, wp1, Pawn);
+    WPIECE(1, 5, wp2, Pawn);
+    WPIECE(1, 6, wp3, Pawn);
+    WPIECE(2, 3, wb, Bishop);
+    WPIECE(2, 7, wp4, Pawn);
+    WPIECE(3, 2, wn, Knight);
+    WPIECE(4, 0, wp5, Pawn);
+    WPIECE(5, 1, wp6, Pawn);
+    BPIECE(7, 0, br1, Rook);
+    BPIECE(7, 5, bk, King);
+    BPIECE(7, 7, br2, Rook);
+    BPIECE(6, 0, bp1, Pawn);
+    BPIECE(6, 1, bp2, Pawn);
+    BPIECE(6, 4, bq, Queen);
+    BPIECE(6, 5, bp3, Pawn);
+    BPIECE(6, 6, bp4, Pawn);
+    BPIECE(5, 2, bp5, Pawn);
+    BPIECE(5, 6, bn, Knight);
+    BPIECE(4, 7, bp6, Pawn);
+
+    vector <Square *> actual;
+    vector <Square *> expected;
+    bool result = true;
+
+    // testing the white bishop
+    wb->updateMoves();
+    actual = wb->getMoves();
+    EXPECT(3, 4);
+    EXPECT(1, 4);
+    EXPECT(4, 5);
+    EXPECT(0, 5);
+    EXPECT(5, 6);
+    VERIFY("white bishop");
+    
+    // testing the white knight
+    wn->updateMoves();
+    actual = wn->getMoves();
+    EXPECT(2, 0);
+    EXPECT(1, 1);
+    EXPECT(1, 3);
+    EXPECT(2, 4);
+    EXPECT(4, 4);
+    EXPECT(5, 3);
+    VERIFY("white knight");
+
+    // testing the white b pawn
+    wp6->updateMoves();
+    actual = wp6->getMoves();
+    EXPECT(6, 0);
+    VERIFY("white b pawn");
+    
+    // testing the black queen
+    bq->updateMoves();
+    actual = bq->getMoves();
+    EXPECT(0, 4);
+    EXPECT(1, 4);
+    EXPECT(2, 4);
+    EXPECT(3, 4);
+    EXPECT(4, 4);
+    EXPECT(5, 4);
+    EXPECT(7, 4);
+    EXPECT(6, 2);
+    EXPECT(6, 3);
+    EXPECT(7, 3);
+    EXPECT(5, 3);
+    EXPECT(4, 2);
+    EXPECT(3, 1);
+    EXPECT(2, 0);
+    EXPECT(5, 5);
+    EXPECT(4, 6);
+    EXPECT(3, 7);
+    VERIFY("black queen");
+
+    // testing the black h rook
+    br2->updateMoves();
+    actual = br2->getMoves();
+    EXPECT(7, 6);
+    EXPECT(6, 7);
+    EXPECT(5, 7);
+    VERIFY("black h rook");
+
+    // testing the black king
+    bk->updateMoves();
+    actual = bk->getMoves();
+    EXPECT(7, 6);
+    EXPECT(7, 4);
+    VERIFY("black king");
+
+    delete board;
+    delete black;
+    delete white;
+    return result;
+}
+
 // compare the elements of two vectors of squares disregarding the order,
 // returning true if so
 bool vectorCompare(vector <Square *> *v1, vector <Square *> *v2) {
@@ -242,5 +380,6 @@ bool runChessPiecesTests() {
     TEST(testQueenEmpty, "queen - empty board");
     TEST(testKingEmpty, "king - empty board");
     TEST(testPawnEmpty, "pawn - empty board");
+    TEST(testBoardInteraction, "board interaction");
     return result;
 }

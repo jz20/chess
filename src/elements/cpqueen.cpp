@@ -4,6 +4,7 @@
 
 // update the possible squares for a piece to move to
 void Queen::updateMoves() {
+    moves.clear();
     // straight line moves
     upCol(&moves);
     downCol(&moves);
