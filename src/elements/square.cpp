@@ -8,8 +8,7 @@ using namespace std;
 
 // constructor of a square at specified row and col position
 // in the specified board
-Square::Square(int row, int col, Board *board) {
-    Square(row, col);
+Square::Square(int row, int col, Board *board):Square(row, col) {
     this->board = board;
 }
 
@@ -30,11 +29,6 @@ int Square::getRow() {
 // return the col position
 int Square::getCol() {
     return this->col;
-}
-
-// free associated memory allocations
-void Square::free() {
-    // may need to free something in the future
 }
 
 // set a specific piece at the square

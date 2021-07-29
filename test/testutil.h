@@ -6,9 +6,9 @@
 
 #define TEST(function, name) \
 if (function()) { \
-    std::cout << name << " success\n"; \
+    std::cout << "\t" << name << " success\n"; \
 } else { \
-    std::cout << name << " failure\n"; \
+    std::cout << "\t" << name << " failure\n"; \
     result = false; \
 }
 

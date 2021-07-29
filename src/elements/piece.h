@@ -11,12 +11,14 @@ class Piece {
     public:
         // Constructor of a piece belonging to a Player at a specific Square
         Piece(Square *square, Player *player);
+        // Destructor of a piece
+        virtual ~Piece() {}
         // get the square
         Square *getSquare();
         // set the square
         void setSquare(Square *square);
         // update the possible squares for a piece to move to
-        virtual void updateMoves();
+        virtual void updateMoves() {}
         // get the legal moves
         std::vector <Square *> getMoves();
         // get the player

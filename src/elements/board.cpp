@@ -10,26 +10,25 @@ Board::Board(int rows, int cols) {
     for (int i = 0; i < rows; i++) {
         squares[i] = new Square *[cols];
         for (int j = 0; j < cols; j++) {
-            squares[i][j] = new Square(i, j);
+            squares[i][j] = new Square(i, j, this);
         }
     }
 }
 
-// returns the square at specified row and col position
-Square *Board::getSquare(int row, int col) {
-    return squares[row][col];
-}
-
-// free associated memory allocations
-void Board::free() {
+// destructor of a board
+Board::~Board() {
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-            squares[i][j]->free();
             delete squares[i][j];
         }
         delete [] squares[i];
     }
     delete [] squares;
+}
+
+// returns the square at specified row and col position
+Square *Board::getSquare(int row, int col) {
+    return squares[row][col];
 }
 
 // get the number of rows

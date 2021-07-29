@@ -4,6 +4,7 @@
 
 // update the possible squares for a piece to move to
 void Rook::updateMoves() {
+    moves.clear();
     upCol(&moves);
     downCol(&moves);
     leftRow(&moves);

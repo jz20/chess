@@ -1,5 +1,6 @@
 #include "boardtest.h"
 #include "board.h" // from corresponding source
+#include "square.h"
 #include "testutil.h" // from ..
 
 using namespace std;
@@ -9,7 +10,6 @@ using namespace std;
 // test the creation of an empty board
 bool testEmpty() {
     Board *board = new Board(0, 0);
-    board->free();
     delete board;
     return true;
 }
@@ -17,7 +17,6 @@ bool testEmpty() {
 // test the creation of an 3 by 15 board
 bool test3x15() {
     Board *board = new Board(3, 15);
-    board->free();
     delete board;
     return true;
 }
@@ -35,7 +34,22 @@ bool testSquareLabels() {
             }
         }
     }
-    board->free();
+    delete board;
+    return true;
+}
+
+// test that the squares in a board has the pointer to this board
+bool testSquareBoard() {
+    const int rows = 5;
+    const int cols = 5;
+    Board *board = new Board(rows, cols);
+    for (int i = 0; i < rows; i++) {
+        for (int j = 0; j < cols; j++) {
+            if (board->getSquare(i, j)->getBoard() != board) {
+                return false;   
+            }
+        }
+    }
     delete board;
     return true;
 }
@@ -48,5 +62,6 @@ bool runBoardTests() {
     TEST(testEmpty, "empty board");
     TEST(test3x15, "3 by 15");
     TEST(testSquareLabels, "square labels");
+    TEST(testSquareBoard, "square reference to board");
     return result;
 }

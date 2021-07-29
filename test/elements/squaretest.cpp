@@ -9,7 +9,6 @@ using namespace std;
 // test the creation of a square
 bool testCreate() {
     Square *square = new Square(0, 0);
-    square->free();
     delete square;
     return true;
 }
@@ -21,7 +20,6 @@ bool testRowCol() {
     if (square->getRow() == 7 && square->getCol() == 3) {
         result = true;
     }
-    square->free();
     delete square;
     return result;
 }
@@ -35,10 +33,3 @@ bool runSquareTests() {
     TEST(testRowCol, "row col");
     return result;
 }
-
-// 0 signals success
-/*
-int main() {
-    return !runSquareTests();
-}
-*/
