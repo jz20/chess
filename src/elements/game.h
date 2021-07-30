@@ -14,7 +14,7 @@ typedef struct Move {
 
 class Game {
     public:
-        // Constructor with the board and the players
+        // Constructor with the board and the players 
         Game(Board *board, Player *player1, Player *player2);
         // Destructor of a game
         ~Game();
@@ -30,9 +30,13 @@ class Game {
         bool isFinished();
         // get the player whose turn it is
         Player *getCurrentPlayer();
+        // get the player whose turn it is not
+        Player *getOppositePlayer();
     protected:
         // whether the game is finished;
         bool finished;
+        // whether the player is in check
+        bool inCheck;
         // the current move number, the first move is 0
         int moveNo;
         // the board to play with

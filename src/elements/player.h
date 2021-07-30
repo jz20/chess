@@ -24,6 +24,8 @@ class Player {
         // returning true if successful and false otherwise (requiring that the 
         // piece is found)
         bool removePiece(Piece *piece);
+        // get pieces
+        std::vector <Piece *> getPieces();
     private:
         // the color of the player's pieces
         Colour colour;

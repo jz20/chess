@@ -36,10 +36,15 @@ bool Player::addPiece(Piece *piece) {
 // piece is found)
 bool Player::removePiece(Piece *piece) {
     for (vector <Piece *> :: iterator it = pieces.begin(); it != pieces.end(); ++it) {
-        if (*it = piece) {
+        if (*it == piece) {
             pieces.erase(it);
             return true;
         }
     }
     return false;
+}
+
+// get pieces
+std::vector <Piece *> Player::getPieces() {
+    return pieces;
 }

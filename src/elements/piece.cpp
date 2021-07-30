@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <cstddef>
+#include <string>
 #include "square.h"
 #include "player.h"
 #include "board.h"
@@ -13,6 +14,7 @@ Piece::Piece(Square *square, Player *player) {
     this->square = square;
     this->player = player;
     this->asKing = false;
+    this->name = "none";
 }
 
 // get the square
@@ -26,7 +28,7 @@ void Piece::setSquare(Square *square) {
 }
 
 // get the legal targets
-vector <Square *> Piece::getMoves() {
+vector <Square *> Piece::getTargets() {
     return targets;
 }
 
@@ -38,6 +40,11 @@ Player *Piece::getPlayer() {
 // return whether the piece functions as a king
 bool Piece::isAsKing() {
     return asKing;
+}
+
+// get name
+string Piece::getName() {
+    return name;
 }
 
 /*

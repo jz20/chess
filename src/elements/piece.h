@@ -4,6 +4,7 @@
 class Piece;
 
 #include <vector>
+#include <string>
 #include "square.h"
 #include "player.h"
 
@@ -20,11 +21,13 @@ class Piece {
         // update the possible squares for a piece to move to
         virtual void updateTargets() {}
         // get the legal targets
-        std::vector <Square *> getMoves();
+        std::vector <Square *> getTargets();
         // get the player
         Player *getPlayer();
         // return whether the piece functions as a king
         bool isAsKing();
+        // get name
+        std::string getName();
     protected:
         // the square that the piece is on
         Square *square;
@@ -34,6 +37,8 @@ class Piece {
         Player *player;
         // whether the piece functions as a king
         bool asKing;
+        // the name of the piece
+        std::string name;
         /*
         These are auxiliary function that help find the targets
         */

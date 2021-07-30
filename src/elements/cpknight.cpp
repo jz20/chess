@@ -1,7 +1,13 @@
 #include "cpknight.h"
 
 #include <vector>
+#include <string>
 #include "board.h"
+
+// Constructor of a bishop at a specific Square belonging to a player
+Knight::Knight(Square *square, Player *player): Piece(square, player) {
+    name = "knight";
+}
 
 // update the possible squares for a piece to move to
 void Knight::updateTargets() {

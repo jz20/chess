@@ -35,7 +35,7 @@ void Game::makeMove(Move *move) {
     Square *destination = move->square;
     Square *origin = piece->getSquare();
     if (destination->getPiece() != NULL) {
-        getCurrentPlayer()->removePiece(destination->getPiece());
+        getOppositePlayer()->removePiece(destination->getPiece());
     }
     piece->setSquare(destination);
     destination->setPiece(piece);
@@ -53,4 +53,12 @@ Player *Game::getCurrentPlayer() {
         return player1;
     }
     return player2;
+}
+
+// get the player whose turn it is not
+Player *Game::getOppositePlayer() {
+    if (moveNo % 2 == 0) {
+        return player2;
+    }
+    return player1;
 }
