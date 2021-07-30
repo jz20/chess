@@ -50,11 +50,11 @@ bool testPlacement() {
     return true;
 }
 
-// test that the bishop has the correct squares as legal moves on an empty board
+// test that the bishop has the correct squares as legal targets on an empty board
 bool testBishopEmpty() {
     Board *board = new Board(8, 8);
     Bishop *bishop = new Bishop(board->getSquare(3, 5), NULL);
-    bishop->updateMoves();
+    bishop->updateTargets();
     vector <Square *> actual = bishop->getMoves();
     vector <Square *> expected;
     EXPECT(2, 4);
@@ -74,11 +74,11 @@ bool testBishopEmpty() {
     return result;
 }
 
-// test that the knight has the correct squares as legal moves on an empty board
+// test that the knight has the correct squares as legal targets on an empty board
 bool testKnightEmpty() {
     Board *board = new Board(8, 8);
     Knight *knight = new Knight(board->getSquare(2, 1), NULL);
-    knight->updateMoves();
+    knight->updateTargets();
     vector <Square *> actual = knight->getMoves();
     vector <Square *> expected;
     EXPECT(0, 0);
@@ -93,11 +93,11 @@ bool testKnightEmpty() {
     return result;
 }
 
-// test that the rook has the correct squares as legal moves on an empty board
+// test that the rook has the correct squares as legal targets on an empty board
 bool testRookEmpty() {
     Board *board = new Board(8, 8);
     Rook *rook = new Rook(board->getSquare(3, 6), NULL);
-    rook->updateMoves();
+    rook->updateTargets();
     vector <Square *> actual = rook->getMoves();
     vector <Square *> expected;
     EXPECT(3, 0);
@@ -120,14 +120,14 @@ bool testRookEmpty() {
     return result;
 }
 
-// test that the queen has the correct squares as legal moves on an empty board
+// test that the queen has the correct squares as legal targets on an empty board
 bool testQueenEmpty() {
     Board *board = new Board(8, 8);
     Queen *queen = new Queen(board->getSquare(2, 4), NULL);
-    queen->updateMoves();
+    queen->updateTargets();
     vector <Square *> actual = queen->getMoves();
     vector <Square *> expected;
-    // rook-like moves
+    // rook-like targets
     EXPECT(2, 0);
     EXPECT(2, 1);
     EXPECT(2, 2);
@@ -142,7 +142,7 @@ bool testQueenEmpty() {
     EXPECT(5, 4);
     EXPECT(6, 4);
     EXPECT(7, 4);
-    // bishop-like moves
+    // bishop-like targets
     EXPECT(0, 2);
     EXPECT(1, 3);
     EXPECT(3, 3);
@@ -160,11 +160,11 @@ bool testQueenEmpty() {
     return result;
 }
 
-// test that the king has the correct squares as legal moves on an empty board
+// test that the king has the correct squares as legal targets on an empty board
 bool testKingEmpty() {
     Board *board = new Board(8, 8);
     King *king = new King(board->getSquare(6, 5), NULL);
-    king->updateMoves();
+    king->updateTargets();
     vector <Square *> actual = king->getMoves();
     vector <Square *> expected;
     EXPECT(7, 4);
@@ -181,13 +181,13 @@ bool testKingEmpty() {
     return result;
 }
 
-// test that the pawn has the correct squares as legal moves on an empty board
+// test that the pawn has the correct squares as legal targets on an empty board
 bool testPawnEmpty() {
     Board *board = new Board(8, 8);
     Player *white = new Player(WHITE);
     Player *black = new Player(BLACK);
     Pawn *pawnW = new Pawn(board->getSquare(5, 6), white);
-    pawnW->updateMoves();
+    pawnW->updateTargets();
     vector <Square *> actual = pawnW->getMoves();
     vector <Square *> expected;
     EXPECT(6, 6);
@@ -204,7 +204,7 @@ bool testPawnEmpty() {
     return result;
 }
 
-// test that the pieces has the correct squares as legal moves when interacting
+// test that the pieces has the correct squares as legal targets when interacting
 // with other pieces, without considering special rules
 
 /*
@@ -273,7 +273,7 @@ bool testBoardInteraction() {
     bool result = true;
 
     // testing the white bishop
-    wb->updateMoves();
+    wb->updateTargets();
     actual = wb->getMoves();
     EXPECT(3, 4);
     EXPECT(1, 4);
@@ -283,7 +283,7 @@ bool testBoardInteraction() {
     VERIFY("white bishop");
     
     // testing the white knight
-    wn->updateMoves();
+    wn->updateTargets();
     actual = wn->getMoves();
     EXPECT(2, 0);
     EXPECT(1, 1);
@@ -294,13 +294,13 @@ bool testBoardInteraction() {
     VERIFY("white knight");
 
     // testing the white b pawn
-    wp6->updateMoves();
+    wp6->updateTargets();
     actual = wp6->getMoves();
     EXPECT(6, 0);
     VERIFY("white b pawn");
     
     // testing the black queen
-    bq->updateMoves();
+    bq->updateTargets();
     actual = bq->getMoves();
     EXPECT(0, 4);
     EXPECT(1, 4);
@@ -322,7 +322,7 @@ bool testBoardInteraction() {
     VERIFY("black queen");
 
     // testing the black h rook
-    br2->updateMoves();
+    br2->updateTargets();
     actual = br2->getMoves();
     EXPECT(7, 6);
     EXPECT(6, 7);
@@ -330,7 +330,7 @@ bool testBoardInteraction() {
     VERIFY("black h rook");
 
     // testing the black king
-    bk->updateMoves();
+    bk->updateTargets();
     actual = bk->getMoves();
     EXPECT(7, 6);
     EXPECT(7, 4);

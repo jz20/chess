@@ -5,16 +5,16 @@
 #include "player.h"
 
 // update the possible squares for a piece to move to
-void Pawn::updateMoves() {
-    moves.clear();
+void Pawn::updateTargets() {
+    targets.clear();
     if (player && (player->getColour() == WHITE)) {
-        targetNonCaptureSquare(&moves, 1, 0);
-        targetCaptureSquare(&moves, 1, 1);
-        targetCaptureSquare(&moves, 1, -1);
+        targetNonCaptureSquare(&targets, 1, 0);
+        targetCaptureSquare(&targets, 1, 1);
+        targetCaptureSquare(&targets, 1, -1);
     } else {
-        targetNonCaptureSquare(&moves, -1, 0);
-        targetCaptureSquare(&moves, -1, 1);
-        targetCaptureSquare(&moves, -1, -1);
+        targetNonCaptureSquare(&targets, -1, 0);
+        targetCaptureSquare(&targets, -1, 1);
+        targetCaptureSquare(&targets, -1, -1);
     }
     
 }

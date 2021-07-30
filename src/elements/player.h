@@ -20,6 +20,10 @@ class Player {
         // successful and false otherwise (requiring that the piece belongs to 
         // the player)
         bool addPiece(Piece *piece);
+        // remove a piece from the player's possession as well as destroying it,
+        // returning true if successful and false otherwise (requiring that the 
+        // piece is found)
+        bool removePiece(Piece *piece);
     private:
         // the color of the player's pieces
         Colour colour;
