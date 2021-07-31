@@ -16,8 +16,15 @@
 
 using namespace std;
 
+/*
 #define PROMOTE_TO(Type) \
-        getCurrentPlayer()->removePiece(move->piece); \
+        getCurrentPlayer()->removePiece(move->piece); 
+        promoted = new Type(move->square, getCurrentPlayer()); \
+        move->square->setPiece(promoted); \
+        getCurrentPlayer()->addPiece(promoted);
+        */
+
+#define PROMOTE_TO(Type) \
         promoted = new Type(move->square, getCurrentPlayer()); \
         move->square->setPiece(promoted); \
         getCurrentPlayer()->addPiece(promoted);
@@ -54,9 +61,13 @@ ChessGame::ChessGame(): Game(new Board(8, 8), new Player(WHITE), new Player(BLAC
 ChessGame::~ChessGame() {
 }
 
-// make the input move, including the possible promotion of a pawn and en passant
-// pawn capture
-void ChessGame::makeMove(Move *move) {
+// make the input move, including the possible promotion of a pawn and en 
+// passant pawn capture, return false if the moveStack is empty thus the move
+// cannot be made
+bool ChessGame::makeMove(Move *move) {
+    if (!moveStack.empty()) {
+        return false;
+    }
     Game::makeMove(move);
     Piece *promoted = NULL;
     if (move->instr == "ep") {
@@ -74,6 +85,31 @@ void ChessGame::makeMove(Move *move) {
     }
     if (move->aux) {
         Game::makeMove(move->aux);
+    }
+    return true;
+}
+
+// try the input move, store the move on the stack so that it can be 
+// reversed
+void ChessGame::tryMove(Move *move, bool isAux) {
+    Game::tryMove(move, isAux);
+    Piece *promoted = NULL;
+    if (move->instr == "ep") {
+        int rmRow = (getCurrentPlayer()->getColour() == WHITE) ? EPWHITE : EPBLACK;
+        int rmCol = move->square->getCol();
+        Square *TPS = board->getSquare(rmRow, rmCol); // TPS = taken pawn square
+        Positioning pos = {TPS->getPiece(), TPS};
+        move->restoration.push_back(&pos);
+        TPS->getPiece()->setSquare(NULL);
+        TPS->setEmpty();
+    } else if (move->instr == "queen") {
+        PROMOTE_TO(Queen);
+    } else if (move->instr == "rook") {
+        PROMOTE_TO(Rook);
+    } else if (move->instr == "bishop") {
+        PROMOTE_TO(Bishop);
+    } else if (move->instr == "knight") {
+        PROMOTE_TO(Knight);
     }
 }
 

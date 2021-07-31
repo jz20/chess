@@ -15,8 +15,12 @@ class ChessGame: public Game {
         ~ChessGame();
         // update the moves that a player can make
         void updateMoves();
-        // make the input move
-        void makeMove(Move *move);
+        // make the input move, return false if the moveStack is empty thus the move
+        // cannot be made
+        bool makeMove(Move *move);
+        // try the input move, store the move on the stack so that it can be 
+        // reversed
+        void tryMove(Move *move, bool isAux);
     private:
         // white short castle right
         bool WSC;
