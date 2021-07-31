@@ -4,12 +4,8 @@
 class ChessGame;
 
 #include "game.h"
-
-typedef enum {NA = 0, QUEEN = 1, ROOK = 2, BISHOP = 3, KNIGHT = 4} Promotion;
-typedef struct Castle {
-    bool happens;
-    Move *rookMove;
-} Castle;
+#include <vector>
+#include <set>
 
 class ChessGame: public Game {
     public:
@@ -20,7 +16,7 @@ class ChessGame: public Game {
         // update the moves that a player can make
         void updateMoves();
         // make the input move
-        void makeMove(Move *move, Castle castle, Promotion promotion, bool enPassant);
+        void makeMove(Move *move);
     private:
         // white short castle right
         bool WSC;
@@ -32,14 +28,21 @@ class ChessGame: public Game {
         bool BLC;
         // the col with the possibility of en passant capture, -1 signifies none
         int EP_COL;
-        // returns a Castle object that does not happen
-        Castle noCastle();
         // update the basic moves (the moves that are determined by the usual move 
         // rules for each piece)
         void basicMoves();
         // update pawns' two-square moves
         void pawnTwoSquare();
-
+        // update the castling moves
+        void castling(std::set <Square *> opponentControlled);
+        // update the en passant captures
+        void enPassant();
+        // update the promotion moves
+        void promotion();
+        // get the squares that are controlled by a player
+        std::set <Square *> squaresControlled(Player* player);
+        // test if a player is in check
+        bool checkTest();
 };
 
 #endif

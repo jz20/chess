@@ -3,13 +3,18 @@
 
 class Game;
 
+#include <cstddef>
 #include <vector>
+#include <string>
 #include "piece.h"
 #include "square.h"
 
 typedef struct Move {
+    Move() : piece(NULL), square(NULL), aux(NULL), instr("") {}
     Piece *piece;
     Square *square;
+    Move *aux;
+    std::string instr;
 } Move;
 
 class Game {
