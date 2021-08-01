@@ -31,11 +31,17 @@ class Game {
         ~Game();
         // update the moves that a player can make
         virtual void updateMoves() {}
+        // set up the board and the players
+        virtual void setUp() {}
+        // check if the game is over, set finished to be true if so, return
+        // true if a player wins and false if there is a draw, the result is 
+        // meaningless unless finished is true
+        virtual bool checkResult() { return false; }
         // get moves
         std::vector <Move *> getMoves();
         // get turn, the first turn is 1
         int getTurn();
-        // make the input move, return false if the moveStack is empty thus the
+        // make the input move, return false if the moveStack is not empty thus the
         // move cannot be made
         bool makeMove(Move *move);
         // is finished
@@ -47,6 +53,9 @@ class Game {
         // try the input move, store the move on the stack so that it can be 
         // reversed
         void tryMove(Move *move, bool aux);
+        // try the input move, store the move on the stack so that it can be 
+        // reversed, default non-aux move
+        void tryMove(Move *move);
         // reverse last move on the moveStack, returns false if the moveStack is 
         // empty
         bool reverseLast();

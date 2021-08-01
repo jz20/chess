@@ -55,7 +55,7 @@ bool testBishopEmpty() {
     Board *board = new Board(8, 8);
     Bishop *bishop = new Bishop(board->getSquare(3, 5), NULL);
     bishop->updateTargets();
-    vector <Square *> actual = bishop->getMoves();
+    vector <Square *> actual = bishop->getTargets();
     vector <Square *> expected;
     EXPECT(2, 4);
     EXPECT(2, 6);
@@ -79,7 +79,7 @@ bool testKnightEmpty() {
     Board *board = new Board(8, 8);
     Knight *knight = new Knight(board->getSquare(2, 1), NULL);
     knight->updateTargets();
-    vector <Square *> actual = knight->getMoves();
+    vector <Square *> actual = knight->getTargets();
     vector <Square *> expected;
     EXPECT(0, 0);
     EXPECT(0, 2);
@@ -98,7 +98,7 @@ bool testRookEmpty() {
     Board *board = new Board(8, 8);
     Rook *rook = new Rook(board->getSquare(3, 6), NULL);
     rook->updateTargets();
-    vector <Square *> actual = rook->getMoves();
+    vector <Square *> actual = rook->getTargets();
     vector <Square *> expected;
     EXPECT(3, 0);
     EXPECT(3, 1);
@@ -125,7 +125,7 @@ bool testQueenEmpty() {
     Board *board = new Board(8, 8);
     Queen *queen = new Queen(board->getSquare(2, 4), NULL);
     queen->updateTargets();
-    vector <Square *> actual = queen->getMoves();
+    vector <Square *> actual = queen->getTargets();
     vector <Square *> expected;
     // rook-like targets
     EXPECT(2, 0);
@@ -165,7 +165,7 @@ bool testKingEmpty() {
     Board *board = new Board(8, 8);
     King *king = new King(board->getSquare(6, 5), NULL);
     king->updateTargets();
-    vector <Square *> actual = king->getMoves();
+    vector <Square *> actual = king->getTargets();
     vector <Square *> expected;
     EXPECT(7, 4);
     EXPECT(7, 5);
@@ -188,7 +188,7 @@ bool testPawnEmpty() {
     Player *black = new Player(BLACK);
     Pawn *pawnW = new Pawn(board->getSquare(5, 6), white);
     pawnW->updateTargets();
-    vector <Square *> actual = pawnW->getMoves();
+    vector <Square *> actual = pawnW->getTargets();
     vector <Square *> expected;
     EXPECT(6, 6);
     bool result = vectorCompare(&actual, &expected);
@@ -274,7 +274,7 @@ bool testBoardInteraction() {
 
     // testing the white bishop
     wb->updateTargets();
-    actual = wb->getMoves();
+    actual = wb->getTargets();
     EXPECT(3, 4);
     EXPECT(1, 4);
     EXPECT(4, 5);
@@ -284,7 +284,7 @@ bool testBoardInteraction() {
     
     // testing the white knight
     wn->updateTargets();
-    actual = wn->getMoves();
+    actual = wn->getTargets();
     EXPECT(2, 0);
     EXPECT(1, 1);
     EXPECT(1, 3);
@@ -295,13 +295,13 @@ bool testBoardInteraction() {
 
     // testing the white b pawn
     wp6->updateTargets();
-    actual = wp6->getMoves();
+    actual = wp6->getTargets();
     EXPECT(6, 0);
     VERIFY("white b pawn");
     
     // testing the black queen
     bq->updateTargets();
-    actual = bq->getMoves();
+    actual = bq->getTargets();
     EXPECT(0, 4);
     EXPECT(1, 4);
     EXPECT(2, 4);
@@ -323,7 +323,7 @@ bool testBoardInteraction() {
 
     // testing the black h rook
     br2->updateTargets();
-    actual = br2->getMoves();
+    actual = br2->getTargets();
     EXPECT(7, 6);
     EXPECT(6, 7);
     EXPECT(5, 7);
@@ -331,10 +331,12 @@ bool testBoardInteraction() {
 
     // testing the black king
     bk->updateTargets();
-    actual = bk->getMoves();
+    actual = bk->getTargets();
     EXPECT(7, 6);
     EXPECT(7, 4);
     VERIFY("black king");
+
+    cout << *board;
 
     delete board;
     delete black;

@@ -12,6 +12,8 @@ Game::Game(Board *board, Player *player1, Player *player2) {
     this->board = board;
     this->player1 = player1;
     this->player2 = player2;
+    this->moveNo = 0;
+    this->finished = false;
 }
 
 // Destructor of a game
@@ -31,7 +33,7 @@ int Game::getTurn() {
     return moveNo / 2 + 1;
 }
 
-// make the input move, return false if the moveStack is empty thus the move
+// make the input move, return false if the moveStack is not empty thus the move
 // cannot be made
 bool Game::makeMove(Move *move) {
     if (!moveStack.empty()) {
@@ -50,6 +52,11 @@ bool Game::makeMove(Move *move) {
 }
 
 // try the input move, store the move on the stack so that it can be reversed
+void Game::tryMove(Move *move) {
+    tryMove(move, false);
+}
+
+// try the input move, store the move on the stack so that it can be reversed
 void Game::tryMove(Move *move, bool isAux) {
     Piece *piece = move->piece;
     Square *destination = move->square;
@@ -60,13 +67,17 @@ void Game::tryMove(Move *move, bool isAux) {
     move->restoration.push_back(&pOrigin);
     move->restoration.push_back(&pDestination);
     piece->setSquare(destination);
+    if (captured != NULL) {
+        captured->setSquare(NULL);
+    }
     destination->setPiece(piece);
     origin->setEmpty();
     if (!isAux) {
         moveStack.push_back(move);
+        moveNo++;
     }
     if (move->aux) {
-        Game::tryMove(move->aux, true);
+        tryMove(move->aux, true);
     }
 }
 
@@ -121,8 +132,17 @@ void Game::revertTo(vector <Positioning *> *revert) {
     for (vector <Positioning *> :: iterator it = revert->begin(); 
             it != revert->end(); ++it) {
         pos = *it;
-        pos->piece->setSquare(pos->square);
-        pos->square->getPiece()->setSquare(NULL);
-        pos->square->setPiece(pos->piece);
+        Square *square = pos->square;
+        Piece *piece = pos->piece;
+        if (piece != NULL) {
+            if (piece->getSquare() && piece->getSquare()->getPiece() == piece) {
+                piece->getSquare()->setEmpty();
+            }
+            piece->setSquare(square);
+        }
+        if (!square->isEmpty() && square->getPiece()->getSquare() == square) {
+            square->getPiece()->setSquare(NULL);
+        }
+        square->setPiece(piece);
     }
 }

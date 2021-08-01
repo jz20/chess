@@ -32,7 +32,6 @@ class Square {
         int row;
         int col;
         Piece *piece;
-        bool empty;
 };
 
 #endif
