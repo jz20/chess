@@ -6,11 +6,10 @@
 class Pawn;
 
 class Pawn: public Piece {
+    using Piece::Piece;
     public:
-        // Constructor of a pawn at a specific Square belonging to a player
-        Pawn(Square *square, Player *player);
         // update the possible squares for a piece to move to
-        void updateTargets();
+        void updateMoves();
 };
 
 #endif

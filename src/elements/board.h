@@ -4,7 +4,6 @@
 class Board;
 
 #include "square.h"
-#include <iostream>
 
 class Board {
     public:
@@ -13,15 +12,11 @@ class Board {
         // destructor of a board
         ~Board();
         // returns the square at specified row and col position
-        Square *getSquare(int row, int col) const;
+        Square *getSquare(int row, int col);
         // get the number of rows
-        int getRows() const;
+        int getRows();
         // get the number of columns
-        int getCols() const;
-        // returning a string representing the board layout
-        std::string layout();
-        // to String
-        friend std::ostream& operator<<(std::ostream &strm, const Board &board);
+        int getCols();
     private:
         int rows;
         int cols;

@@ -16,6 +16,7 @@ Square::Square(int row, int col, Board *board):Square(row, col) {
 Square::Square(int row, int col) {
     this->row = row;
     this->col = col;
+    this->empty = true;
     this->piece = NULL;
     this->board = NULL;
 }
@@ -33,6 +34,7 @@ int Square::getCol() {
 // set a specific piece at the square
 void Square::setPiece(Piece *piece) {
     this->piece = piece;
+    this->empty = false;
 }
 
 // get the piece
@@ -42,12 +44,12 @@ Piece *Square::getPiece() {
 
 // mark the square empty
 void Square::setEmpty() {
-    this->piece = NULL;
+    this->empty = true;
 }
 
 // return whether the square is empty
 bool Square::isEmpty() {
-    return piece == NULL;
+    return empty;
 }
 
 // get the board

@@ -1,9 +1,5 @@
 #include "board.h"
 #include "square.h"
-#include "piece.h"
-#include <iostream>
-#include <sstream>
-
 using namespace std;
 
 // constructor of a board with specified rows and cols
@@ -31,83 +27,16 @@ Board::~Board() {
 }
 
 // returns the square at specified row and col position
-Square *Board::getSquare(int row, int col) const {
+Square *Board::getSquare(int row, int col) {
     return squares[row][col];
 }
 
 // get the number of rows
-int Board::getRows() const {
+int Board::getRows() {
     return rows;
 }
 
 // get the number of columns
-int Board::getCols() const {
+int Board::getCols() {
     return cols;
-}
-
-/*
-+-+-+-+-+-+-+-+-+
-| | | | | | | | | 
-*/
-
-
-// returning a string representing the board layout
-string Board::layout() {
-    Square *current = NULL;
-    string rep = "";
-    stringstream auxStrm;
-    for (int i = 0; i < getCols(); i++) {
-        rep += "+-";
-    }
-    rep += "+\n";
-    for (int i = getRows() - 1; i >= 0; i--) {
-        for (int j = 0; j < getCols(); j++) {
-            current = getSquare(i, j);
-            rep += "|";
-            if (current->isEmpty()) {
-                rep += " ";
-            } else {
-                cout << 2 << "\n";
-                auxStrm << *(current->getPiece());
-                rep += auxStrm.str();
-                cout << 3 << "\n";
-            }
-        }
-        rep += "|\n";
-    }
-    for (int i = 0; i < getCols(); i++) {
-        rep += "+-";
-    }
-    rep += "+\n";
-    return rep;
-}
-
-// to String
-ostream& operator<<(ostream &strm, const Board &board) {
-    Square *current = NULL;
-    string rep = "";
-    stringstream auxStrm;
-    for (int i = 0; i < board.getCols(); i++) {
-        rep += "+-";
-    }
-    rep += "+\n";
-    for (int i = board.getRows() - 1; i >= 0; i--) {
-        for (int j = 0; j < board.getCols(); j++) {
-            current = board.getSquare(i, j);
-            rep += "|";
-            if (current->isEmpty()) {
-                rep += " ";
-            } else {    
-                auxStrm << *(current->getPiece());
-                rep += auxStrm.str();
-                auxStrm.str(string());
-            }
-        }
-        rep += "|\n";
-    }
-    for (int i = 0; i < board.getCols(); i++) {
-        rep += "+-";
-    }
-    rep += "+\n";
-    return strm << rep;
 }

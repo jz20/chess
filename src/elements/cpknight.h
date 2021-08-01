@@ -6,11 +6,10 @@
 class Knight;
 
 class Knight: public Piece {
+    using Piece::Piece;
     public:
-        // Constructor of a knight at a specific Square belonging to a player
-        Knight(Square *square, Player *player);
         // update the possible squares for a piece to move to
-        void updateTargets();
+        void updateMoves();
 };
 
 #endif
