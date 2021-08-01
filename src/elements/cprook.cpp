@@ -1,12 +1,23 @@
 #include "cprook.h"
 
 #include <vector>
+#include <string>
+
+// Constructor of a rook at a specific Square belonging to a player
+Rook::Rook(Square *square, Player *player): Piece(square, player) {
+    name = "rook";
+    if (player && player->getColour() == WHITE) {
+        symbol = 'r';
+    } else {
+        symbol = 'R';
+    }
+}
 
 // update the possible squares for a piece to move to
-void Rook::updateMoves() {
-    moves.clear();
-    upCol(&moves);
-    downCol(&moves);
-    leftRow(&moves);
-    rightRow(&moves);
+void Rook::updateTargets() {
+    targets.clear();
+    upCol(&targets);
+    downCol(&targets);
+    leftRow(&targets);
+    rightRow(&targets);
 }
