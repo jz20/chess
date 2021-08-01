@@ -28,6 +28,4 @@ class Board {
         Square ***squares;
 };
 
-// std::ostream& operator<<(std::ostream &strm, const Board &board);
-
 #endif

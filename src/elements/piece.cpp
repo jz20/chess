@@ -14,7 +14,8 @@ Piece::Piece(Square *square, Player *player) {
     this->square = square;
     this->player = player;
     this->asKing = false;
-    this->name = "none";
+    this->name = "";
+    this->symbol = '?';
 }
 
 // get the square
@@ -45,6 +46,11 @@ bool Piece::isAsKing() {
 // get name
 string Piece::getName() {
     return name;
+}
+
+// to String
+ostream& operator<<(ostream &strm, const Piece &piece) {
+    return strm << piece.symbol;
 }
 
 /*

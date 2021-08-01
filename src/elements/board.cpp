@@ -85,7 +85,6 @@ string Board::layout() {
 
 // to String
 ostream& operator<<(ostream &strm, const Board &board) {
-    cout << "bruh\n";
     Square *current = NULL;
     string rep = "";
     stringstream auxStrm;
@@ -99,9 +98,10 @@ ostream& operator<<(ostream &strm, const Board &board) {
             rep += "|";
             if (current->isEmpty()) {
                 rep += " ";
-            } else {
-                auxStrm << current->getPiece();
+            } else {    
+                auxStrm << *(current->getPiece());
                 rep += auxStrm.str();
+                auxStrm.str(string());
             }
         }
         rep += "|\n";

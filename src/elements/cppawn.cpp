@@ -8,6 +8,11 @@
 // Constructor of a pawn at a specific Square belonging to a player
 Pawn::Pawn(Square *square, Player *player): Piece(square, player) {
     name = "pawn";
+    if (player && player->getColour() == WHITE) {
+        symbol = 'p';
+    } else {
+        symbol = 'P';
+    }
 }
 
 // update the possible squares for a piece to move to

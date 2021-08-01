@@ -7,6 +7,11 @@
 King::King(Square *square, Player *player): Piece(square, player) {
     asKing = true;
     name = "king";
+    if (player && player->getColour() == WHITE) {
+        symbol = 'k';
+    } else {
+        symbol = 'K';
+    }
 }
 
 // update the possible squares for a piece to move to

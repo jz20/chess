@@ -7,6 +7,11 @@
 // Constructor of a bishop at a specific Square belonging to a player
 Knight::Knight(Square *square, Player *player): Piece(square, player) {
     name = "knight";
+    if (player && player->getColour() == WHITE) {
+        symbol = 'n';
+    } else {
+        symbol = 'N';
+    }
 }
 
 // update the possible squares for a piece to move to

@@ -28,6 +28,8 @@ class Piece {
         bool isAsKing();
         // get name
         std::string getName();
+        // to String
+        friend std::ostream& operator<<(std::ostream &strm, const Piece &piece);
     protected:
         // the square that the piece is on
         Square *square;
@@ -39,6 +41,8 @@ class Piece {
         bool asKing;
         // the name of the piece
         std::string name;
+        // the utf-8 representation of the piece
+        char symbol;
         /*
         These are auxiliary function that help find the targets
         */

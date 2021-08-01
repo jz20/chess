@@ -6,6 +6,11 @@
 // Constructor of a queen at a specific Square belonging to a player
 Queen::Queen(Square *square, Player *player): Piece(square, player) {
     name = "queen";
+    if (player && player->getColour() == WHITE) {
+        symbol = 'q';
+    } else {
+        symbol = 'Q';
+    }
 }
 
 // update the possible squares for a piece to move to
