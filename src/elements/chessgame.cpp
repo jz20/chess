@@ -5,6 +5,9 @@
 #include <set>
 #include <string>
 #include <cstdlib>
+#include <iostream>
+#include <sstream>
+#include <algorithm>
 #include "piece.h"
 #include "square.h"
 
@@ -123,13 +126,17 @@ void ChessGame::tryMove(Move *move, bool isAux) {
     } else if (move->instr == "knight") {
         PROMOTE_TO(Knight);
     }
+    storeBoardState();
 }
 
 // reverse last move on the moveStack, returns false if the moveStack is empty
 bool ChessGame::reverseLast() {
-    bool result = Game::reverseLast();
+    if (!Game::reverseLast()) {
+        return false;
+    }
     reverseFlags();
-    return result;
+    boardStateStack.pop_back();
+    return true;
 }
 
 // update the moves that a player can make
@@ -179,6 +186,7 @@ void ChessGame::setUp() {
     SET_PIECE(bp7, 6, 6, player2, Pawn);
     SET_PIECE(bp8, 6, 7, player2, Pawn);
     blackKing = bk;
+    storeBoardState();
 }
 
 // check if the game is over, set finished to be true if so, return
@@ -402,6 +410,8 @@ void ChessGame::updateFlags(Move *move) {
     newFlags.BLC = flags->BLC;
     newFlags.BSC = flags->BSC;
     newFlags.EP_COL = flags->EP_COL;
+    newFlags.REP = flags->REP;
+    newFlags.FIFTY = flags->FIFTY;
     Piece *piece = move->piece;
     if (piece == whiteKing) {
         newFlags.WLC = false;
@@ -436,6 +446,12 @@ void ChessGame::updateFlags(Move *move) {
         newFlags.EP_COL = piece->getSquare()->getCol();
     } else {
         newFlags.EP_COL = -1;
+    }
+    if (piece->getName() != "pawn"
+            && move->square->getPiece() == NULL) {
+        newFlags.FIFTY++;
+    } else {
+        newFlags.FIFTY = 0;
     }
     flags = &newFlags;
     flagsStack.push_back(&newFlags);
@@ -509,4 +525,15 @@ bool ChessGame::insufficientMaterial() {
         }
     }
     return false;
+}
+
+// store the board state into the stack
+void ChessGame::storeBoardState() {
+    stringstream sBoard;
+    sBoard << *board;
+    boardStateStack.push_back(sBoard.str());
+    int occurence = count(boardStateStack.begin(), boardStateStack.end(), sBoard.str());
+    if (occurence > flags->REP) {
+        flags->REP = occurence;
+    }
 }

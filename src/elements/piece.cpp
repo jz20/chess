@@ -3,6 +3,7 @@
 #include <vector>
 #include <cstddef>
 #include <string>
+#include <iostream>
 #include "square.h"
 #include "player.h"
 #include "board.h"

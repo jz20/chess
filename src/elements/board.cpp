@@ -59,7 +59,6 @@ string Board::layout() {
     for (int i = 0; i < getCols(); i++) {
         rep += "+-";
     }
-    //
     rep += "+\n";
     for (int i = getRows() - 1; i >= 0; i--) {
         for (int j = 0; j < getCols(); j++) {
@@ -69,7 +68,7 @@ string Board::layout() {
                 rep += " ";
             } else {
                 cout << 2 << "\n";
-                auxStrm << current->getPiece();
+                auxStrm << *(current->getPiece());
                 rep += auxStrm.str();
                 cout << 3 << "\n";
             }

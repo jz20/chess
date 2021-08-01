@@ -5,6 +5,7 @@ class Piece;
 
 #include <vector>
 #include <string>
+#include <iostream>
 #include "square.h"
 #include "player.h"
 
