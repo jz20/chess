@@ -23,6 +23,11 @@ Game::~Game() {
     delete player2;
 }
 
+// get board
+Board *Game::getBoard() {
+    return board;
+}
+
 // get moves
 vector <Move *> Game::getMoves() {
     return moves;
@@ -120,9 +125,13 @@ Player *Game::getOppositePlayer() {
 
 // reverse the input move
 void Game::reverseMove(Move *move) {
+    cout << move->piece->getName() << "\n";
+    cout << move->piece->getSquare()->getRow() << "\n";
+    cout << move->piece->getSquare()->getCol() << "\n";
     if (move->aux) {
         reverseMove(move->aux);
     }
+    cout << "SUCCESS\n";
     revertTo(&(move->restoration));
 }
 

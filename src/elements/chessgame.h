@@ -58,7 +58,7 @@ class ChessGame: public Game {
         // the stack of flags
         std::vector <Flags *> flagsStack;
         // record the board state in the game for the 3-fold repetition rule
-        std::vector <std::string> boardStateStack;
+        std::vector <std::string *> boardStateStack;
         // update the basic moves (the moves that are determined by the usual move 
         // rules for each piece)
         void basicMoves();
@@ -87,6 +87,7 @@ class ChessGame: public Game {
         std::vector <Piece *> getActivePieces();
         // store the board state into the stack, check for 3-fold repetition
         void storeBoardState();
+        
 };
 
 #endif

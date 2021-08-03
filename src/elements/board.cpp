@@ -51,8 +51,8 @@ int Board::getCols() const {
 */
 
 
-// returning a string representing the board layout
-string Board::layout() {
+// snapshot, other version of toString
+std::string Board::snapshot() {
     Square *current = NULL;
     string rep = "";
     stringstream auxStrm;
@@ -66,11 +66,10 @@ string Board::layout() {
             rep += "|";
             if (current->isEmpty()) {
                 rep += " ";
-            } else {
-                cout << 2 << "\n";
+            } else {    
                 auxStrm << *(current->getPiece());
                 rep += auxStrm.str();
-                cout << 3 << "\n";
+                auxStrm.str(string());
             }
         }
         rep += "|\n";

@@ -37,6 +37,8 @@ class Game {
         // true if a player wins and false if there is a draw, the result is 
         // meaningless unless finished is true
         virtual bool checkResult() { return false; }
+        // get board
+        Board *getBoard();
         // get moves
         std::vector <Move *> getMoves();
         // get turn, the first turn is 1

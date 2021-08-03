@@ -18,10 +18,10 @@ class Board {
         int getRows() const;
         // get the number of columns
         int getCols() const;
-        // returning a string representing the board layout
-        std::string layout();
         // to String
         friend std::ostream& operator<<(std::ostream &strm, const Board &board);
+        // snapshot, other version of toString
+        std::string snapshot();
     private:
         int rows;
         int cols;
