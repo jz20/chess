@@ -67,10 +67,12 @@ void Game::tryMove(Move *move, bool isAux) {
     Square *destination = move->square;
     Square *origin = piece->getSquare();
     Piece *captured = destination->getPiece();
-    Positioning pOrigin = {piece, origin};
-    Positioning pDestination = {captured, destination};
-    move->restoration.push_back(&pOrigin);
-    move->restoration.push_back(&pDestination);
+    Positioning *pOrigin = new Positioning;
+    *pOrigin = {piece, origin};
+    Positioning *pDestination = new Positioning;
+    *pDestination = {captured, destination};
+    move->restoration.push_back(pOrigin);
+    move->restoration.push_back(pDestination);
     piece->setSquare(destination);
     if (captured != NULL) {
         captured->setSquare(NULL);
@@ -91,9 +93,9 @@ bool Game::reverseLast() {
     if (moveStack.empty()) {
         return false;
     }
-    Move *move = moves.back();
+    Move *move = moveStack.back();
     reverseMove(move);
-    moves.pop_back();
+    moveStack.pop_back();
     return true;
 }
 
@@ -125,13 +127,9 @@ Player *Game::getOppositePlayer() {
 
 // reverse the input move
 void Game::reverseMove(Move *move) {
-    cout << move->piece->getName() << "\n";
-    cout << move->piece->getSquare()->getRow() << "\n";
-    cout << move->piece->getSquare()->getCol() << "\n";
     if (move->aux) {
         reverseMove(move->aux);
     }
-    cout << "SUCCESS\n";
     revertTo(&(move->restoration));
 }
 

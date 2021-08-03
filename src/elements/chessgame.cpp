@@ -382,8 +382,11 @@ void ChessGame::promotion() {
 void ChessGame::removeIllegalMoves() {
     Move *current = NULL;
     Player *player = getCurrentPlayer();
-    for (vector <Move *> :: iterator it = moves.begin(); it != moves.end(); ++it) {
+    int count = 0;
+    for (vector <Move *> :: iterator it = moves.begin(); it != moves.end(); ) {
         current = *it;
+        it++;
+        count++;
         tryMove(current, false);
         if (checkTest(player)) {
             moves.erase(it);
@@ -399,18 +402,18 @@ set <Square *> ChessGame::squaresControlled(Player* player) {
     Piece *current = NULL;
     for (vector <Piece *> :: iterator it = pieces.begin(); it != pieces.end(); ++it) {
         current = *it;
-        
-        cout << current->getName() << ", " << current->getSquare()->getRow() << ", " << current->getSquare()->getCol() << "\n";
-        current->updateTargets();
-        vector <Square *> currentTargets = current->getTargets();
-        copy(currentTargets.begin(), currentTargets.end(),
-                inserter(squareSet, squareSet.end()));
+        // cout << current->getName() << ", " << current->getSquare()->getRow() << ", " << current->getSquare()->getCol() << "\n";
+        if (current->getSquare() != NULL) {
+            current->updateTargets();
+            vector <Square *> currentTargets = current->getTargets();
+            copy(currentTargets.begin(), currentTargets.end(),
+                    inserter(squareSet, squareSet.end()));
+        }
     }
     return squareSet;
 }
 
 bool ChessGame::checkTest(Player *player) {
-    cout << "Kleur" << player->getColour() << "\n";
     Piece *king = player->getColour() == WHITE ? whiteKing : blackKing;
     Player *opposite = player == player1 ? player2 : player1;
     return squaresControlled(opposite).count(king->getSquare());

@@ -2,6 +2,10 @@
 #define GAME_H
 
 class Game;
+struct Positioning;
+typedef struct Positioning Positioning;
+struct Move;
+typedef struct Move Move;
 
 #include <cstddef>
 #include <vector>
@@ -21,6 +25,10 @@ typedef struct Move {
     Move *aux;
     std::string instr;
     std::vector <Positioning *> restoration; // used for trial and reverse
+    ~Move() {
+        delete aux;
+        restoration.clear();
+    }
 } Move;
 
 class Game {

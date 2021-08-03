@@ -14,8 +14,8 @@ int main() {
     while (!game->isFinished()) {
         cout << *(game->getBoard());
         game->updateMoves();
-        moves = game->getMoves();
         move = NULL; // TODO
+        cout << *(game->getBoard());
         game->tryMove(move);
         game->checkResult();
     }
