@@ -90,6 +90,7 @@ void Game::tryMove(Move *move, bool isAux) {
 
 // reverse last move on the moveStack, returns false if the moveStack is empty
 bool Game::reverseLast() {
+    moveNo--;
     if (moveStack.empty()) {
         return false;
     }

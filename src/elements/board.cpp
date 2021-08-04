@@ -72,12 +72,19 @@ std::string Board::snapshot() {
                 auxStrm.str(string());
             }
         }
-        rep += "|\n";
+        rep += "| ";
+        rep += to_string(i % 10);
+        rep += "\n";
     }
     for (int i = 0; i < getCols(); i++) {
         rep += "+-";
     }
     rep += "+\n";
+    for (int i = 0; i < getCols(); i++) {
+        rep += " ";
+        rep += to_string(i % 10);
+    }
+    rep += " \n";
     return rep;
 }
 
@@ -102,11 +109,18 @@ ostream& operator<<(ostream &strm, const Board &board) {
                 auxStrm.str(string());
             }
         }
-        rep += "|\n";
+        rep += "| ";
+        rep += to_string(i % 10);
+        rep += "\n";
     }
     for (int i = 0; i < board.getCols(); i++) {
         rep += "+-";
     }
     rep += "+\n";
+    for (int i = 0; i < board.getCols(); i++) {
+        rep += " ";
+        rep += to_string(i % 10);
+    }
+    rep += " \n";
     return strm << rep;
 }

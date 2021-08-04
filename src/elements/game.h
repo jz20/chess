@@ -62,13 +62,13 @@ class Game {
         Player *getOppositePlayer();
         // try the input move, store the move on the stack so that it can be 
         // reversed
-        void tryMove(Move *move, bool aux);
+        virtual void tryMove(Move *move, bool aux);
         // try the input move, store the move on the stack so that it can be 
         // reversed, default non-aux move
-        void tryMove(Move *move);
+        virtual void tryMove(Move *move);
         // reverse last move on the moveStack, returns false if the moveStack is 
         // empty
-        bool reverseLast();
+        virtual bool reverseLast();
         // get the size of the moveStack
         int getMoveStackSize();
     protected:

@@ -41,10 +41,13 @@ class ChessGame: public Game {
         // check if the game is over, set finished to be true if so, return
         // true if a player wins and false if there is a draw, the result is 
         // meaningless unless finished is true
-        bool checkResult();
+        virtual bool checkResult();
         // try the input move, store the move on the stack so that it can be 
         // reversed
-        void tryMove(Move *move, bool isAux);
+        virtual void tryMove(Move *move, bool isAux);
+        // try the input move, store the move on the stack so that it can be 
+        // reversed, default non-aux move
+        virtual void tryMove(Move *move);
         // reverse last move on the moveStack, returns false if the moveStack is 
         // empty
         bool reverseLast();
