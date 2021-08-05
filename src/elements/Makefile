@@ -5,13 +5,13 @@ CHESSLIB	= cpbishop.o cprook.o cpqueen.o cpknight.o cpking.o cppawn.o chessgame.
 LIBOBJS		= board.o square.o piece.o player.o game.o $(CHESSLIB)
 BUILD		= $(LIB)
 
-.PHONY: 	all clean runner
+.PHONY: 	all clean
 
-runner:		rungame
+all:		$(BUILD) rungame
+
+# game runner
 rungame:	rungame.o $(LIBOBJS)
 rungame.o:	rungame.h
-
-all:		$(BUILD)
 
 board.o:	board.h
 square.o:	square.h
