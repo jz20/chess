@@ -38,6 +38,16 @@ int Game::getTurn() {
     return moveNo / 2 + 1;
 }
 
+// get note
+std::string Game::getNote() {
+    return note;
+}
+
+// set note
+void Game::setNote(std::string note) {
+    this->note = note;
+}
+
 // make the input move, return false if the moveStack is not empty thus the move
 // cannot be made
 bool Game::makeMove(Move *move) {

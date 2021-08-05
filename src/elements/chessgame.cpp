@@ -28,11 +28,11 @@ using namespace std;
 #define EMPTY_AND_FREE(y, x) \
         (opCtrl.count(board->getSquare(y, x)) == 0) && board->getSquare(y, x)->isEmpty()
 
-#define ADD_CASTLE(king, dKing, oRook, dRook) \
+#define ADD_CASTLE(king, dKing, oRook, dRook, row) \
         move->piece = king; \
-        move->square = board->getSquare(WHITE_KING_ROW, dKing); \
-        aux->piece = board->getSquare(WHITE_KING_ROW, oRook)->getPiece(); \
-        aux->square = board->getSquare(WHITE_KING_ROW, dRook); \
+        move->square = board->getSquare(row, dKing); \
+        aux->piece = board->getSquare(row, oRook)->getPiece(); \
+        aux->square = board->getSquare(row, dRook); \
         move->aux = aux; \
         moves.push_back(move);
 
@@ -105,7 +105,9 @@ bool ChessGame::makeMove(Move *move) {
 // try the input move, store the move on the stack so that it can be 
 // reversed
 void ChessGame::tryMove(Move *move, bool isAux) {
-    updateFlags(move);
+    if (!isAux) {
+        updateFlags(move);
+    }
     Player *current = getCurrentPlayer();
     Game::tryMove(move, isAux);
     Piece *promoted = NULL;
@@ -113,8 +115,8 @@ void ChessGame::tryMove(Move *move, bool isAux) {
         int rmRow = (current->getColour() == WHITE) ? EPWHITE : EPBLACK;
         int rmCol = move->square->getCol();
         Square *TPS = board->getSquare(rmRow, rmCol); // TPS = taken pawn square
-        Positioning pos = {TPS->getPiece(), TPS};
-        move->restoration.push_back(&pos);
+        Positioning *pos = new Positioning{TPS->getPiece(), TPS};
+        move->restoration.push_back(pos);
         TPS->getPiece()->setSquare(NULL);
         TPS->setEmpty();
     } else if (move->instr == "queen") {
@@ -126,9 +128,11 @@ void ChessGame::tryMove(Move *move, bool isAux) {
     } else if (move->instr == "knight") {
         PROMOTE_TO(Knight);
     }
-    storeBoardState();
-    Player *opposite = current == player1 ? player2 : player1;
-    inCheck = checkTest(opposite);
+    if (!isAux) {
+        storeBoardState();
+        Player *opposite = current == player1 ? player2 : player1;
+        inCheck = checkTest(opposite);
+    }
 }
 
 // try the input move, store the move on the stack so that it can be reversed
@@ -183,14 +187,13 @@ void ChessGame::setUp() {
     flagsStack.push_back(flags);
 
     // pieces
-
     SET_PIECE(wr1, 0, 0, player1, Rook);
-    SET_PIECE(wn1, 0, 1, player1, Knight);
-    SET_PIECE(wb1, 0, 2, player1, Bishop);
-    SET_PIECE(wq, 0, 3, player1, Queen);
+    //SET_PIECE(wn1, 0, 1, player1, Knight);
+    //SET_PIECE(wb1, 0, 2, player1, Bishop);
+    //SET_PIECE(wq, 0, 3, player1, Queen);
     SET_PIECE(wk, 0, 4, player1, King);
-    SET_PIECE(wb2, 0, 5, player1, Bishop);
-    SET_PIECE(wn2, 0, 6, player1, Knight);
+    //SET_PIECE(wb2, 0, 5, player1, Bishop);
+    //SET_PIECE(wn2, 0, 6, player1, Knight);
     SET_PIECE(wr2, 0, 7, player1, Rook);
     SET_PIECE(wp1, 1, 0, player1, Pawn);
     SET_PIECE(wp2, 1, 1, player1, Pawn);
@@ -202,12 +205,12 @@ void ChessGame::setUp() {
     SET_PIECE(wp8, 1, 7, player1, Pawn);
     whiteKing = wk;
     SET_PIECE(br1, 7, 0, player2, Rook);
-    SET_PIECE(bn1, 7, 1, player2, Knight);
-    SET_PIECE(bb1, 7, 2, player2, Bishop);
-    SET_PIECE(bq, 7, 3, player2, Queen);
+    //SET_PIECE(bn1, 7, 1, player2, Knight);
+    //SET_PIECE(bb1, 7, 2, player2, Bishop);
+    //SET_PIECE(bq, 7, 3, player2, Queen);
     SET_PIECE(bk, 7, 4, player2, King);
-    SET_PIECE(bb2, 7, 5, player2, Bishop);
-    SET_PIECE(bn2, 7, 6, player2, Knight);
+    //SET_PIECE(bb2, 7, 5, player2, Bishop);
+    // SET_PIECE(bn2, 7, 6, player2, Knight);
     SET_PIECE(br2, 7, 7, player2, Rook);
     SET_PIECE(bp1, 6, 0, player2, Pawn);
     SET_PIECE(bp2, 6, 1, player2, Pawn);
@@ -226,6 +229,9 @@ void ChessGame::setUp() {
 // meaningless unless finished is true
 bool ChessGame::checkResult() {
     if (flags->REP >= 3 || flags->FIFTY / 2 >= 50 || insufficientMaterial()) {
+        cout << (flags->REP >= 3) << "\n";
+        cout << (flags->FIFTY / 2 >= 50) << "\n";
+        cout << insufficientMaterial() << "\n";
         finished = true;
         return false;
     }
@@ -302,21 +308,23 @@ void ChessGame::castling() {
             if (flags->WLC && EMPTY_AND_FREE(WHITE_KING_ROW, 1) 
                     && EMPTY_AND_FREE(WHITE_KING_ROW, 2)
                     && EMPTY_AND_FREE(WHITE_KING_ROW, 3)) {
-                ADD_CASTLE(whiteKing, 2, 0, 3);
+                        cout << "Hallo Ik ben niet dom\n";
+                ADD_CASTLE(whiteKing, 2, 0, 3, WHITE_KING_ROW);
             }
             if (flags->WSC && EMPTY_AND_FREE(WHITE_KING_ROW, 5) 
                     && EMPTY_AND_FREE(WHITE_KING_ROW, 6)) {
-                ADD_CASTLE(whiteKing, 6, 7, 5);
+                        cout << "Hallo Ik ben dom\n";
+                ADD_CASTLE(whiteKing, 6, 7, 5, WHITE_KING_ROW);
             }
         } else {
             if (flags->BLC && EMPTY_AND_FREE(BLACK_KING_ROW, 1) 
                     && EMPTY_AND_FREE(BLACK_KING_ROW, 2)
                     && EMPTY_AND_FREE(BLACK_KING_ROW, 3)) {
-                ADD_CASTLE(blackKing, 2, 0, 3);
+                ADD_CASTLE(blackKing, 2, 0, 3, BLACK_KING_ROW);
             }
             if (flags->BSC && EMPTY_AND_FREE(BLACK_KING_ROW, 5) 
                     && EMPTY_AND_FREE(BLACK_KING_ROW, 6)) {
-                ADD_CASTLE(blackKing, 6, 7, 5);
+                ADD_CASTLE(blackKing, 6, 7, 5, BLACK_KING_ROW);
             }
         }
     }
@@ -327,7 +335,6 @@ void ChessGame::enPassant() {
     if (flags->EP_COL == -1) {
         return;
     }
-    cout << "ep: " << flags->EP_COL << "\n";
     int leftCol = flags->EP_COL - 1;
     int rightCol = flags->EP_COL + 1;
     if (getCurrentPlayer()->getColour() == WHITE) {
@@ -362,7 +369,8 @@ void ChessGame::promotion() {
         current = *it;
         if (getCurrentPlayer()->getColour() == WHITE) {
             if ((current->piece->getName() == "pawn")
-                    && (current->square->getRow() == BLACK_KING_ROW)) {
+                    && (current->square->getRow() == BLACK_KING_ROW)
+                    && current->instr == "") {
                 current->instr = "queen";
                 ADD_PROMOTION(rook, "rook")
                 ADD_PROMOTION(bishop, "bishop")
@@ -370,7 +378,8 @@ void ChessGame::promotion() {
             }
         } else {
             if ((current->piece->getName() == "pawn") 
-                    && (current->square->getRow() == WHITE_KING_ROW)) {
+                    && (current->square->getRow() == WHITE_KING_ROW)
+                    && current->instr == "") {
                 current->instr = "queen";
                 ADD_PROMOTION(rook, "rook")
                 ADD_PROMOTION(bishop, "bishop")
@@ -404,7 +413,6 @@ set <Square *> ChessGame::squaresControlled(Player* player) {
     Piece *current = NULL;
     for (vector <Piece *> :: iterator it = pieces.begin(); it != pieces.end(); ++it) {
         current = *it;
-        // cout << current->getName() << ", " << current->getSquare()->getRow() << ", " << current->getSquare()->getCol() << "\n";
         if (current->getSquare() != NULL) {
             current->updateTargets();
             vector <Square *> currentTargets = current->getTargets();
@@ -563,6 +571,9 @@ void ChessGame::storeBoardState() {
             count++;
         }
     }
+    cout << board->snapshot() << "\n";
+    cout << "Size: " << boardStateStack.size() << "\n";
+    cout << "Count: " << count << "\n";
     if (count > flags->REP) {
         flags->REP = count;
     }

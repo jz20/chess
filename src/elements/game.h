@@ -51,6 +51,10 @@ class Game {
         std::vector <Move *> getMoves();
         // get turn, the first turn is 1
         int getTurn();
+        // get note
+        std::string getNote();
+        // set note
+        void setNote(std::string note);
         // make the input move, return false if the moveStack is not empty thus the
         // move cannot be made
         bool makeMove(Move *move);
@@ -78,6 +82,9 @@ class Game {
         bool inCheck;
         // the current move number, the first move is 0
         int moveNo;
+        // the note of the game state for storing information that the game 
+        // runner might use
+        std::string note;
         // the board to play with
         Board *board;
         // the player who moves first
