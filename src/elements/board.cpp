@@ -51,8 +51,8 @@ int Board::getCols() const {
 */
 
 
-// returning a string representing the board layout
-string Board::layout() {
+// snapshot, other version of toString
+std::string Board::snapshot() {
     Square *current = NULL;
     string rep = "";
     stringstream auxStrm;
@@ -66,19 +66,25 @@ string Board::layout() {
             rep += "|";
             if (current->isEmpty()) {
                 rep += " ";
-            } else {
-                cout << 2 << "\n";
+            } else {    
                 auxStrm << *(current->getPiece());
                 rep += auxStrm.str();
-                cout << 3 << "\n";
+                auxStrm.str(string());
             }
         }
-        rep += "|\n";
+        rep += "| ";
+        rep += to_string(i % 10);
+        rep += "\n";
     }
     for (int i = 0; i < getCols(); i++) {
         rep += "+-";
     }
     rep += "+\n";
+    for (int i = 0; i < getCols(); i++) {
+        rep += " ";
+        rep += to_string(i % 10);
+    }
+    rep += " \n";
     return rep;
 }
 
@@ -103,11 +109,18 @@ ostream& operator<<(ostream &strm, const Board &board) {
                 auxStrm.str(string());
             }
         }
-        rep += "|\n";
+        rep += "| ";
+        rep += to_string(i % 10);
+        rep += "\n";
     }
     for (int i = 0; i < board.getCols(); i++) {
         rep += "+-";
     }
     rep += "+\n";
+    for (int i = 0; i < board.getCols(); i++) {
+        rep += " ";
+        rep += to_string(i % 10);
+    }
+    rep += " \n";
     return strm << rep;
 }

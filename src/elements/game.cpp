@@ -23,6 +23,11 @@ Game::~Game() {
     delete player2;
 }
 
+// get board
+Board *Game::getBoard() {
+    return board;
+}
+
 // get moves
 vector <Move *> Game::getMoves() {
     return moves;
@@ -31,6 +36,16 @@ vector <Move *> Game::getMoves() {
 // get turn, the first turn is 1
 int Game::getTurn() {
     return moveNo / 2 + 1;
+}
+
+// get note
+std::string Game::getNote() {
+    return note;
+}
+
+// set note
+void Game::setNote(std::string note) {
+    this->note = note;
 }
 
 // make the input move, return false if the moveStack is not empty thus the move
@@ -62,10 +77,12 @@ void Game::tryMove(Move *move, bool isAux) {
     Square *destination = move->square;
     Square *origin = piece->getSquare();
     Piece *captured = destination->getPiece();
-    Positioning pOrigin = {piece, origin};
-    Positioning pDestination = {captured, destination};
-    move->restoration.push_back(&pOrigin);
-    move->restoration.push_back(&pDestination);
+    Positioning *pOrigin = new Positioning;
+    *pOrigin = {piece, origin};
+    Positioning *pDestination = new Positioning;
+    *pDestination = {captured, destination};
+    move->restoration.push_back(pOrigin);
+    move->restoration.push_back(pDestination);
     piece->setSquare(destination);
     if (captured != NULL) {
         captured->setSquare(NULL);
@@ -83,12 +100,13 @@ void Game::tryMove(Move *move, bool isAux) {
 
 // reverse last move on the moveStack, returns false if the moveStack is empty
 bool Game::reverseLast() {
+    moveNo--;
     if (moveStack.empty()) {
         return false;
     }
-    Move *move = moves.back();
+    Move *move = moveStack.back();
     reverseMove(move);
-    moves.pop_back();
+    moveStack.pop_back();
     return true;
 }
 

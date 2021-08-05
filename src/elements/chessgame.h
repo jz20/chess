@@ -41,10 +41,13 @@ class ChessGame: public Game {
         // check if the game is over, set finished to be true if so, return
         // true if a player wins and false if there is a draw, the result is 
         // meaningless unless finished is true
-        bool checkResult();
+        virtual bool checkResult();
         // try the input move, store the move on the stack so that it can be 
         // reversed
-        void tryMove(Move *move, bool isAux);
+        virtual void tryMove(Move *move, bool isAux);
+        // try the input move, store the move on the stack so that it can be 
+        // reversed, default non-aux move
+        virtual void tryMove(Move *move);
         // reverse last move on the moveStack, returns false if the moveStack is 
         // empty
         bool reverseLast();
@@ -58,7 +61,7 @@ class ChessGame: public Game {
         // the stack of flags
         std::vector <Flags *> flagsStack;
         // record the board state in the game for the 3-fold repetition rule
-        std::vector <std::string> boardStateStack;
+        std::vector <std::string *> boardStateStack;
         // update the basic moves (the moves that are determined by the usual move 
         // rules for each piece)
         void basicMoves();
@@ -87,6 +90,7 @@ class ChessGame: public Game {
         std::vector <Piece *> getActivePieces();
         // store the board state into the stack, check for 3-fold repetition
         void storeBoardState();
+        
 };
 
 #endif

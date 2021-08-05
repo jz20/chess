@@ -2,6 +2,10 @@
 #define GAME_H
 
 class Game;
+struct Positioning;
+typedef struct Positioning Positioning;
+struct Move;
+typedef struct Move Move;
 
 #include <cstddef>
 #include <vector>
@@ -21,6 +25,10 @@ typedef struct Move {
     Move *aux;
     std::string instr;
     std::vector <Positioning *> restoration; // used for trial and reverse
+    ~Move() {
+        delete aux;
+        restoration.clear();
+    }
 } Move;
 
 class Game {
@@ -37,10 +45,16 @@ class Game {
         // true if a player wins and false if there is a draw, the result is 
         // meaningless unless finished is true
         virtual bool checkResult() { return false; }
+        // get board
+        Board *getBoard();
         // get moves
         std::vector <Move *> getMoves();
         // get turn, the first turn is 1
         int getTurn();
+        // get note
+        std::string getNote();
+        // set note
+        void setNote(std::string note);
         // make the input move, return false if the moveStack is not empty thus the
         // move cannot be made
         bool makeMove(Move *move);
@@ -52,13 +66,13 @@ class Game {
         Player *getOppositePlayer();
         // try the input move, store the move on the stack so that it can be 
         // reversed
-        void tryMove(Move *move, bool aux);
+        virtual void tryMove(Move *move, bool aux);
         // try the input move, store the move on the stack so that it can be 
         // reversed, default non-aux move
-        void tryMove(Move *move);
+        virtual void tryMove(Move *move);
         // reverse last move on the moveStack, returns false if the moveStack is 
         // empty
-        bool reverseLast();
+        virtual bool reverseLast();
         // get the size of the moveStack
         int getMoveStackSize();
     protected:
@@ -68,6 +82,9 @@ class Game {
         bool inCheck;
         // the current move number, the first move is 0
         int moveNo;
+        // the note of the game state for storing information that the game 
+        // runner might use
+        std::string note;
         // the board to play with
         Board *board;
         // the player who moves first
