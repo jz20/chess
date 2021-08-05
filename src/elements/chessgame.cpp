@@ -29,6 +29,8 @@ using namespace std;
         (opCtrl.count(board->getSquare(y, x)) == 0) && board->getSquare(y, x)->isEmpty()
 
 #define ADD_CASTLE(king, dKing, oRook, dRook, row) \
+        Move *move = new Move; \
+        Move *aux = new Move; \
         move->piece = king; \
         move->square = board->getSquare(row, dKing); \
         aux->piece = board->getSquare(row, oRook)->getPiece(); \
@@ -157,7 +159,7 @@ void ChessGame::updateMoves() {
     pawnTwoSquare();
     castling();
     enPassant();
-    /*
+/*
     cout << "Before deletion.\n";
     Move *current = NULL;
     for (vector <Move *> :: iterator it = moves.begin(); it != moves.end(); it++) {
@@ -169,7 +171,7 @@ void ChessGame::updateMoves() {
         }
     }
     cout << "Terminado.\n";
-    */
+*/
     removeIllegalMoves();
     promotion();
 }
@@ -302,18 +304,14 @@ void ChessGame::pawnTwoSquare() {
 void ChessGame::castling() {
     if (!inCheck) {
         set <Square *> opCtrl = squaresControlled(getOppositePlayer());
-        Move *move = new Move;
-        Move *aux = new Move;
         if (getCurrentPlayer()->getColour() == WHITE) {
             if (flags->WLC && EMPTY_AND_FREE(WHITE_KING_ROW, 1) 
                     && EMPTY_AND_FREE(WHITE_KING_ROW, 2)
                     && EMPTY_AND_FREE(WHITE_KING_ROW, 3)) {
-                        cout << "Hallo Ik ben niet dom\n";
                 ADD_CASTLE(whiteKing, 2, 0, 3, WHITE_KING_ROW);
             }
             if (flags->WSC && EMPTY_AND_FREE(WHITE_KING_ROW, 5) 
                     && EMPTY_AND_FREE(WHITE_KING_ROW, 6)) {
-                        cout << "Hallo Ik ben dom\n";
                 ADD_CASTLE(whiteKing, 6, 7, 5, WHITE_KING_ROW);
             }
         } else {
@@ -457,8 +455,8 @@ void ChessGame::updateFlags(Move *move) {
         newFlags->WSC = false;
     }
     if (piece == blackKing) {
-        newFlags->WLC = false;
-        newFlags->WSC = false;
+        newFlags->BLC = false;
+        newFlags->BSC = false;
     }
     if (newFlags->BLC 
             && piece->getName() == "rook" 
@@ -571,9 +569,6 @@ void ChessGame::storeBoardState() {
             count++;
         }
     }
-    cout << board->snapshot() << "\n";
-    cout << "Size: " << boardStateStack.size() << "\n";
-    cout << "Count: " << count << "\n";
     if (count > flags->REP) {
         flags->REP = count;
     }
