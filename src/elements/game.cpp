@@ -29,7 +29,7 @@ Board *Game::getBoard() {
 }
 
 // get moves
-vector <Move *> Game::getMoves() {
+vector <GameMove *> Game::getMoves() {
     return moves;
 }
 
@@ -50,7 +50,7 @@ void Game::setNote(std::string note) {
 
 // make the input move, return false if the moveStack is not empty thus the move
 // cannot be made
-bool Game::makeMove(Move *move) {
+bool Game::makeMove(GameMove *move) {
     if (!moveStack.empty()) {
         return false;
     }
@@ -67,12 +67,12 @@ bool Game::makeMove(Move *move) {
 }
 
 // try the input move, store the move on the stack so that it can be reversed
-void Game::tryMove(Move *move) {
+void Game::tryMove(GameMove *move) {
     tryMove(move, false);
 }
 
 // try the input move, store the move on the stack so that it can be reversed
-void Game::tryMove(Move *move, bool isAux) {
+void Game::tryMove(GameMove *move, bool isAux) {
     Piece *piece = move->piece;
     Square *destination = move->square;
     Square *origin = piece->getSquare();
@@ -104,7 +104,7 @@ bool Game::reverseLast() {
     if (moveStack.empty()) {
         return false;
     }
-    Move *move = moveStack.back();
+    GameMove *move = moveStack.back();
     reverseMove(move);
     moveStack.pop_back();
     return true;
@@ -137,7 +137,7 @@ Player *Game::getOppositePlayer() {
 }
 
 // reverse the input move
-void Game::reverseMove(Move *move) {
+void Game::reverseMove(GameMove *move) {
     if (move->aux) {
         reverseMove(move->aux);
     }
