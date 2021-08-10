@@ -16,8 +16,9 @@ class ChessGameRunner;
 class ChessGameRunner: public wxApp {
     public:
         virtual bool OnInit();
-
-        // input the move piece
+        // input a raw value, call inputPiece or inputRow accordingly
+        bool input(int row, int col);
+        // clear the information in the proposal move
         bool inputPiece(int row, int col);
         // input the move square in the proposal move
         void inputSquare(int row, int col);
@@ -36,10 +37,12 @@ class ChessGameRunner: public wxApp {
 
 class ChessGameFrame: public wxFrame {
     public: 
-        ChessGameFrame(const wxString title, Game *game);
+        ChessGameFrame(const wxString title, Game *game, ChessGameRunner *runner);
         // update the pieces in the board
         void updatePieces();
     private:
+        // the game app that is using this frame
+        ChessGameRunner *runner;
         // the size of a square
         int squareSize;
         // the square panels

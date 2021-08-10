@@ -11,17 +11,27 @@
 #include <string>
 #include <game.h>
 #include <chessgame.h>
+#include <thread>
+#include "chesssquarepanel.h"
+#include "chesspiecebitmap.h"
 
 using namespace std;
+
 
 bool ChessGameRunner::OnInit() {
     wxInitAllImageHandlers();
     game = new ChessGame();
-    ChessGameFrame *frame = new ChessGameFrame("Chess Game", game);
+    ChessGameFrame *frame = new ChessGameFrame("Chess Game", game, this);
     game->setUp();
     vector <GameMove *> moves;
     GameMove *move = NULL;
     bool result;
+    frame->Show(true);
+    frame->updatePieces();
+    cout << "TEST\n";
+    // thread t(test);
+    // t.detach();
+    /*
     while (!game->isFinished()) {
         frame->updatePieces();
         game->updateMoves();
@@ -31,8 +41,8 @@ bool ChessGameRunner::OnInit() {
         game->tryMove(move);
         result = game->checkResult();
     }
-    frame->Show(true);
-    frame->updatePieces();
+    */
+    
 
     return true;
 }
@@ -40,7 +50,8 @@ bool ChessGameRunner::OnInit() {
 wxIMPLEMENT_APP(ChessGameRunner);
 
 //wxFrame(NULL, wxID_ANY, title, pos, size)
-ChessGameFrame::ChessGameFrame(const wxString title, Game* game) {
+ChessGameFrame::ChessGameFrame(const wxString title, Game* game, ChessGameRunner *runner) {
+    this->runner = runner;
     this->game = game;
     squareSize = 64;
     Board *board = game->getBoard();
@@ -49,16 +60,23 @@ ChessGameFrame::ChessGameFrame(const wxString title, Game* game) {
     int xPos = 0;
     int yPos = (rows - 1) * squareSize;
     int extra = 50;
+    wxColour light = wxColour(240,176,87);
+    wxColour dark = wxColour(137,82,23);
     Create(0, wxID_ANY, title, wxPoint(0, 0), wxSize(rows * squareSize, cols * squareSize + extra), wxDEFAULT_FRAME_STYLE, _T("wxID_ANY"));
     pBoard = new wxPanel(this, wxNewId(), wxPoint(0, 0));
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
-            wxPanel* pSquare = new wxPanel(pBoard, wxNewId(), wxPoint(xPos, yPos), wxSize(squareSize, squareSize));
+            wxWindowID id = wxNewId();
+            wxPanel* pSquare = new ChessSquarePanel(pBoard, id, wxPoint(xPos, yPos),
+                    wxSize(squareSize, squareSize), board->getSquare(i, j), runner);
             if ((i + j) % 2 == 0) {
-                pSquare->SetBackgroundColour(wxColour(240,176,87));
+                pSquare->SetBackgroundColour(light);
             } else {
-                pSquare->SetBackgroundColour(wxColour(137,82,23));
+                pSquare->SetBackgroundColour(dark);
             }
+            // pSquare->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(&ChessGameFrame::test), NULL, this);
+            // Connect(id, );
+            // Bind();
             pSquares.push_back(pSquare);
             xPos += squareSize;
         }
@@ -117,9 +135,9 @@ void ChessGameFrame::updatePieces() {
                 }
             }
             wxStaticBitmap *img; 
-            img = new wxStaticBitmap(*it, wxNewId(), 
+            img = new ChessPieceBitmap(*it, wxNewId(), 
             wxBitmap(wxImage(path).Rescale(squareSize, squareSize)),
-                    wxPoint(0,0), wxSize(squareSize, squareSize), 0, _T("ID_STATICBITMAP1"));
+                    wxPoint(0,0), wxSize(squareSize, squareSize), 0);
             pieceMap[*it] = img;
         }
         count++;
@@ -149,6 +167,21 @@ GameMove *ChessGameRunner::actualMove(GameMove *prop) {
     return NULL;
 }
 
+// input raw row and col values, call inputPiece or inputRow accordingly
+bool ChessGameRunner::input(int row, int col) {
+    cout << row << ", " << col << "\n";
+    return true;
+    /*
+    if (proposal.piece == NULL) {
+        return inputPiece(row, col);
+    } else {
+        inputSquare(row, col);
+        return true;
+    }
+    */
+}
+
+// input the move piece in the proposal move
 bool ChessGameRunner::inputPiece(int row, int col) {
     Board *board = game->getBoard();
     if (board->getSquare(row, col)->getPiece() == NULL) {
@@ -158,6 +191,7 @@ bool ChessGameRunner::inputPiece(int row, int col) {
     return true;
 }
 
+// input the move square in the proposal move
 void ChessGameRunner::inputSquare(int row, int col) {
     Board *board = game->getBoard();
     proposal.square = board->getSquare(row, col);
