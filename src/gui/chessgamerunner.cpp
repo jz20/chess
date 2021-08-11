@@ -9,9 +9,10 @@
 #include <vector>
 #include <cstddef>
 #include <string>
-#include <game.h>
-#include <chessgame.h>
+#include "game.h"
+#include "chessgame.h"
 #include <thread>
+#include <chrono>
 #include "chesssquarepanel.h"
 #include "chesspiecebitmap.h"
 
@@ -21,29 +22,12 @@ using namespace std;
 bool ChessGameRunner::OnInit() {
     wxInitAllImageHandlers();
     game = new ChessGame();
-    ChessGameFrame *frame = new ChessGameFrame("Chess Game", game, this);
+    frame = new ChessGameFrame("Chess Game", game, this);
     game->setUp();
-    vector <GameMove *> moves;
-    GameMove *move = NULL;
-    bool result;
-    frame->Show(true);
     frame->updatePieces();
-    cout << "TEST\n";
-    // thread t(test);
-    // t.detach();
-    /*
-    while (!game->isFinished()) {
-        frame->updatePieces();
-        game->updateMoves();
-        while (proposal.piece == NULL || proposal.square == NULL) {
-            // move = actualMove();
-        }
-        game->tryMove(move);
-        result = game->checkResult();
-    }
-    */
-    
-
+    frame->Show(true);
+    thread t(&ChessGameRunner::gameCycle, this);
+    t.detach();
     return true;
 }
 
@@ -86,9 +70,32 @@ ChessGameFrame::ChessGameFrame(const wxString title, Game* game, ChessGameRunner
     FitInside();
 }
 
-// get pointer to proposal move
-GameMove *ChessGameRunner::ptrProposal() {
-    return &proposal;
+void ChessGameRunner::gameCycle() {
+    vector <GameMove *> moves;
+    GameMove *move = NULL;
+    bool result;
+    while (!game->isFinished()) {
+        cout << *(game->getBoard()) << "\n";
+        game->updateMoves();
+        while (move == NULL) {
+            while (proposal.piece == NULL || proposal.square == NULL) {
+                // cout << (proposal.piece == NULL) << " TEST3\n";
+                this_thread::sleep_for(chrono::milliseconds(10));
+            }
+            move = actualMove();
+            if (move == NULL) {
+                clearProposal();
+            }
+        }
+        game->tryMove(move);
+        frame->updatePieces();
+        move = NULL;
+        result = game->checkResult();
+    }
+}
+
+void ChessGameRunner::waitForInput() {
+
 }
 
 void ChessGameFrame::updatePieces() {
@@ -96,10 +103,16 @@ void ChessGameFrame::updatePieces() {
     int row = 0;
     int col = 0;
     Board *board = game->getBoard();
+    cout << pSquares.size() << "\n";
+    for (vector <wxStaticBitmap *> :: iterator it = bPieces.begin(); it != bPieces.end(); it++) {
+        // cout << count << "\n";
+        (*it)->Hide();
+        (*it)->Close();
+        // count++;
+    }
+    bPieces.clear();
+    count = 0;
     for (vector <wxPanel *> :: iterator it = pSquares.begin(); it != pSquares.end(); it++) {
-        if (pieceMap[*it] != NULL) {
-            pieceMap[*it]->Destroy();
-        }
         row = count / 8;
         col = count % 8;
         Piece *piece = board->getSquare(row, col)->getPiece();
@@ -137,23 +150,27 @@ void ChessGameFrame::updatePieces() {
             wxStaticBitmap *img; 
             img = new ChessPieceBitmap(*it, wxNewId(), 
             wxBitmap(wxImage(path).Rescale(squareSize, squareSize)),
-                    wxPoint(0,0), wxSize(squareSize, squareSize), 0);
-            pieceMap[*it] = img;
+                    wxPoint(0,0), wxSize(squareSize, squareSize), 0, piece->getSquare(), runner);
+            bPieces.push_back(img);
+            // (*it)->AddChild(img);
+            // pieceMap[*it] = img;
+            // cout << (img == pieceMap[*it]) << "\n";
+            // pieceMap[*it]->Destroy();
         }
         count++;
     }
 }
 
 // get the actual move
-GameMove *ChessGameRunner::actualMove(GameMove *prop) {
+GameMove *ChessGameRunner::actualMove() {
     GameMove *move;
     vector <GameMove *> moves = game->getMoves();
     bool promotion = false;
     string promoteTo = "";
     for (vector <GameMove *> :: iterator it = moves.begin(); it != moves.end(); it++) {
         move = *it;
-        if (move->piece == (prop->piece)
-                && move->square == (prop->square)) {
+        if (move->piece == (proposal.piece)
+                && move->square == (proposal.square)) {
             if (promotion) {
                 if (move->instr == promoteTo) {
                     return move;
@@ -168,36 +185,32 @@ GameMove *ChessGameRunner::actualMove(GameMove *prop) {
 }
 
 // input raw row and col values, call inputPiece or inputRow accordingly
-bool ChessGameRunner::input(int row, int col) {
-    cout << row << ", " << col << "\n";
-    return true;
-    /*
-    if (proposal.piece == NULL) {
-        return inputPiece(row, col);
+bool ChessGameRunner::input(Square *square) {
+    if (proposal.piece == NULL && square->getPiece() != NULL) {
+        return inputPiece(square->getPiece());
     } else {
-        inputSquare(row, col);
-        return true;
+        return inputSquare(square);
     }
-    */
 }
 
 // input the move piece in the proposal move
-bool ChessGameRunner::inputPiece(int row, int col) {
-    Board *board = game->getBoard();
-    if (board->getSquare(row, col)->getPiece() == NULL) {
-        return false;
-    }
-    proposal.piece = board->getSquare(row, col)->getPiece();
+bool ChessGameRunner::inputPiece(Piece *piece) {
+    proposal.piece = piece;
+    cout << "P\n";
     return true;
 }
 
 // input the move square in the proposal move
-void ChessGameRunner::inputSquare(int row, int col) {
-    Board *board = game->getBoard();
-    proposal.square = board->getSquare(row, col);
+bool ChessGameRunner::inputSquare(Square *square) {
+    if (proposal.piece == NULL) {
+        return false;
+    }
+    cout << "S\n";
+    proposal.square = square;
+    return true;
 }
 
-void ChessGameRunner::clearMove() {
+void ChessGameRunner::clearProposal() {
     proposal.piece = NULL;
     proposal.square = NULL;
     delete proposal.aux;

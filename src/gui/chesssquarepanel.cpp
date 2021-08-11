@@ -19,5 +19,5 @@ ChessSquarePanel::~ChessSquarePanel() {
 }
 
 void ChessSquarePanel::onClick(wxMouseEvent& event) {
-    // runner->input(row, col);
+    runner->inputSquare(square);
 }

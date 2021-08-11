@@ -2,6 +2,7 @@
 #define CHESS_GAME_RUNNER_H
 
 class ChessGameRunner;
+class ChessGameFrame;
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
@@ -9,30 +10,34 @@ class ChessGameRunner;
 #endif
 #include <vector>
 #include <unordered_map>
-#include <game.h>
-#include <chessgame.h>
+#include "game.h"
+#include "chessgame.h"
 
 
 class ChessGameRunner: public wxApp {
     public:
         virtual bool OnInit();
         // input a raw value, call inputPiece or inputRow accordingly
-        bool input(int row, int col);
+        bool input(Square *square);
         // clear the information in the proposal move
-        bool inputPiece(int row, int col);
+        bool inputPiece(Piece *piece);
         // input the move square in the proposal move
-        void inputSquare(int row, int col);
+        bool inputSquare(Square *square);
         // clear the information in the proposal move
-        void clearMove();
-        // get pointer to proposal move
-        GameMove *ptrProposal();
+        void clearProposal();
+        // run the game cycle
+        void gameCycle();
+        // wait for input
+        void waitForInput();
         // get the actual move
-        GameMove *actualMove(GameMove *prop);
+        GameMove *actualMove();
     private:
         Game *game;
         // the move propose by the user
         GameMove proposal;
         // virtual int OnExit();
+        // the main frame of the application
+        ChessGameFrame *frame;
 };
 
 class ChessGameFrame: public wxFrame {
@@ -47,6 +52,8 @@ class ChessGameFrame: public wxFrame {
         int squareSize;
         // the square panels
         std::vector <wxPanel *> pSquares;
+        // the piece bitmaps
+        std::vector <wxStaticBitmap *> bPieces;
         // the map from the square to the pieces
         std::unordered_map <wxPanel *, wxStaticBitmap *> pieceMap;
         // the board panel
