@@ -12,8 +12,7 @@ using namespace std;
 int main() {
     Game *game = new ChessGame();
     game->setUp();
-    vector <Move *> moves;
-    Move *move = NULL;
+    GameMove *move = NULL;
     bool result;
     while (!game->isFinished()) {
         cout << *(game->getBoard());
@@ -23,14 +22,15 @@ int main() {
         result = game->checkResult();
     }
     displayResult(game, result);
+    delete game;
     return 0;
 }
 
 // get input move from cli
-Move *inputMove(Game *game) {
-    std::vector <Move *> moves = game->getMoves();
+GameMove *inputMove(Game *game) {
+    std::vector <GameMove *> moves = game->getMoves();
     bool available = false;
-    Move *move = NULL;
+    GameMove *move = NULL;
     int oRow = -1;
     int oCol = -1; 
     int dRow = -1;
@@ -65,7 +65,7 @@ Move *inputMove(Game *game) {
             cout << "Promote to: \n";
             cin >> promoteTo;
         }
-        for (vector <Move *> :: iterator it = moves.begin(); it != moves.end(); it++) {
+        for (vector <GameMove *> :: iterator it = moves.begin(); it != moves.end(); it++) {
             move = *it;
             if (move->piece == board->getSquare(oRow, oCol)->getPiece()
                     && move->square->getRow() == dRow && move->square->getCol() == dCol) {

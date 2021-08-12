@@ -35,7 +35,7 @@ class ChessGame: public Game {
         void updateMoves();
         // make the input move, return false if the moveStack is not empty thus the move
         // cannot be made
-        bool makeMove(Move *move);
+        bool makeMove(GameMove *move);
         // set up the pieces for the board and the players
         void setUp();
         // check if the game is over, set finished to be true if so, return
@@ -44,10 +44,10 @@ class ChessGame: public Game {
         virtual bool checkResult();
         // try the input move, store the move on the stack so that it can be 
         // reversed
-        virtual void tryMove(Move *move, bool isAux);
+        virtual void tryMove(GameMove *move, bool isAux);
         // try the input move, store the move on the stack so that it can be 
         // reversed, default non-aux move
-        virtual void tryMove(Move *move);
+        virtual void tryMove(GameMove *move);
         // reverse last move on the moveStack, returns false if the moveStack is 
         // empty
         bool reverseLast();
@@ -80,7 +80,7 @@ class ChessGame: public Game {
         // test if a player is in check
         bool checkTest(Player *player);
         // update the flags;
-        void updateFlags(Move *move);
+        void updateFlags(GameMove *move);
         // reverse flags to the previous state
         void reverseFlags();
         // check if there is insufficient material on the board such that

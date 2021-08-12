@@ -1,11 +1,11 @@
 #ifndef GAME_H
 #define GAME_H
 
-class Game;
 struct Positioning;
 typedef struct Positioning Positioning;
-struct Move;
-typedef struct Move Move;
+struct GameMove;
+typedef struct GameMove GameMove;
+class Game;
 
 #include <cstddef>
 #include <vector>
@@ -18,25 +18,25 @@ typedef struct Positioning {
     Square *square;
 } Positioning;
 
-typedef struct Move {
-    Move() : piece(NULL), square(NULL), aux(NULL), instr("") {}
+typedef struct GameMove {
+    GameMove() : piece(NULL), square(NULL), aux(NULL), instr("") {}
     Piece *piece;
     Square *square;
-    Move *aux;
+    GameMove *aux;
     std::string instr;
     std::vector <Positioning *> restoration; // used for trial and reverse
-    ~Move() {
+    ~GameMove() {
         delete aux;
         restoration.clear();
     }
-} Move;
+} GameMove;
 
 class Game {
     public:
         // Constructor with the board and the players 
         Game(Board *board, Player *player1, Player *player2);
         // Destructor of a game
-        ~Game();
+        virtual ~Game();
         // update the moves that a player can make
         virtual void updateMoves() {}
         // set up the board and the players
@@ -48,7 +48,7 @@ class Game {
         // get board
         Board *getBoard();
         // get moves
-        std::vector <Move *> getMoves();
+        std::vector <GameMove *> getMoves();
         // get turn, the first turn is 1
         int getTurn();
         // get note
@@ -57,7 +57,7 @@ class Game {
         void setNote(std::string note);
         // make the input move, return false if the moveStack is not empty thus the
         // move cannot be made
-        bool makeMove(Move *move);
+        bool makeMove(GameMove *move);
         // is finished
         bool isFinished();
         // get the player whose turn it is
@@ -66,10 +66,10 @@ class Game {
         Player *getOppositePlayer();
         // try the input move, store the move on the stack so that it can be 
         // reversed
-        virtual void tryMove(Move *move, bool aux);
+        virtual void tryMove(GameMove *move, bool aux);
         // try the input move, store the move on the stack so that it can be 
         // reversed, default non-aux move
-        virtual void tryMove(Move *move);
+        virtual void tryMove(GameMove *move);
         // reverse last move on the moveStack, returns false if the moveStack is 
         // empty
         virtual bool reverseLast();
@@ -93,11 +93,11 @@ class Game {
         Player *player2;
         // the dynamic move storage, storing the legal moves for the player to 
         // move
-        std::vector <Move *> moves;
+        std::vector <GameMove *> moves;
         // the stack of moves for trial and reverse
-        std::vector <Move *> moveStack;
+        std::vector <GameMove *> moveStack;
         // reverse the input move
-        void reverseMove(Move *move);
+        void reverseMove(GameMove *move);
         // revert to the input position
         void revertTo(std::vector <Positioning *> *pos);
 };

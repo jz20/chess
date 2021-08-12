@@ -29,8 +29,8 @@ using namespace std;
         (opCtrl.count(board->getSquare(y, x)) == 0) && board->getSquare(y, x)->isEmpty()
 
 #define ADD_CASTLE(king, dKing, oRook, dRook, row) \
-        Move *move = new Move; \
-        Move *aux = new Move; \
+        GameMove *move = new GameMove; \
+        GameMove *aux = new GameMove; \
         move->piece = king; \
         move->square = board->getSquare(row, dKing); \
         aux->piece = board->getSquare(row, oRook)->getPiece(); \
@@ -39,14 +39,14 @@ using namespace std;
         moves.push_back(move);
 
 #define ADD_PROMOTION(name, instruction) \
-        Move *name = new Move; \
+        GameMove *name = new GameMove; \
         name->piece = current->piece; \
         name->square = current->square; \
         name->instr = instruction; \
         moves.push_back(name);
 
 #define ADD_EN_PASSANT(oRow, oCol, dRow) \
-        Move *move = new Move; \
+        GameMove *move = new GameMove; \
         move->piece = board->getSquare(oRow, oCol)->getPiece(); \
         move->square = board->getSquare(dRow, flags->EP_COL); \
         move->instr = "ep"; \
@@ -106,7 +106,7 @@ bool ChessGame::makeMove(Move *move) {
 
 // try the input move, store the move on the stack so that it can be 
 // reversed
-void ChessGame::tryMove(Move *move, bool isAux) {
+void ChessGame::tryMove(GameMove *move, bool isAux) {
     if (!isAux) {
         updateFlags(move);
     }
@@ -138,7 +138,7 @@ void ChessGame::tryMove(Move *move, bool isAux) {
 }
 
 // try the input move, store the move on the stack so that it can be reversed
-void ChessGame::tryMove(Move *move) {
+void ChessGame::tryMove(GameMove *move) {
     ChessGame::tryMove(move, false);
 }
 
@@ -159,19 +159,6 @@ void ChessGame::updateMoves() {
     pawnTwoSquare();
     castling();
     enPassant();
-/*
-    cout << "Before deletion.\n";
-    Move *current = NULL;
-    for (vector <Move *> :: iterator it = moves.begin(); it != moves.end(); it++) {
-        current = *it;
-        if (current) {
-            cout << current->piece->getName() << ", " << current->square->getRow() << ", " << current->square->getCol() << "\n";
-        } else {
-            cout << "Het gaat mis.\n";
-        }
-    }
-    cout << "Terminado.\n";
-*/
     removeIllegalMoves();
     promotion();
 }
@@ -190,12 +177,12 @@ void ChessGame::setUp() {
 
     // pieces
     SET_PIECE(wr1, 0, 0, player1, Rook);
-    //SET_PIECE(wn1, 0, 1, player1, Knight);
-    //SET_PIECE(wb1, 0, 2, player1, Bishop);
-    //SET_PIECE(wq, 0, 3, player1, Queen);
+    SET_PIECE(wn1, 0, 1, player1, Knight);
+    SET_PIECE(wb1, 0, 2, player1, Bishop);
+    SET_PIECE(wq, 0, 3, player1, Queen);
     SET_PIECE(wk, 0, 4, player1, King);
-    //SET_PIECE(wb2, 0, 5, player1, Bishop);
-    //SET_PIECE(wn2, 0, 6, player1, Knight);
+    SET_PIECE(wb2, 0, 5, player1, Bishop);
+    SET_PIECE(wn2, 0, 6, player1, Knight);
     SET_PIECE(wr2, 0, 7, player1, Rook);
     SET_PIECE(wp1, 1, 0, player1, Pawn);
     SET_PIECE(wp2, 1, 1, player1, Pawn);
@@ -207,12 +194,12 @@ void ChessGame::setUp() {
     SET_PIECE(wp8, 1, 7, player1, Pawn);
     whiteKing = wk;
     SET_PIECE(br1, 7, 0, player2, Rook);
-    //SET_PIECE(bn1, 7, 1, player2, Knight);
-    //SET_PIECE(bb1, 7, 2, player2, Bishop);
-    //SET_PIECE(bq, 7, 3, player2, Queen);
+    SET_PIECE(bn1, 7, 1, player2, Knight);
+    SET_PIECE(bb1, 7, 2, player2, Bishop);
+    SET_PIECE(bq, 7, 3, player2, Queen);
     SET_PIECE(bk, 7, 4, player2, King);
-    //SET_PIECE(bb2, 7, 5, player2, Bishop);
-    // SET_PIECE(bn2, 7, 6, player2, Knight);
+    SET_PIECE(bb2, 7, 5, player2, Bishop);
+    SET_PIECE(bn2, 7, 6, player2, Knight);
     SET_PIECE(br2, 7, 7, player2, Rook);
     SET_PIECE(bp1, 6, 0, player2, Pawn);
     SET_PIECE(bp2, 6, 1, player2, Pawn);
@@ -231,9 +218,6 @@ void ChessGame::setUp() {
 // meaningless unless finished is true
 bool ChessGame::checkResult() {
     if (flags->REP >= 3 || flags->FIFTY / 2 >= 50 || insufficientMaterial()) {
-        cout << (flags->REP >= 3) << "\n";
-        cout << (flags->FIFTY / 2 >= 50) << "\n";
-        cout << insufficientMaterial() << "\n";
         finished = true;
         return false;
     }
@@ -260,7 +244,7 @@ void ChessGame::basicMoves() {
             current->updateTargets();
             vector <Square *> targets = current->getTargets();
             for (vector <Square *> :: iterator it2 = targets.begin(); it2 != targets.end(); ++it2) {
-                Move *move = new Move;
+                GameMove *move = new GameMove;
                 move->piece = current;
                 move->square = *it2;
                 moves.push_back(move);
@@ -278,7 +262,7 @@ void ChessGame::pawnTwoSquare() {
                     && board->getSquare(row, i)->getPiece()->getName() == "pawn" 
                     && board->getSquare(row + 1, i)->isEmpty()
                     && board->getSquare(row + 2, i)->isEmpty()) {
-                Move *move = new Move;
+                GameMove *move = new GameMove;
                 move->piece = board->getSquare(row, i)->getPiece();
                 move->square = board->getSquare(row + 2, i);
                 moves.push_back(move);
@@ -291,7 +275,7 @@ void ChessGame::pawnTwoSquare() {
                     && board->getSquare(row, i)->getPiece()->getName() == "pawn" 
                     && board->getSquare(row - 1, i)->isEmpty()
                     && board->getSquare(row - 2, i)->isEmpty()) {
-                Move *move = new Move;
+                GameMove *move = new GameMove;
                 move->piece = board->getSquare(row, i)->getPiece();
                 move->square = board->getSquare(row - 2, i);
                 moves.push_back(move);
@@ -362,8 +346,8 @@ void ChessGame::enPassant() {
 
 // update the promotion moves
 void ChessGame::promotion() {
-    Move *current = NULL;
-    for (vector <Move *> :: iterator it = moves.begin(); it != moves.end(); ++it) {
+    GameMove *current = NULL;
+    for (vector <GameMove *> :: iterator it = moves.begin(); it != moves.end(); ++it) {
         current = *it;
         if (getCurrentPlayer()->getColour() == WHITE) {
             if ((current->piece->getName() == "pawn")
@@ -389,10 +373,10 @@ void ChessGame::promotion() {
 
 // remove the illegal moves from the possible moves
 void ChessGame::removeIllegalMoves() {
-    Move *current = NULL;
+    GameMove *current = NULL;
     Player *player = getCurrentPlayer();
     int count = 0;
-    for (vector <Move *> :: iterator it = moves.begin(); it != moves.end(); it++) {
+    for (vector <GameMove *> :: iterator it = moves.begin(); it != moves.end(); it++) {
         current = *it;
         count++;
         tryMove(current, false); 
@@ -428,7 +412,7 @@ bool ChessGame::checkTest(Player *player) {
 }
 
 // update the flags
-void ChessGame::updateFlags(Move *move) {
+void ChessGame::updateFlags(GameMove *move) {
     Flags *newFlags = new Flags;
     newFlags->WLC = flags->WLC;
     newFlags->WSC = flags->WSC;
