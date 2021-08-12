@@ -26,9 +26,15 @@ bool ChessGameRunner::OnInit() {
     game->setUp();
     frame->updatePieces();
     frame->Show(true);
-    thread t(&ChessGameRunner::gameCycle, this);
-    t.detach();
+    /*
+    thread *t = new thread(&ChessGameRunner::gameCycle, this);
+    t->detach();
+    */
     return true;
+}
+
+void showFrame() {
+    
 }
 
 wxIMPLEMENT_APP(ChessGameRunner);
@@ -51,47 +57,54 @@ ChessGameFrame::ChessGameFrame(const wxString title, Game* game, ChessGameRunner
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
             wxWindowID id = wxNewId();
-            wxPanel* pSquare = new ChessSquarePanel(pBoard, id, wxPoint(xPos, yPos),
-                    wxSize(squareSize, squareSize), board->getSquare(i, j), runner);
+            wxPanel* pSquare = new wxPanel(pBoard, id, wxPoint(xPos, yPos),
+                    wxSize(squareSize, squareSize));
             if ((i + j) % 2 == 0) {
                 pSquare->SetBackgroundColour(light);
             } else {
                 pSquare->SetBackgroundColour(dark);
             }
-            // pSquare->Connect(wxEVT_LEFT_DCLICK, wxMouseEventHandler(&ChessGameFrame::test), NULL, this);
-            // Connect(id, );
-            // Bind();
             pSquares.push_back(pSquare);
+            ChessPieceBitmap *img;
+            wxString path = "../../img/chess/empty.png";
+            img = new ChessPieceBitmap(pSquare, wxNewId(), 
+            wxBitmap(wxImage(path).Rescale(squareSize, squareSize)),
+                    wxPoint(0, 0), wxSize(squareSize, squareSize), 0, board->getSquare(i, j), runner);
+            pieceMap[pSquare] = img;
             xPos += squareSize;
         }
         xPos = 0;
         yPos -= squareSize;
     }
     FitInside();
+    updatePieces();
 }
 
 void ChessGameRunner::gameCycle() {
-    vector <GameMove *> moves;
-    GameMove *move = NULL;
-    bool result;
-    while (!game->isFinished()) {
-        cout << *(game->getBoard()) << "\n";
-        game->updateMoves();
-        while (move == NULL) {
-            while (proposal.piece == NULL || proposal.square == NULL) {
-                // cout << (proposal.piece == NULL) << " TEST3\n";
-                this_thread::sleep_for(chrono::milliseconds(10));
-            }
-            move = actualMove();
-            if (move == NULL) {
-                clearProposal();
-            }
-        }
+    game->updateMoves();
+    GameMove *move = actualMove();
+    if (move != NULL) {
         game->tryMove(move);
         frame->updatePieces();
-        move = NULL;
-        result = game->checkResult();
+        bool result = game->checkResult();
+        if (game->isFinished()) {
+            wxString msg = "";
+            if (result) {
+                if (game->getCurrentPlayer()->getColour() == WHITE) {
+                    msg = "Black wins.";
+                } else {
+                    msg = "White wins.";
+                }
+            } else {
+                msg = "Draw.";
+            }
+            wxMessageDialog *dial = new wxMessageDialog(NULL, 
+                            msg, wxT("Good Game"), 
+                            wxOK | wxICON_INFORMATION);
+                    dial->ShowModal();
+        }
     }
+    clearProposal();
 }
 
 void ChessGameRunner::waitForInput() {
@@ -103,21 +116,13 @@ void ChessGameFrame::updatePieces() {
     int row = 0;
     int col = 0;
     Board *board = game->getBoard();
-    cout << pSquares.size() << "\n";
-    for (vector <wxStaticBitmap *> :: iterator it = bPieces.begin(); it != bPieces.end(); it++) {
-        // cout << count << "\n";
-        (*it)->Hide();
-        (*it)->Close();
-        // count++;
-    }
-    bPieces.clear();
     count = 0;
     for (vector <wxPanel *> :: iterator it = pSquares.begin(); it != pSquares.end(); it++) {
         row = count / 8;
         col = count % 8;
         Piece *piece = board->getSquare(row, col)->getPiece();
+        wxString path = "../../img/chess/";
         if (piece != NULL) {
-            wxString path = "../../img/chess/";
             if (piece->getPlayer()->getColour() == WHITE) {
                 if (piece->getName() == "king") {
                     path += "white_king.png";
@@ -147,16 +152,10 @@ void ChessGameFrame::updatePieces() {
                     path += "black_pawn.png";
                 }
             }
-            wxStaticBitmap *img; 
-            img = new ChessPieceBitmap(*it, wxNewId(), 
-            wxBitmap(wxImage(path).Rescale(squareSize, squareSize)),
-                    wxPoint(0,0), wxSize(squareSize, squareSize), 0, piece->getSquare(), runner);
-            bPieces.push_back(img);
-            // (*it)->AddChild(img);
-            // pieceMap[*it] = img;
-            // cout << (img == pieceMap[*it]) << "\n";
-            // pieceMap[*it]->Destroy();
+        } else {
+            path += "empty.png";
         }
+        pieceMap[*it]->SetBitmap(wxBitmap(wxImage(path).Rescale(squareSize, squareSize)));
         count++;
     }
 }
@@ -186,9 +185,16 @@ GameMove *ChessGameRunner::actualMove() {
 
 // input raw row and col values, call inputPiece or inputRow accordingly
 bool ChessGameRunner::input(Square *square) {
-    if (proposal.piece == NULL && square->getPiece() != NULL) {
-        return inputPiece(square->getPiece());
+    if (proposal.piece == NULL) {
+        if (square->getPiece() != NULL) {
+            return inputPiece(square->getPiece());
+        } else {
+            return false;
+        }
     } else {
+        if (square->getPiece() != NULL && proposal.piece->getPlayer() == square->getPiece()->getPlayer()) {
+            return inputPiece(square->getPiece());
+        }
         return inputSquare(square);
     }
 }
@@ -196,7 +202,6 @@ bool ChessGameRunner::input(Square *square) {
 // input the move piece in the proposal move
 bool ChessGameRunner::inputPiece(Piece *piece) {
     proposal.piece = piece;
-    cout << "P\n";
     return true;
 }
 
@@ -205,8 +210,8 @@ bool ChessGameRunner::inputSquare(Square *square) {
     if (proposal.piece == NULL) {
         return false;
     }
-    cout << "S\n";
     proposal.square = square;
+    gameCycle();
     return true;
 }
 

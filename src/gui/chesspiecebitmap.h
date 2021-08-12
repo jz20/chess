@@ -14,7 +14,6 @@ class ChessPieceBitmap: public wxStaticBitmap {
     public:
         ChessPieceBitmap(wxWindow *parent, wxWindowID id, const wxBitmap &label,
                 const wxPoint &pos, const wxSize &size, long style, Square *square, ChessGameRunner *runner);
-        ~ChessPieceBitmap();
     private:
         ChessGameRunner *runner;
         Square *square;

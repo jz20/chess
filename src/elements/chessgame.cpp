@@ -159,19 +159,6 @@ void ChessGame::updateMoves() {
     pawnTwoSquare();
     castling();
     enPassant();
-/*
-    cout << "Before deletion.\n";
-    Move *current = NULL;
-    for (vector <Move *> :: iterator it = moves.begin(); it != moves.end(); it++) {
-        current = *it;
-        if (current) {
-            cout << current->piece->getName() << ", " << current->square->getRow() << ", " << current->square->getCol() << "\n";
-        } else {
-            cout << "Het gaat mis.\n";
-        }
-    }
-    cout << "Terminado.\n";
-*/
     removeIllegalMoves();
     promotion();
 }
@@ -231,9 +218,6 @@ void ChessGame::setUp() {
 // meaningless unless finished is true
 bool ChessGame::checkResult() {
     if (flags->REP >= 3 || flags->FIFTY / 2 >= 50 || insufficientMaterial()) {
-        cout << (flags->REP >= 3) << "\n";
-        cout << (flags->FIFTY / 2 >= 50) << "\n";
-        cout << insufficientMaterial() << "\n";
         finished = true;
         return false;
     }

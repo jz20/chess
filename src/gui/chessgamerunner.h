@@ -12,6 +12,7 @@ class ChessGameFrame;
 #include <unordered_map>
 #include "game.h"
 #include "chessgame.h"
+#include "chesspiecebitmap.h"
 
 
 class ChessGameRunner: public wxApp {
@@ -31,6 +32,8 @@ class ChessGameRunner: public wxApp {
         void waitForInput();
         // get the actual move
         GameMove *actualMove();
+        // show frame
+        void showFrame();
     private:
         Game *game;
         // the move propose by the user
@@ -53,7 +56,7 @@ class ChessGameFrame: public wxFrame {
         // the square panels
         std::vector <wxPanel *> pSquares;
         // the piece bitmaps
-        std::vector <wxStaticBitmap *> bPieces;
+        std::vector <ChessPieceBitmap *> bPieces;
         // the map from the square to the pieces
         std::unordered_map <wxPanel *, wxStaticBitmap *> pieceMap;
         // the board panel

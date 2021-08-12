@@ -15,8 +15,11 @@ ChessPieceBitmap::ChessPieceBitmap(wxWindow *parent, wxWindowID id, const wxBitm
     this->square = square;
 }
 
+/*
 ChessPieceBitmap::~ChessPieceBitmap() {
+    wxEvtHandler::Disconnect();
 }
+*/
 
 void ChessPieceBitmap::onClick(wxMouseEvent& event) {
     runner->input(square);
