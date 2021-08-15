@@ -11,4 +11,9 @@ std::vector <std::string> readFile(const std::string& name);
 // spaces
 std::string trim(const std::string& str, const std::string& space = " \t\n");
 
+// tokenise the text between the first occurrence of opener and the first
+// occurrence of closer, seperated by the delimiter
+std::vector <std::string> tokenise(const std::string& str, const char& opener, 
+        const char& closer, const char& delimiter);
+
 #endif
