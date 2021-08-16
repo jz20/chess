@@ -1,7 +1,7 @@
 CC			= g++
 CPPFLAGS	= -g -Wall
 LIB			= libparser.a
-LIBOBJS		= parserutils.o
+LIBOBJS		= parserutils.o pieceparser.o
 BUILD		= $(LIB)
 
 .PHONY: 	all clean
@@ -9,6 +9,7 @@ BUILD		= $(LIB)
 all:	$(BUILD)
 
 parserutils.o:	parserutils.h
+pieceparser.o:	pieceparser.h
 
 $(LIB):		$(LIBOBJS)
 			ar rcs $(LIB) $(LIBOBJS)

@@ -9,7 +9,8 @@
 using namespace std;
 
 // read the content of a file and put it into a vector of strings
-vector <string> readFile(const std::string& name) {
+// removes all spaces
+vector <string> readFile(const string& name) {
     vector <string> lines;
     ifstream in(name);
     string str = "";
@@ -22,6 +23,15 @@ vector <string> readFile(const std::string& name) {
     }
     in.close();
     return lines;
+}
+
+// write the content of a vector of strings to a file
+void writeFile(const string& name, const vector <string>& lines) {
+    ofstream out(name);
+    for (const string& line : lines) {
+        out << line << "\n";
+    }
+    out.close();
 }
 
 // trim the input string, outputing a string with no leading or trailing blank 

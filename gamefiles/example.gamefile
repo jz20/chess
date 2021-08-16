@@ -1,13 +1,37 @@
 #GAME (foo) {
     #ROW = 8;
     #COL = 8;
+    // This is the declaration of a piece:
+    // #PIECE (name, symbol) <- name consist of only letters and symbol consist of one letter
+    // Inside the brackets, #KING indicates the piece is a king.
+    // Other lines describe how a piece moves, such as the following statements:
+    //      UP
+    //      DOWN
+    //      LEFT
+    //      RIGHT
+    //      UP_LEFT
+    //      UP_RIGHT
+    //      DOWN_LEFT
+    //      DOWN_RIGHT
+    // The moves can also be a coordinate (rowOffset, colOffset):
+    //      (1, 2) means the piece can move 1 square up and 2 squares to the right
+    //      (-3, -3) means the piece can move 3 square down and 3 squares to the left
+    //      *C* indicates the piece can only capture on that square
+    //      *NC* indicates the piece can only move to that square if it is not a capture
+    //
+    // NOTE: The moves are seen from White's perspective, so black pieces' moves automatically
+    // have the vertical direction reversed. However, the horizontal direction is NOT reversed.
+    // 
+    // NOTE: A move described by a statement can overwrite move described by a coordinate,
+    // meaning that, suppose (1, 0) is marked with *NC*, but there is also UP, then the piece
+    // will still be able to capture on the square with (1, 0) offset
     #PIECE (bar, b) {
         (2, 1)
         (2, -1)
         (1, 0)
         DOWN_RIGHT
         DOWN_LEFT
-        (-1, 0) *NC
+        (-1, 0) *NC*
     }
     #PIECE(queen, q) {
         UP

@@ -5,7 +5,11 @@
 #include <string>
 
 // read the content of a file and put it into a vector of strings
+// removes all spaces
 std::vector <std::string> readFile(const std::string& name);
+
+// write the content of a vector of strings to a file
+void writeFile(const std::string& name, const std::vector <std::string>& lines);
 
 // trim the input string, outputing a string with no leading or trailing blank 
 // spaces

@@ -7,10 +7,11 @@ COMMON		= ..
 
 all:			$(BUILD)
 
-parsertestrunner:	parsertestrunner.o parserutilstest.o
+parsertestrunner:	parsertestrunner.o parserutilstest.o pieceparsertest.o
 
 parsertestrunner.o:	parsertestrunner.h
 parserutilstest.o:	parserutilstest.h
+pieceparsertest.o:	pieceparsertest.h
 
 clean:		
 				$(RM) $(BUILD) *.o core
