@@ -1,4 +1,5 @@
 #include "elementstestrunner.h"
+
 #include "squaretest.h"
 #include "boardtest.h"
 #include "chesspiecestest.h"
@@ -12,6 +13,7 @@ bool testRunner() {
     return result;
 }
 
+// main function calling the test runner
 int main() {
     return !testRunner();
 }
