@@ -180,8 +180,8 @@ void ChessGame::setUp() {
     SET_PIECE(wb1, 0, 2, player1, Bishop);
     SET_PIECE(wq, 0, 3, player1, Queen);
     SET_PIECE(wk, 0, 4, player1, King);
-    // SET_PIECE(wb2, 0, 5, player1, Bishop);
-    // SET_PIECE(wn2, 0, 6, player1, Knight);
+    SET_PIECE(wb2, 0, 5, player1, Bishop);
+    SET_PIECE(wn2, 0, 6, player1, Knight);
     SET_PIECE(wr2, 0, 7, player1, Rook);
     SET_PIECE(wp1, 1, 0, player1, Pawn);
     SET_PIECE(wp2, 1, 1, player1, Pawn);
