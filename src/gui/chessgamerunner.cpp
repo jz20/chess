@@ -17,6 +17,8 @@
 
 using namespace std;
 
+#define WHITE_KING_ROW 0
+#define BLACK_KING_ROW 7
 
 bool ChessGameRunner::OnInit() {
     wxInitAllImageHandlers();
@@ -165,6 +167,18 @@ GameMove ChessGameRunner::actualMove() {
     string promoteTo = "";
     for (vector <GameMove> :: iterator it = moves.begin(); it != moves.end(); it++) {
         move = *it;
+        /*
+        if ((game->getCurrentPlayer()->getColour() == WHITE 
+                && move.piece->getName() == "pawn"
+                && move.square->getRow() == BLACK_KING_ROW)
+                || (game->getCurrentPlayer()->getColour() == BLACK 
+                && move.piece->getName() == "pawn"
+                && move.square->getRow() == WHITE_KING_ROW)) {
+            promotion = true;
+            cout << "Promote to: \n";
+            cin >> promoteTo;
+        }
+        */
         if (move.piece == (proposal.piece)
                 && move.square == (proposal.square)) {
             if (promotion) {
