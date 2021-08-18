@@ -357,7 +357,6 @@ void ChessGame::promotion() {
             if ((current.piece->getName() == "pawn")
                     && (current.square->getRow() == BLACK_KING_ROW)
                     && current.instr == "") {
-                cout << current.piece << "\n";
                 current.instr = "queen";
                 ADD_PROMOTION(rook, "rook")
                 ADD_PROMOTION(bishop, "bishop")

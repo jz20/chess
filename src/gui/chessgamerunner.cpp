@@ -100,7 +100,6 @@ void ChessGameRunner::gameCycle() {
                             msg, wxT("Good Game"), 
                             wxOK | wxICON_INFORMATION);
                     dial->ShowModal();
-            delete game;
         }
     }
     clearProposal();
@@ -164,29 +163,49 @@ GameMove ChessGameRunner::actualMove() {
     GameMove move;
     vector <GameMove> moves = game->getMoves();
     bool promotion = false;
-    string promoteTo = "";
-    /*
+    string promoteTo = "queen";
         if ((game->getCurrentPlayer()->getColour() == WHITE 
-                && move.piece->getName() == "pawn"
-                && move.square->getRow() == BLACK_KING_ROW)
+                && proposal.piece->getName() == "pawn"
+                && proposal.square->getRow() == BLACK_KING_ROW)
                 || (game->getCurrentPlayer()->getColour() == BLACK 
-                && move.piece->getName() == "pawn"
-                && move.square->getRow() == WHITE_KING_ROW)) {
+                && proposal.piece->getName() == "pawn"
+                && proposal.square->getRow() == WHITE_KING_ROW)) {
             promotion = true;
-            cout << "Promote to: \n";
-            cin >> promoteTo;
+            cout << "promotion\n";
+            wxArrayString choices;
+            choices.Add(wxT("queen"));
+            choices.Add(wxT("rook"));
+            choices.Add(wxT("bishop"));
+            choices.Add(wxT("knight"));
+            wxSingleChoiceDialog *dial = new wxSingleChoiceDialog(NULL, 
+                    wxT("Choose a piece to promote to:"), wxT("Promotion"), choices);
+            dial->ShowModal();
+            switch (dial->GetSelection()) {
+                case 1:
+                    promoteTo = "rook";
+                    break;
+                case 2:
+                    promoteTo = "bishop";
+                    break;
+                case 3:
+                    promoteTo = "knight";
+                    break;
+                case 0:
+                default:
+                    promoteTo = "queen";
+                    break;
+            }
         }
-        */
     for (vector <GameMove> :: iterator it = moves.begin(); it != moves.end(); it++) {
         move = *it;
-        
         if (move.piece == (proposal.piece)
                 && move.square == (proposal.square)) {
             if (promotion) {
                 if (move.instr == promoteTo) {
+                    promotion = false;
+                    string promoteTo = "queen";
                     return move;
                 }
-                promotion = false;
             } else {
                 return move;
             }
