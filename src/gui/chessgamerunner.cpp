@@ -13,7 +13,6 @@
 #include "chessgame.h"
 #include <thread>
 #include <chrono>
-#include "chesssquarepanel.h"
 #include "chesspiecebitmap.h"
 
 using namespace std;
@@ -31,10 +30,6 @@ bool ChessGameRunner::OnInit() {
     t->detach();
     */
     return true;
-}
-
-void showFrame() {
-    
 }
 
 wxIMPLEMENT_APP(ChessGameRunner);
@@ -105,10 +100,6 @@ void ChessGameRunner::gameCycle() {
         }
     }
     clearProposal();
-}
-
-void ChessGameRunner::waitForInput() {
-
 }
 
 void ChessGameFrame::updatePieces() {

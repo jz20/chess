@@ -28,8 +28,6 @@ class ChessGameRunner: public wxApp {
         void clearProposal();
         // run the game cycle
         void gameCycle();
-        // wait for input
-        void waitForInput();
         // get the actual move
         GameMove actualMove();
         // show frame
@@ -55,8 +53,6 @@ class ChessGameFrame: public wxFrame {
         int squareSize;
         // the square panels
         std::vector <wxPanel *> pSquares;
-        // the piece bitmaps
-        std::vector <ChessPieceBitmap *> bPieces;
         // the map from the square to the pieces
         std::unordered_map <wxPanel *, wxStaticBitmap *> pieceMap;
         // the board panel
