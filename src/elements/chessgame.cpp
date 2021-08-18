@@ -119,7 +119,9 @@ void ChessGame::tryMove(GameMove& move, bool isAux) {
         Square *TPS = board->getSquare(rmRow, rmCol); // TPS = taken pawn square
         Positioning pos{TPS->getPiece(), TPS};
         move.restoration.push_back(pos);
-        TPS->getPiece()->setSquare(NULL);
+        if (!TPS->isEmpty()) {
+            TPS->getPiece()->setSquare(NULL);
+        }
         TPS->setEmpty();
     } else if (move.instr == "queen") {
         PROMOTE_TO(Queen);
