@@ -13,7 +13,6 @@
 #include "chessgame.h"
 #include <thread>
 #include <chrono>
-#include "chesssquarepanel.h"
 #include "chesspiecebitmap.h"
 
 using namespace std;
@@ -33,14 +32,11 @@ bool ChessGameRunner::OnInit() {
     return true;
 }
 
-void showFrame() {
-    
-}
-
 wxIMPLEMENT_APP(ChessGameRunner);
 
 //wxFrame(NULL, wxID_ANY, title, pos, size)
 ChessGameFrame::ChessGameFrame(const wxString title, Game* game, ChessGameRunner *runner) {
+    Connect(wxEVT_CLOSE_WINDOW, wxCommandEventHandler(ChessGameFrame::onClose), NULL, this);
     this->runner = runner;
     this->game = game;
     squareSize = 64;
@@ -82,8 +78,8 @@ ChessGameFrame::ChessGameFrame(const wxString title, Game* game, ChessGameRunner
 
 void ChessGameRunner::gameCycle() {
     game->updateMoves();
-    GameMove *move = actualMove();
-    if (move != NULL) {
+    GameMove move = actualMove();
+    if (move.instr != "unavailable") {
         game->tryMove(move);
         frame->updatePieces();
         bool result = game->checkResult();
@@ -102,13 +98,14 @@ void ChessGameRunner::gameCycle() {
                             msg, wxT("Good Game"), 
                             wxOK | wxICON_INFORMATION);
                     dial->ShowModal();
+            delete game;
         }
     }
     clearProposal();
 }
 
-void ChessGameRunner::waitForInput() {
-
+void ChessGameRunner::finishGame() {
+    delete game;
 }
 
 void ChessGameFrame::updatePieces() {
@@ -161,17 +158,17 @@ void ChessGameFrame::updatePieces() {
 }
 
 // get the actual move
-GameMove *ChessGameRunner::actualMove() {
-    GameMove *move;
-    vector <GameMove *> moves = game->getMoves();
+GameMove ChessGameRunner::actualMove() {
+    GameMove move;
+    vector <GameMove> moves = game->getMoves();
     bool promotion = false;
     string promoteTo = "";
-    for (vector <GameMove *> :: iterator it = moves.begin(); it != moves.end(); it++) {
+    for (vector <GameMove> :: iterator it = moves.begin(); it != moves.end(); it++) {
         move = *it;
-        if (move->piece == (proposal.piece)
-                && move->square == (proposal.square)) {
+        if (move.piece == (proposal.piece)
+                && move.square == (proposal.square)) {
             if (promotion) {
-                if (move->instr == promoteTo) {
+                if (move.instr == promoteTo) {
                     return move;
                 }
                 promotion = false;
@@ -180,7 +177,8 @@ GameMove *ChessGameRunner::actualMove() {
             }
         }
     }
-    return NULL;
+    move.instr = "unavailable";
+    return move;
 }
 
 // input raw row and col values, call inputPiece or inputRow accordingly
@@ -218,8 +216,20 @@ bool ChessGameRunner::inputSquare(Square *square) {
 void ChessGameRunner::clearProposal() {
     proposal.piece = NULL;
     proposal.square = NULL;
-    delete proposal.aux;
-    proposal.aux = NULL;
+    proposal.aux.reset();
     proposal.restoration.clear();
     proposal.instr = "";
+}
+
+// called when the window closes
+void ChessGameFrame::onClose(wxCommandEvent& event) {
+    for (vector <wxPanel *> :: iterator it = pSquares.begin(); it != pSquares.end(); it++) {
+        if (pieceMap.count(*it) > 0 && pieceMap[*it]) {
+            delete pieceMap[*it];
+        }
+        delete *it;
+    }
+    pSquares.clear();
+    runner->finishGame();
+    Destroy();
 }

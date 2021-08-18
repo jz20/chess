@@ -12,13 +12,15 @@ using namespace std;
 int main() {
     Game *game = new ChessGame();
     game->setUp();
-    GameMove *move = NULL;
+    GameMove move;
     bool result;
     while (!game->isFinished()) {
         cout << *(game->getBoard());
         game->updateMoves();
         move = inputMove(game);
-        game->tryMove(move);
+        if (move.instr != "unavailable") {
+            game->tryMove(move);
+        }
         result = game->checkResult();
     }
     displayResult(game, result);
@@ -27,10 +29,10 @@ int main() {
 }
 
 // get input move from cli
-GameMove *inputMove(Game *game) {
-    std::vector <GameMove *> moves = game->getMoves();
+GameMove inputMove(Game *game) {
+    std::vector <GameMove> moves = game->getMoves();
     bool available = false;
-    GameMove *move = NULL;
+    GameMove move;
     int oRow = -1;
     int oCol = -1; 
     int dRow = -1;
@@ -65,12 +67,12 @@ GameMove *inputMove(Game *game) {
             cout << "Promote to: \n";
             cin >> promoteTo;
         }
-        for (vector <GameMove *> :: iterator it = moves.begin(); it != moves.end(); it++) {
+        for (vector <GameMove> :: iterator it = moves.begin(); it != moves.end(); it++) {
             move = *it;
-            if (move->piece == board->getSquare(oRow, oCol)->getPiece()
-                    && move->square->getRow() == dRow && move->square->getCol() == dCol) {
+            if (move.piece == board->getSquare(oRow, oCol)->getPiece()
+                    && move.square->getRow() == dRow && move.square->getCol() == dCol) {
                 if (promotion) {
-                    if (move->instr == promoteTo) {
+                    if (move.instr == promoteTo) {
                         return move;
                     }
                     promotion = false;
@@ -79,8 +81,9 @@ GameMove *inputMove(Game *game) {
                 }
             }
         }
-        cout << "Move unavalible\n";
+        cout << "Move unavailable\n";
     }
+    move.instr = "unavailable";
     return move;
 }
 

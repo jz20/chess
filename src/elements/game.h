@@ -10,6 +10,7 @@ class Game;
 #include <cstddef>
 #include <vector>
 #include <string>
+#include <memory>
 #include "piece.h"
 #include "square.h"
 
@@ -22,11 +23,10 @@ typedef struct GameMove {
     GameMove() : piece(NULL), square(NULL), aux(NULL), instr("") {}
     Piece *piece;
     Square *square;
-    GameMove *aux;
+    std::shared_ptr <GameMove> aux;
     std::string instr;
-    std::vector <Positioning *> restoration; // used for trial and reverse
+    std::vector <Positioning> restoration; // used for trial and reverse
     ~GameMove() {
-        delete aux;
         restoration.clear();
     }
 } GameMove;
@@ -48,7 +48,7 @@ class Game {
         // get board
         Board *getBoard();
         // get moves
-        std::vector <GameMove *> getMoves();
+        std::vector <GameMove> getMoves();
         // get turn, the first turn is 1
         int getTurn();
         // get note
@@ -57,7 +57,7 @@ class Game {
         void setNote(std::string note);
         // make the input move, return false if the moveStack is not empty thus the
         // move cannot be made
-        bool makeMove(GameMove *move);
+        bool makeMove(GameMove& move);
         // is finished
         bool isFinished();
         // get the player whose turn it is
@@ -66,10 +66,10 @@ class Game {
         Player *getOppositePlayer();
         // try the input move, store the move on the stack so that it can be 
         // reversed
-        virtual void tryMove(GameMove *move, bool aux);
+        virtual void tryMove(GameMove& move, bool aux);
         // try the input move, store the move on the stack so that it can be 
         // reversed, default non-aux move
-        virtual void tryMove(GameMove *move);
+        virtual void tryMove(GameMove& move);
         // reverse last move on the moveStack, returns false if the moveStack is 
         // empty
         virtual bool reverseLast();
@@ -93,13 +93,13 @@ class Game {
         Player *player2;
         // the dynamic move storage, storing the legal moves for the player to 
         // move
-        std::vector <GameMove *> moves;
+        std::vector <GameMove> moves;
         // the stack of moves for trial and reverse
-        std::vector <GameMove *> moveStack;
+        std::vector <GameMove> moveStack;
         // reverse the input move
-        void reverseMove(GameMove *move);
+        void reverseMove(GameMove& move);
         // revert to the input position
-        void revertTo(std::vector <Positioning *> *pos);
+        void revertTo(std::vector <Positioning>& pos);
 };
 
 #endif

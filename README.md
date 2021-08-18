@@ -17,7 +17,7 @@ cd src/elements
 make  
 ./rungame
 
-To play chess using the GUI:  
+To play chess using the GUI (requires wxWidgets):  
 cd src/gui  
 make  
 ./run

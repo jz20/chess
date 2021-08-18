@@ -11,7 +11,6 @@ all:		$(BUILD)
 chessgamerunner:		chessgamerunner.o chesspiecebitmap.o
 
 chessgamerunner.o:		chessgamerunner.h
-chesssquarepanel.o:		chesssquarepanel.h
 chesspiecebitmap.o:		chesspiecebitmap.h
 
 clean:		
