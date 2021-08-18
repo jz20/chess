@@ -220,7 +220,6 @@ bool ChessGame::checkResult() {
         finished = true;
         return false;
     }
-    // cout << getCurrentPlayer()->getColour() << "\n";
     updateMoves();
     if (moves.empty()) {
         finished = true;
@@ -321,23 +320,27 @@ void ChessGame::enPassant() {
     if (getCurrentPlayer()->getColour() == WHITE) {
         if (leftCol >= 0
                 && !board->getSquare(EPWHITE, leftCol)->isEmpty()
-                && board->getSquare(EPWHITE, leftCol)->getPiece()->getName() == "pawn") {
+                && board->getSquare(EPWHITE, leftCol)->getPiece()->getName() == "pawn"
+                && board->getSquare(EPWHITE, leftCol)->getPiece()->getPlayer() == getCurrentPlayer()) {
             ADD_EN_PASSANT(EPWHITE, leftCol, EPWHITE + 1)
         }
         if (rightCol < board->getCols()
                 && !board->getSquare(EPWHITE, rightCol)->isEmpty()
-                && board->getSquare(EPWHITE, rightCol)->getPiece()->getName() == "pawn") {
+                && board->getSquare(EPWHITE, rightCol)->getPiece()->getName() == "pawn"
+                && board->getSquare(EPWHITE, rightCol)->getPiece()->getPlayer() == getCurrentPlayer()) {
             ADD_EN_PASSANT(EPWHITE, rightCol, EPWHITE + 1)
         }
     } else {
         if (leftCol >= 0
                 && !board->getSquare(EPBLACK, leftCol)->isEmpty()
-                && board->getSquare(EPBLACK, leftCol)->getPiece()->getName() == "pawn") {
+                && board->getSquare(EPBLACK, leftCol)->getPiece()->getName() == "pawn"
+                && board->getSquare(EPBLACK, leftCol)->getPiece()->getPlayer() == getCurrentPlayer()) {
             ADD_EN_PASSANT(EPBLACK, leftCol, EPBLACK - 1)
         }
         if (rightCol < board->getCols()
                 && !board->getSquare(EPBLACK, rightCol)->isEmpty()
-                && board->getSquare(EPBLACK, rightCol)->getPiece()->getName() == "pawn") {
+                && board->getSquare(EPBLACK, rightCol)->getPiece()->getName() == "pawn"
+                && board->getSquare(EPBLACK, rightCol)->getPiece()->getPlayer() == getCurrentPlayer()) {
             ADD_EN_PASSANT(EPBLACK, rightCol, EPBLACK - 1)
         }
     }
@@ -453,7 +456,6 @@ void ChessGame::updateFlags(GameMove& move) {
             && piece->getSquare() == board->getSquare(7, 7)) {
         newFlags.BSC = false;
     }
-    // cout << (abs(piece->getSquare()->getRow() - move.square->getRow()) == 2) << "\n";
     if (piece->getName() == "pawn"
             && abs(piece->getSquare()->getRow() - move.square->getRow()) == 2) {
         newFlags.EP_COL = piece->getSquare()->getCol();
