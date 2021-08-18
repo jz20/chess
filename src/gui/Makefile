@@ -8,7 +8,7 @@ WXPATH		= `wx-config --cxxflags std`
 
 all:		$(BUILD)
 
-chessgamerunner:		chessgamerunner.o chesssquarepanel.o chesspiecebitmap.o
+chessgamerunner:		chessgamerunner.o chesspiecebitmap.o
 
 chessgamerunner.o:		chessgamerunner.h
 chesssquarepanel.o:		chesssquarepanel.h
