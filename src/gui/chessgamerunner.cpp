@@ -82,8 +82,8 @@ ChessGameFrame::ChessGameFrame(const wxString title, Game* game, ChessGameRunner
 
 void ChessGameRunner::gameCycle() {
     game->updateMoves();
-    GameMove *move = actualMove();
-    if (move != NULL) {
+    GameMove move = actualMove();
+    if (move.instr != "unavailable") {
         game->tryMove(move);
         frame->updatePieces();
         bool result = game->checkResult();
@@ -161,17 +161,17 @@ void ChessGameFrame::updatePieces() {
 }
 
 // get the actual move
-GameMove *ChessGameRunner::actualMove() {
-    GameMove *move;
-    vector <GameMove *> moves = game->getMoves();
+GameMove ChessGameRunner::actualMove() {
+    GameMove move;
+    vector <GameMove> moves = game->getMoves();
     bool promotion = false;
     string promoteTo = "";
-    for (vector <GameMove *> :: iterator it = moves.begin(); it != moves.end(); it++) {
+    for (vector <GameMove> :: iterator it = moves.begin(); it != moves.end(); it++) {
         move = *it;
-        if (move->piece == (proposal.piece)
-                && move->square == (proposal.square)) {
+        if (move.piece == (proposal.piece)
+                && move.square == (proposal.square)) {
             if (promotion) {
-                if (move->instr == promoteTo) {
+                if (move.instr == promoteTo) {
                     return move;
                 }
                 promotion = false;
@@ -180,7 +180,8 @@ GameMove *ChessGameRunner::actualMove() {
             }
         }
     }
-    return NULL;
+    move.instr = "unavailable";
+    return move;
 }
 
 // input raw row and col values, call inputPiece or inputRow accordingly
@@ -218,8 +219,7 @@ bool ChessGameRunner::inputSquare(Square *square) {
 void ChessGameRunner::clearProposal() {
     proposal.piece = NULL;
     proposal.square = NULL;
-    delete proposal.aux;
-    proposal.aux = NULL;
+    proposal.aux.reset();
     proposal.restoration.clear();
     proposal.instr = "";
 }

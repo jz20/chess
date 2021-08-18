@@ -31,7 +31,7 @@ class ChessGameRunner: public wxApp {
         // wait for input
         void waitForInput();
         // get the actual move
-        GameMove *actualMove();
+        GameMove actualMove();
         // show frame
         void showFrame();
     private:
