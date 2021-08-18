@@ -8,7 +8,7 @@
 int main();
 
 // get input move from cli
-GameMove *inputMove(Game *game);
+GameMove inputMove(Game *game);
 
 // display the result of the game
 void displayResult(Game *game, bool result);

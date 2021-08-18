@@ -14,6 +14,7 @@ Game::Game(Board *board, Player *player1, Player *player2) {
     this->player2 = player2;
     this->moveNo = 0;
     this->finished = false;
+    this->inCheck = false;
 }
 
 // Destructor of a game
@@ -29,7 +30,7 @@ Board *Game::getBoard() {
 }
 
 // get moves
-vector <GameMove *> Game::getMoves() {
+vector <GameMove> Game::getMoves() {
     return moves;
 }
 
@@ -50,12 +51,12 @@ void Game::setNote(std::string note) {
 
 // make the input move, return false if the moveStack is not empty thus the move
 // cannot be made
-bool Game::makeMove(GameMove *move) {
+bool Game::makeMove(GameMove& move) {
     if (!moveStack.empty()) {
         return false;
     }
-    Piece *piece = move->piece;
-    Square *destination = move->square;
+    Piece *piece = move.piece;
+    Square *destination = move.square;
     Square *origin = piece->getSquare();
     if (destination->getPiece() != NULL) {
         getOppositePlayer()->removePiece(destination->getPiece());
@@ -67,22 +68,20 @@ bool Game::makeMove(GameMove *move) {
 }
 
 // try the input move, store the move on the stack so that it can be reversed
-void Game::tryMove(GameMove *move) {
+void Game::tryMove(GameMove& move) {
     tryMove(move, false);
 }
 
 // try the input move, store the move on the stack so that it can be reversed
-void Game::tryMove(GameMove *move, bool isAux) {
-    Piece *piece = move->piece;
-    Square *destination = move->square;
+void Game::tryMove(GameMove& move, bool isAux) {
+    Piece *piece = move.piece;
+    Square *destination = move.square;
     Square *origin = piece->getSquare();
     Piece *captured = destination->getPiece();
-    Positioning *pOrigin = new Positioning;
-    *pOrigin = {piece, origin};
-    Positioning *pDestination = new Positioning;
-    *pDestination = {captured, destination};
-    move->restoration.push_back(pOrigin);
-    move->restoration.push_back(pDestination);
+    Positioning pOrigin{piece, origin};
+    Positioning pDestination{captured, destination};
+    move.restoration.push_back(pOrigin);
+    move.restoration.push_back(pDestination);
     piece->setSquare(destination);
     if (captured != NULL) {
         captured->setSquare(NULL);
@@ -93,8 +92,8 @@ void Game::tryMove(GameMove *move, bool isAux) {
         moveStack.push_back(move);
         moveNo++;
     }
-    if (move->aux) {
-        tryMove(move->aux, true);
+    if (move.aux.get()) {
+        tryMove(*(move.aux.get()), true);
     }
 }
 
@@ -104,7 +103,7 @@ bool Game::reverseLast() {
     if (moveStack.empty()) {
         return false;
     }
-    GameMove *move = moveStack.back();
+    GameMove move = moveStack.back();
     reverseMove(move);
     moveStack.pop_back();
     return true;
@@ -137,21 +136,21 @@ Player *Game::getOppositePlayer() {
 }
 
 // reverse the input move
-void Game::reverseMove(GameMove *move) {
-    if (move->aux) {
-        reverseMove(move->aux);
+void Game::reverseMove(GameMove& move) {
+    if (move.aux.get()) {
+        reverseMove(*(move.aux.get()));
     }
-    revertTo(&(move->restoration));
+    revertTo(move.restoration);
 }
 
 // revert to the input position
-void Game::revertTo(vector <Positioning *> *revert) {
-    Positioning *pos;
-    for (vector <Positioning *> :: iterator it = revert->begin(); 
-            it != revert->end(); ++it) {
+void Game::revertTo(vector <Positioning>& revert) {
+    Positioning pos;
+    for (vector <Positioning> :: iterator it = revert.begin(); 
+            it != revert.end(); ++it) {
         pos = *it;
-        Square *square = pos->square;
-        Piece *piece = pos->piece;
+        Square *square = pos.square;
+        Piece *piece = pos.piece;
         if (piece != NULL) {
             if (piece->getSquare() && piece->getSquare()->getPiece() == piece) {
                 piece->getSquare()->setEmpty();
