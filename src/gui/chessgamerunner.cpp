@@ -165,9 +165,7 @@ GameMove ChessGameRunner::actualMove() {
     vector <GameMove> moves = game->getMoves();
     bool promotion = false;
     string promoteTo = "";
-    for (vector <GameMove> :: iterator it = moves.begin(); it != moves.end(); it++) {
-        move = *it;
-        /*
+    /*
         if ((game->getCurrentPlayer()->getColour() == WHITE 
                 && move.piece->getName() == "pawn"
                 && move.square->getRow() == BLACK_KING_ROW)
@@ -179,6 +177,9 @@ GameMove ChessGameRunner::actualMove() {
             cin >> promoteTo;
         }
         */
+    for (vector <GameMove> :: iterator it = moves.begin(); it != moves.end(); it++) {
+        move = *it;
+        
         if (move.piece == (proposal.piece)
                 && move.square == (proposal.square)) {
             if (promotion) {
