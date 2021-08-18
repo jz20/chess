@@ -30,13 +30,12 @@ class ChessGameRunner: public wxApp {
         void gameCycle();
         // get the actual move
         GameMove actualMove();
-        // show frame
-        void showFrame();
+        // finish game: call destructor of game
+        void finishGame();
     private:
         Game *game;
         // the move propose by the user
         GameMove proposal;
-        // virtual int OnExit();
         // the main frame of the application
         ChessGameFrame *frame;
 };
@@ -59,6 +58,8 @@ class ChessGameFrame: public wxFrame {
         wxPanel *pBoard;
         // the game
         Game *game;
+        // called when the window closes
+        void onClose(wxCommandEvent& event);
 };
 
 

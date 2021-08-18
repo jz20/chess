@@ -36,6 +36,7 @@ wxIMPLEMENT_APP(ChessGameRunner);
 
 //wxFrame(NULL, wxID_ANY, title, pos, size)
 ChessGameFrame::ChessGameFrame(const wxString title, Game* game, ChessGameRunner *runner) {
+    Connect(wxEVT_CLOSE_WINDOW, wxCommandEventHandler(ChessGameFrame::onClose), NULL, this);
     this->runner = runner;
     this->game = game;
     squareSize = 64;
@@ -97,9 +98,14 @@ void ChessGameRunner::gameCycle() {
                             msg, wxT("Good Game"), 
                             wxOK | wxICON_INFORMATION);
                     dial->ShowModal();
+            delete game;
         }
     }
     clearProposal();
+}
+
+void ChessGameRunner::finishGame() {
+    delete game;
 }
 
 void ChessGameFrame::updatePieces() {
@@ -213,4 +219,17 @@ void ChessGameRunner::clearProposal() {
     proposal.aux.reset();
     proposal.restoration.clear();
     proposal.instr = "";
+}
+
+// called when the window closes
+void ChessGameFrame::onClose(wxCommandEvent& event) {
+    for (vector <wxPanel *> :: iterator it = pSquares.begin(); it != pSquares.end(); it++) {
+        if (pieceMap.count(*it) > 0 && pieceMap[*it]) {
+            delete pieceMap[*it];
+        }
+        delete *it;
+    }
+    pSquares.clear();
+    runner->finishGame();
+    Destroy();
 }
