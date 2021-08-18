@@ -40,10 +40,10 @@ using namespace std;
 
 #define ADD_PROMOTION(name, instruction) \
         GameMove name; \
-        name.piece = current->piece; \
-        name.square = current->square; \
+        name.piece = current.piece; \
+        name.square = current.square; \
         name.instr = instruction; \
-        moves.push_back(name);
+        temp.push_back(name);
 
 #define ADD_EN_PASSANT(oRow, oCol, dRow) \
         GameMove move; \
@@ -350,29 +350,33 @@ void ChessGame::enPassant() {
 
 // update the promotion moves
 void ChessGame::promotion() {
-    GameMove *current = NULL;
+    vector <GameMove> temp;
     for (vector <GameMove> :: iterator it = moves.begin(); it != moves.end(); ++it) {
-        current = &*it;
+        GameMove& current = *it;
         if (getCurrentPlayer()->getColour() == WHITE) {
-            if ((current->piece->getName() == "pawn")
-                    && (current->square->getRow() == BLACK_KING_ROW)
-                    && current->instr == "") {
-                current->instr = "queen";
+            if ((current.piece->getName() == "pawn")
+                    && (current.square->getRow() == BLACK_KING_ROW)
+                    && current.instr == "") {
+                current.instr = "queen";
                 ADD_PROMOTION(rook, "rook")
                 ADD_PROMOTION(bishop, "bishop")
                 ADD_PROMOTION(knight, "knight")
             }
         } else {
-            if ((current->piece->getName() == "pawn") 
-                    && (current->square->getRow() == WHITE_KING_ROW)
-                    && current->instr == "") {
-                current->instr = "queen";
+            if ((current.piece->getName() == "pawn") 
+                    && (current.square->getRow() == WHITE_KING_ROW)
+                    && current.instr == "") {
+                current.instr = "queen";
                 ADD_PROMOTION(rook, "rook")
                 ADD_PROMOTION(bishop, "bishop")
                 ADD_PROMOTION(knight, "knight")
             }
         }
     }
+    for (vector <GameMove> :: iterator it = temp.begin(); it != temp.end(); ++it) {
+        moves.push_back(*it);
+    }
+    temp.clear();
 }
 
 // remove the illegal moves from the possible moves
