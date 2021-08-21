@@ -1,18 +1,21 @@
 #include "game.h"
 
-#include <vector>
 #include <cstddef>
+#include <vector>
+#include <string>
+#include <memory>
 #include <set>
 #include "piece.h"
 #include "square.h"
+#include "player.h"
 
 using namespace std;
 
 // Constructor with the board and the players
-Game::Game(Board *board, Player *player1, Player *player2) {
+Game::Game(Board *board) {
     this->board = board;
-    this->player1 = player1;
-    this->player2 = player2;
+    this->white = new Player(WHITE);
+    this->black = new Player(BLACK);
     this->moveNo = 0;
     this->finished = false;
     this->inCheck = false;
@@ -21,8 +24,8 @@ Game::Game(Board *board, Player *player1, Player *player2) {
 // Destructor of a game
 Game::~Game() {
     delete board;
-    delete player1;
-    delete player2;
+    delete white;
+    delete black;
 }
 
 // get board
@@ -123,17 +126,17 @@ bool Game::isFinished() {
 // get the player whose turn it is
 Player *Game::getCurrentPlayer() {
     if (moveNo % 2 == 0) {
-        return player1;
+        return white;
     }
-    return player2;
+    return black;
 }
 
 // get the player whose turn it is not
 Player *Game::getOppositePlayer() {
     if (moveNo % 2 == 0) {
-        return player2;
+        return black;
     }
-    return player1;
+    return white;
 }
 
 // reverse the input move
@@ -212,7 +215,7 @@ set <Square *> Game::squaresControlled(Player* player) {
 bool Game::checkTest(Player *player) {
     bool inCheck = false;
     vector <Piece *> kings = player->getColour() == WHITE ? whiteKings : blackKings;
-    Player *opposite = player == player1 ? player2 : player1;
+    Player *opposite = player == white ? black : white;
     Piece *king = NULL;
     for (vector <Piece *> :: iterator it = kings.begin(); it != kings.end(); it++) {
         king = *it;
@@ -239,7 +242,29 @@ void Game::removeIllegalMoves() {
 // reverse trackers to the previous state
 void Game::reverseTrackers() {
     if (!trackers.empty()) {
-        trackers = trackersStack.back();
         trackersStack.pop_back();
+        trackers = trackersStack.back();
     }
+}
+
+// promote a piece to a different piece
+void Game::promote(Piece *piece, Piece *promotion) {
+    Square *square = piece->getSquare();
+    piece->setSquare(NULL);
+    promotion->setSquare(square);
+    square->setPiece(promotion);
+    promotion->getPlayer()->addPiece(promotion);
+}
+
+// get how many times the last boardstate has been repeated
+int Game::getRepetition() {
+    string snapshot = board->snapshot();
+    int count = 0;
+    for (vector <string> :: iterator it = boardStateStack.begin(); 
+            it != boardStateStack.end(); it++) {
+        if (*it == snapshot) {
+            count++;
+        }
+    }
+    return count;
 }

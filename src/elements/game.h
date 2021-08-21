@@ -35,7 +35,7 @@ typedef struct GameMove {
 class Game {
     public:
         // Constructor with the board and the players 
-        Game(Board *board, Player *player1, Player *player2);
+        Game(Board *board);
         // Destructor of a game
         virtual ~Game();
         // update the moves that a player can make
@@ -84,9 +84,9 @@ class Game {
         // the board to play with
         Board *board;
         // the player who moves first
-        Player *player1;
+        Player *white;
         // the player who moves second
-        Player *player2;
+        Player *black;
         // record the board state in the game
         std::vector <std::string> boardStateStack;
         // the dynamic move storage, storing the legal moves for the player to 
@@ -126,6 +126,10 @@ class Game {
         virtual void updateTrackers(GameMove& move) {}
         // reverse trackers to the previous state
         virtual void reverseTrackers();
+        // promote a piece to a different piece
+        void promote(Piece *piece, Piece *promotion);
+        // get how many times the last boardstate has been repeated
+        int getRepetition();
 };
 
 #endif
