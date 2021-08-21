@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <cstddef>
+#include <set>
 #include "piece.h"
 #include "square.h"
 
@@ -161,5 +162,84 @@ void Game::revertTo(vector <Positioning>& revert) {
             square->getPiece()->setSquare(NULL);
         }
         square->setPiece(piece);
+    }
+}
+
+// store the board state into the stack
+void Game::storeBoardState() {
+    string snapshot = board->snapshot();
+    boardStateStack.push_back(snapshot);
+}
+
+// update the basic moves (the moves that are determined by the usual move 
+// rules for each piece)
+void Game::basicMoves() {
+    vector <Piece *> pieces = getCurrentPlayer()->getPieces();
+    Piece *current = NULL;
+    for (vector <Piece *> :: iterator it1 = pieces.begin(); it1 != pieces.end(); ++it1) {
+        current = *it1;
+        if (current->getSquare() != NULL) {
+            current->updateTargets();
+            vector <Square *> targets = current->getTargets();
+            for (vector <Square *> :: iterator it2 = targets.begin(); it2 != targets.end(); ++it2) {
+                GameMove move;
+                move.piece = current;
+                move.square = *it2;
+                moves.push_back(move);
+            }
+        }
+    }
+}
+
+// get the squares that are controlled by a player
+set <Square *> Game::squaresControlled(Player* player) {
+    vector <Piece *> pieces = player->getPieces();
+    set <Square *> squareSet;
+    Piece *current = NULL;
+    for (vector <Piece *> :: iterator it = pieces.begin(); it != pieces.end(); ++it) {
+        current = *it;
+        if (current->getSquare() != NULL) {
+            current->updateTargets();
+            vector <Square *> currentTargets = current->getTargets();
+            copy(currentTargets.begin(), currentTargets.end(),
+                    inserter(squareSet, squareSet.end()));
+        }
+    }
+    return squareSet;
+}
+
+// test if a player is in check
+bool Game::checkTest(Player *player) {
+    bool inCheck = false;
+    vector <Piece *> kings = player->getColour() == WHITE ? whiteKings : blackKings;
+    Player *opposite = player == player1 ? player2 : player1;
+    Piece *king = NULL;
+    for (vector <Piece *> :: iterator it = kings.begin(); it != kings.end(); it++) {
+        king = *it;
+        inCheck = squaresControlled(opposite).count(king->getSquare()) || inCheck;
+    }
+    return inCheck;
+}
+
+// remove the illegal moves from the possible moves
+void Game::removeIllegalMoves() {
+    GameMove *current = NULL;
+    Player *player = getCurrentPlayer();
+    for (vector <GameMove> :: iterator it = moves.begin(); it != moves.end(); it++) {
+        current = &*it;
+        tryMove(*current, false); 
+        if (checkTest(player)) {
+            moves.erase(it);
+            it--;
+        }
+        reverseLast();
+    }
+}
+
+// reverse trackers to the previous state
+void Game::reverseTrackers() {
+    if (!trackers.empty()) {
+        trackers = trackersStack.back();
+        trackersStack.pop_back();
     }
 }

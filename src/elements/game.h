@@ -5,12 +5,16 @@ struct Positioning;
 typedef struct Positioning Positioning;
 struct GameMove;
 typedef struct GameMove GameMove;
+struct Flags;
+typedef struct Flags Flags;
+
 class Game;
 
 #include <cstddef>
 #include <vector>
 #include <string>
 #include <memory>
+#include <set>
 #include "piece.h"
 #include "square.h"
 
@@ -26,9 +30,6 @@ typedef struct GameMove {
     std::shared_ptr <GameMove> aux;
     std::string instr;
     std::vector <Positioning> restoration; // used for trial and reverse
-    ~GameMove() {
-        restoration.clear();
-    }
 } GameMove;
 
 class Game {
@@ -70,11 +71,6 @@ class Game {
         // try the input move, store the move on the stack so that it can be 
         // reversed, default non-aux move
         virtual void tryMove(GameMove& move);
-        // reverse last move on the moveStack, returns false if the moveStack is 
-        // empty
-        virtual bool reverseLast();
-        // get the size of the moveStack
-        int getMoveStackSize();
     protected:
         // whether the game is finished;
         bool finished;
@@ -91,15 +87,45 @@ class Game {
         Player *player1;
         // the player who moves second
         Player *player2;
+        // record the board state in the game
+        std::vector <std::string> boardStateStack;
         // the dynamic move storage, storing the legal moves for the player to 
         // move
         std::vector <GameMove> moves;
         // the stack of moves for trial and reverse
         std::vector <GameMove> moveStack;
+        // the vector containing the white king(s)
+        std::vector <Piece *> whiteKings;
+        // the vector containing the black king(s)
+        std::vector <Piece *> blackKings;
+        // the trackers that a game uses
+        std::vector <int> trackers;
+        // the trackers that a game uses
+        std::vector <std::vector <int>> trackersStack;
         // reverse the input move
         void reverseMove(GameMove& move);
         // revert to the input position
         void revertTo(std::vector <Positioning>& pos);
+        // store the board state into the stack, check for 3-fold repetition
+        virtual void storeBoardState();
+        // update the basic moves (the moves that are determined by the usual move 
+        // rules for each piece)
+        void basicMoves();
+        // get the squares that are controlled by a player
+        std::set <Square *> squaresControlled(Player* player);
+        // test if a player is in check
+        bool checkTest(Player *player);
+        // remove the illegal moves from the possible moves
+        void removeIllegalMoves();
+        // get the size of the moveStack
+        int getMoveStackSize();
+        // reverse last move on the moveStack, returns false if the moveStack is 
+        // empty
+        virtual bool reverseLast();
+        // update trackers
+        virtual void updateTrackers(GameMove& move) {}
+        // reverse trackers to the previous state
+        virtual void reverseTrackers();
 };
 
 #endif
