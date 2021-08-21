@@ -171,7 +171,6 @@ GameMove ChessGameRunner::actualMove() {
                 && proposal.piece->getName() == "pawn"
                 && proposal.square->getRow() == WHITE_KING_ROW)) {
             promotion = true;
-            cout << "promotion\n";
             wxArrayString choices;
             choices.Add(wxT("queen"));
             choices.Add(wxT("rook"));

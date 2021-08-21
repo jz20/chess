@@ -21,9 +21,8 @@
 using namespace std;
 
 #define PROMOTE_TO(Type) \
-        promoted = new Type(move.square, current); \
-        move.square->setPiece(promoted); \
-        current->addPiece(promoted);
+        Piece *promotion = new Queen(move.square, move.piece->getPlayer()); \
+        promote(move.piece, promotion);
 
 #define EMPTY_AND_FREE(y, x) \
         (opCtrl.count(board->getSquare(y, x)) == 0) && board->getSquare(y, x)->isEmpty()
@@ -48,7 +47,7 @@ using namespace std;
 #define ADD_EN_PASSANT(oRow, oCol, dRow) \
         GameMove move; \
         move.piece = board->getSquare(oRow, oCol)->getPiece(); \
-        move.square = board->getSquare(dRow, flags.EP_COL); \
+        move.square = board->getSquare(dRow, trackers[EP_COL]); \
         move.instr = "ep"; \
         moves.push_back(move);
 
@@ -67,52 +66,21 @@ using namespace std;
 #define BOARD_SIZE 8
 
 // Constructor with the board and the players
-ChessGame::ChessGame(): Game(new Board(8, 8), new Player(WHITE), new Player(BLACK)) {
+ChessGame::ChessGame(): Game(new Board(8, 8)) {
 }
 
 // Destructor of ChessGame
 ChessGame::~ChessGame() {
 }
 
-// make the input move, including the possible promotion of a pawn and en 
-// passant pawn capture, return false if the moveStack is not empty thus the move
-// cannot be made
-/*
-bool ChessGame::makeMove(Move *move) {
-    if (!moveStack.empty()) {
-        return false;
-    }
-    Game::makeMove(move);
-    Piece *promoted = NULL;
-    if (move.instr == "ep") {
-        int rmRow = (getCurrentPlayer()->getColour() == WHITE) ? EPWHITE : EPBLACK;
-        int rmCol = move.square->getCol();
-        getOppositePlayer()->removePiece(board->getSquare(rmRow, rmCol)->getPiece());
-    } else if (move.instr == "queen") {
-        PROMOTE_TO(Queen);
-    } else if (move.instr == "rook") {
-        PROMOTE_TO(Rook);
-    } else if (move.instr == "bishop") {
-        PROMOTE_TO(Bishop);
-    } else if (move.instr == "knight") {
-        PROMOTE_TO(Knight);
-    }
-    if (move.aux) {
-        Game::makeMove(move.aux);
-    }
-    return true;
-}
-*/
-
 // try the input move, store the move on the stack so that it can be 
 // reversed
 void ChessGame::tryMove(GameMove& move, bool isAux) {
     if (!isAux) {
-        updateFlags(move);
+        updateTrackers(move);
     }
     Player *current = getCurrentPlayer();
     Game::tryMove(move, isAux);
-    Piece *promoted = NULL;
     if (move.instr == "ep") {
         int rmRow = (current->getColour() == WHITE) ? EPWHITE : EPBLACK;
         int rmCol = move.square->getCol();
@@ -134,7 +102,8 @@ void ChessGame::tryMove(GameMove& move, bool isAux) {
     }
     if (!isAux) {
         storeBoardState();
-        Player *opposite = current == player1 ? player2 : player1;
+        checkRepetition();
+        Player *opposite = current == white ? black : white;
         inCheck = checkTest(opposite);
     }
 }
@@ -149,7 +118,7 @@ bool ChessGame::reverseLast() {
     if (!Game::reverseLast()) {
         return false;
     }
-    reverseFlags();
+    reverseTrackers();
     boardStateStack.pop_back();
     return true;
 }
@@ -167,50 +136,53 @@ void ChessGame::updateMoves() {
 
 // set up the pieces for the board and the players
 void ChessGame::setUp() {
-    flags.WSC = true;
-    flags.WLC = true;
-    flags.BSC = true;
-    flags.BLC = true;
-    flags.EP_COL = -1;
-    flags.FIFTY = 0;
-    flags.REP = 0;
-    flagsStack.push_back(flags);
+    trackers = vector <int>(num_TRACKERS);
+    trackers[WSC] = true;
+    trackers[WLC] = true;
+    trackers[BSC] = true;
+    trackers[BLC] = true;
+    trackers[EP_COL] = -1;
+    trackers[FIFTY] = 0;
+    trackers[REP] = 0;
+    trackersStack.push_back(trackers);
 
     // pieces
-    SET_PIECE(wr1, 0, 0, player1, Rook);
-    SET_PIECE(wn1, 0, 1, player1, Knight);
-    SET_PIECE(wb1, 0, 2, player1, Bishop);
-    SET_PIECE(wq, 0, 3, player1, Queen);
-    SET_PIECE(wk, 0, 4, player1, King);
-    SET_PIECE(wb2, 0, 5, player1, Bishop);
-    SET_PIECE(wn2, 0, 6, player1, Knight);
-    SET_PIECE(wr2, 0, 7, player1, Rook);
-    SET_PIECE(wp1, 1, 0, player1, Pawn);
-    SET_PIECE(wp2, 1, 1, player1, Pawn);
-    SET_PIECE(wp3, 1, 2, player1, Pawn);
-    SET_PIECE(wp4, 1, 3, player1, Pawn);
-    SET_PIECE(wp5, 1, 4, player1, Pawn);
-    SET_PIECE(wp6, 1, 5, player1, Pawn);
-    SET_PIECE(wp7, 1, 6, player1, Pawn);
-    SET_PIECE(wp8, 1, 7, player1, Pawn);
+    SET_PIECE(wr1, 0, 0, white, Rook);
+    SET_PIECE(wn1, 0, 1, white, Knight);
+    SET_PIECE(wb1, 0, 2, white, Bishop);
+    SET_PIECE(wq, 0, 3, white, Queen);
+    SET_PIECE(wk, 0, 4, white, King);
+    SET_PIECE(wb2, 0, 5, white, Bishop);
+    SET_PIECE(wn2, 0, 6, white, Knight);
+    SET_PIECE(wr2, 0, 7, white, Rook);
+    SET_PIECE(wp1, 1, 0, white, Pawn);
+    SET_PIECE(wp2, 1, 1, white, Pawn);
+    SET_PIECE(wp3, 1, 2, white, Pawn);
+    SET_PIECE(wp4, 1, 3, white, Pawn);
+    SET_PIECE(wp5, 1, 4, white, Pawn);
+    SET_PIECE(wp6, 1, 5, white, Pawn);
+    SET_PIECE(wp7, 1, 6, white, Pawn);
+    SET_PIECE(wp8, 1, 7, white, Pawn);
     whiteKing = wk;
-    SET_PIECE(br1, 7, 0, player2, Rook);
-    SET_PIECE(bn1, 7, 1, player2, Knight);
-    SET_PIECE(bb1, 7, 2, player2, Bishop);
-    SET_PIECE(bq, 7, 3, player2, Queen);
-    SET_PIECE(bk, 7, 4, player2, King);
-    SET_PIECE(bb2, 7, 5, player2, Bishop);
-    SET_PIECE(bn2, 7, 6, player2, Knight);
-    SET_PIECE(br2, 7, 7, player2, Rook);
-    SET_PIECE(bp1, 6, 0, player2, Pawn);
-    SET_PIECE(bp2, 6, 1, player2, Pawn);
-    SET_PIECE(bp3, 6, 2, player2, Pawn);
-    SET_PIECE(bp4, 6, 3, player2, Pawn);
-    SET_PIECE(bp5, 6, 4, player2, Pawn);
-    SET_PIECE(bp6, 6, 5, player2, Pawn);
-    SET_PIECE(bp7, 6, 6, player2, Pawn);
-    SET_PIECE(bp8, 6, 7, player2, Pawn);
+    whiteKings.push_back(wk);
+    SET_PIECE(br1, 7, 0, black, Rook);
+    SET_PIECE(bn1, 7, 1, black, Knight);
+    SET_PIECE(bb1, 7, 2, black, Bishop);
+    SET_PIECE(bq, 7, 3, black, Queen);
+    SET_PIECE(bk, 7, 4, black, King);
+    SET_PIECE(bb2, 7, 5, black, Bishop);
+    SET_PIECE(bn2, 7, 6, black, Knight);
+    SET_PIECE(br2, 7, 7, black, Rook);
+    SET_PIECE(bp1, 6, 0, black, Pawn);
+    SET_PIECE(bp2, 6, 1, black, Pawn);
+    SET_PIECE(bp3, 6, 2, black, Pawn);
+    SET_PIECE(bp4, 6, 3, black, Pawn);
+    SET_PIECE(bp5, 6, 4, black, Pawn);
+    SET_PIECE(bp6, 6, 5, black, Pawn);
+    SET_PIECE(bp7, 6, 6, black, Pawn);
+    SET_PIECE(bp8, 6, 7, black, Pawn);
     blackKing = bk;
+    blackKings.push_back(bk);
     storeBoardState();
 }
 
@@ -218,7 +190,7 @@ void ChessGame::setUp() {
 // true if a player wins and false if there is a draw, the result is 
 // meaningless unless finished is true
 bool ChessGame::checkResult() {
-    if (flags.REP >= 3 || flags.FIFTY / 2 >= 50 || insufficientMaterial()) {
+    if (trackers[REP] >= 3 || trackers[FIFTY] / 2 >= 50 || insufficientMaterial()) {
         finished = true;
         return false;
     }
@@ -231,26 +203,6 @@ bool ChessGame::checkResult() {
         return false;
     }
     return true;
-}
-
-// update the basic moves (the moves that are determined by the usual move 
-// rules for each piece)
-void ChessGame::basicMoves() {
-    vector <Piece *> pieces = getCurrentPlayer()->getPieces();
-    Piece *current = NULL;
-    for (vector <Piece *> :: iterator it1 = pieces.begin(); it1 != pieces.end(); ++it1) {
-        current = *it1;
-        if (current->getSquare() != NULL) {
-            current->updateTargets();
-            vector <Square *> targets = current->getTargets();
-            for (vector <Square *> :: iterator it2 = targets.begin(); it2 != targets.end(); ++it2) {
-                GameMove move;
-                move.piece = current;
-                move.square = *it2;
-                moves.push_back(move);
-            }
-        }
-    }
 }
 
 // update pawns' two-square moves
@@ -289,22 +241,22 @@ void ChessGame::castling() {
     if (!inCheck) {
         set <Square *> opCtrl = squaresControlled(getOppositePlayer());
         if (getCurrentPlayer()->getColour() == WHITE) {
-            if (flags.WLC && EMPTY_AND_FREE(WHITE_KING_ROW, 1) 
+            if (trackers[WLC] && EMPTY_AND_FREE(WHITE_KING_ROW, 1) 
                     && EMPTY_AND_FREE(WHITE_KING_ROW, 2)
                     && EMPTY_AND_FREE(WHITE_KING_ROW, 3)) {
                 ADD_CASTLE(whiteKing, 2, 0, 3, WHITE_KING_ROW);
             }
-            if (flags.WSC && EMPTY_AND_FREE(WHITE_KING_ROW, 5) 
+            if (trackers[WSC] && EMPTY_AND_FREE(WHITE_KING_ROW, 5) 
                     && EMPTY_AND_FREE(WHITE_KING_ROW, 6)) {
                 ADD_CASTLE(whiteKing, 6, 7, 5, WHITE_KING_ROW);
             }
         } else {
-            if (flags.BLC && EMPTY_AND_FREE(BLACK_KING_ROW, 1) 
+            if (trackers[BLC] && EMPTY_AND_FREE(BLACK_KING_ROW, 1) 
                     && EMPTY_AND_FREE(BLACK_KING_ROW, 2)
                     && EMPTY_AND_FREE(BLACK_KING_ROW, 3)) {
                 ADD_CASTLE(blackKing, 2, 0, 3, BLACK_KING_ROW);
             }
-            if (flags.BSC && EMPTY_AND_FREE(BLACK_KING_ROW, 5) 
+            if (trackers[BSC] && EMPTY_AND_FREE(BLACK_KING_ROW, 5) 
                     && EMPTY_AND_FREE(BLACK_KING_ROW, 6)) {
                 ADD_CASTLE(blackKing, 6, 7, 5, BLACK_KING_ROW);
             }
@@ -314,11 +266,11 @@ void ChessGame::castling() {
 
 // update the en passant captures
 void ChessGame::enPassant() {
-    if (flags.EP_COL == -1) {
+    if (trackers[EP_COL] == -1) {
         return;
     }
-    int leftCol = flags.EP_COL - 1;
-    int rightCol = flags.EP_COL + 1;
+    int leftCol = trackers[EP_COL] - 1;
+    int rightCol = trackers[EP_COL] + 1;
     if (getCurrentPlayer()->getColour() == WHITE) {
         if (leftCol >= 0
                 && !board->getSquare(EPWHITE, leftCol)->isEmpty()
@@ -379,116 +331,61 @@ void ChessGame::promotion() {
     temp.clear();
 }
 
-// remove the illegal moves from the possible moves
-void ChessGame::removeIllegalMoves() {
-    GameMove *current = NULL;
-    Player *player = getCurrentPlayer();
-    int count = 0;
-    for (vector <GameMove> :: iterator it = moves.begin(); it != moves.end(); it++) {
-        current = &*it;
-        count++;
-        tryMove(*current, false); 
-        if (checkTest(player)) {
-            moves.erase(it);
-            it--;
-        }
-        reverseLast();
-    }
-}
-
-// get the squares that are controlled by a player
-set <Square *> ChessGame::squaresControlled(Player* player) {
-    vector <Piece *> pieces = player->getPieces();
-    set <Square *> squareSet;
-    Piece *current = NULL;
-    for (vector <Piece *> :: iterator it = pieces.begin(); it != pieces.end(); ++it) {
-        current = *it;
-        if (current->getSquare() != NULL) {
-            current->updateTargets();
-            vector <Square *> currentTargets = current->getTargets();
-            copy(currentTargets.begin(), currentTargets.end(),
-                    inserter(squareSet, squareSet.end()));
-        }
-    }
-    return squareSet;
-}
-
-bool ChessGame::checkTest(Player *player) {
-    Piece *king = player->getColour() == WHITE ? whiteKing : blackKing;
-    Player *opposite = player == player1 ? player2 : player1;
-    return squaresControlled(opposite).count(king->getSquare());
-}
-
-// update the flags
-void ChessGame::updateFlags(GameMove& move) {
-    Flags newFlags;
-    newFlags.WLC = flags.WLC;
-    newFlags.WSC = flags.WSC;
-    newFlags.BLC = flags.BLC;
-    newFlags.BSC = flags.BSC;
-    newFlags.EP_COL = flags.EP_COL;
-    newFlags.REP = flags.REP;
-    newFlags.FIFTY = flags.FIFTY;
+// update trackers
+void ChessGame::updateTrackers(GameMove& move) {
     Piece *piece = move.piece;
     if (piece == whiteKing) {
-        newFlags.WLC = false;
-        newFlags.WSC = false;
+        trackers[WLC] = false;
+        trackers[WSC] = false;
     }
-    if (newFlags.WLC
+    if (trackers[WLC]
             && piece->getName() == "rook" 
-            && piece->getPlayer() == player1
+            && piece->getPlayer() == white
             && piece->getSquare() == board->getSquare(0, 0)) {
-        newFlags.WLC = false;
+        trackers[WLC] = false;
     }
-    if (newFlags.WSC 
+    if (trackers[WSC] 
             && piece->getName() == "rook" 
-            && piece->getPlayer() == player1
+            && piece->getPlayer() == white
             && piece->getSquare() == board->getSquare(0, 7)) {
-        newFlags.WSC = false;
+        trackers[WSC] = false;
     }
     if (piece == blackKing) {
-        newFlags.BLC = false;
-        newFlags.BSC = false;
+        trackers[BLC] = false;
+        trackers[BSC] = false;
     }
-    if (newFlags.BLC 
+    if (trackers[BLC] 
             && piece->getName() == "rook" 
-            && piece->getPlayer() == player2
+            && piece->getPlayer() == black
             && piece->getSquare() == board->getSquare(7, 0)) {
-        newFlags.BLC = false;
+        trackers[BLC] = false;
     }
-    if (newFlags.BSC 
+    if (trackers[BSC] 
             && piece->getName() == "rook" 
-            && piece->getPlayer() == player2
+            && piece->getPlayer() == black
             && piece->getSquare() == board->getSquare(7, 7)) {
-        newFlags.BSC = false;
+        trackers[BSC] = false;
     }
     if (piece->getName() == "pawn"
             && abs(piece->getSquare()->getRow() - move.square->getRow()) == 2) {
-        newFlags.EP_COL = piece->getSquare()->getCol();
+        trackers[EP_COL] = piece->getSquare()->getCol();
     } else {
-        newFlags.EP_COL = -1;
+        trackers[EP_COL] = -1;
     }
     if (piece->getName() != "pawn"
             && move.square->getPiece() == NULL) {
-        newFlags.FIFTY++;
+        trackers[FIFTY]++;
     } else {
-        newFlags.FIFTY = 0;
+        trackers[FIFTY] = 0;
     }
-    flags = newFlags;
-    flagsStack.push_back(newFlags);
-}
-
-// reverse flags to the previous state
-void ChessGame::reverseFlags() {
-    flagsStack.pop_back();
-    flags = flagsStack.back();
+    trackersStack.push_back(trackers);
 }
 
 // get the pieces that have not been captured, excluding the kings
 vector <Piece *> ChessGame::getActivePieces() {
     vector <Piece *> active;
-    vector <Piece *> p1 = player1->getPieces();
-    vector <Piece *> p2 = player2->getPieces();
+    vector <Piece *> p1 = white->getPieces();
+    vector <Piece *> p2 = black->getPieces();
     Piece *current = NULL;
     for (vector <Piece *> :: iterator it = p1.begin(); it != p1.end(); it++) {
         current = *it;
@@ -548,19 +445,10 @@ bool ChessGame::insufficientMaterial() {
     return false;
 }
 
-// store the board state into the stack
-void ChessGame::storeBoardState() {
-    string snapshot = board->snapshot();
-    boardStateStack.push_back(snapshot);
-    int count = 0;
-    for (vector <string> :: iterator it = boardStateStack.begin(); 
-            it != boardStateStack.end(); it++) {
-        if (*it == snapshot) {
-            count++;
-        }
-    }
-    if (count > flags.REP) {
-        flags.REP = count;
+// check the threefold repetition rule
+void ChessGame::checkRepetition() {
+    int count = getRepetition();
+    if (count > trackers[REP]) {
+        trackers[REP] = count;
     }
 }
-
