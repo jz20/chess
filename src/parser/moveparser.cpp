@@ -20,12 +20,6 @@ using namespace std;
         name = findAndReplace(name, "#COLOF", "piece->getSquare()->getCol()"); \
     }
 
-#define POP_FRONT(name) \
-    if (!name.empty()) { \
-        name.erase(name.begin()); \
-    }
-    
-
 #define PROCESS_MOVE \
     W("bool cond = true;"); \
     string cond; \

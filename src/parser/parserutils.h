@@ -29,6 +29,11 @@
 // requires vector <string> content to be defined
 #define WN content.push_back("");
 
+#define POP_FRONT(name) \
+    if (!name.empty()) { \
+        name.erase(name.begin()); \
+    }
+
 // read the content of a file and put it into a vector of strings
 // removes all spaces
 std::vector <std::string> readFile(const std::string& name);

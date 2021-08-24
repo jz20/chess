@@ -146,10 +146,9 @@
         #COND(REP >= 3)
         #COND(FIFTY / 2 >= 50)
     }
-    #UPDATE {
         #PREMOVE {
-            #COND(#ROWOF == 0)
-            #COND(#COLOF == 4)
+            #COND(#ROWOFORIGIN == 0)
+            #COND(#COLOFORIGIN == 4)
             WSC = 0
             WLC = 0
         }
@@ -163,5 +162,4 @@
             #COND(#REPETITION > REP)
             REP = #REPETITION
         }
-    }
 }
