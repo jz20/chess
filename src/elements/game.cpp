@@ -80,18 +80,30 @@ void Game::tryMove(GameMove& move) {
 void Game::tryMove(GameMove& move, bool isAux) {
     Piece *piece = move.piece;
     Square *destination = move.square;
-    Square *origin = piece->getSquare();
-    Piece *captured = destination->getPiece();
-    Positioning pOrigin{piece, origin};
-    Positioning pDestination{captured, destination};
-    move.restoration.push_back(pOrigin);
-    move.restoration.push_back(pDestination);
-    piece->setSquare(destination);
-    if (captured != NULL) {
-        captured->setSquare(NULL);
+    if (piece != NULL) {
+        Square *origin = piece->getSquare();
+        Piece *captured = destination->getPiece();
+        Positioning pOrigin{piece, origin};
+        Positioning pDestination{captured, destination};
+        move.restoration.push_back(pOrigin);
+        move.restoration.push_back(pDestination);
+        piece->setSquare(destination);
+        if (captured != NULL) {
+            captured->setSquare(NULL);
+        }
+        destination->setPiece(piece);
+        origin->setEmpty();
+    } else {
+        // for aux moves only
+        if (destination->getPiece() != NULL) {
+            Piece *captured = destination->getPiece();
+            Positioning pDestination{captured, destination};
+            move.restoration.push_back(pDestination);
+            captured->setSquare(NULL);
+            destination->setEmpty();
+        }
+        destination->setEmpty();
     }
-    destination->setPiece(piece);
-    origin->setEmpty();
     if (!isAux) {
         moveStack.push_back(move);
         moveNo++;
