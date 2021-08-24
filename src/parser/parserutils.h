@@ -52,4 +52,7 @@ int blockSize(std::vector <std::string>& content, size_t start);
 // find the target find in str and replace it with replace
 std::string findAndReplace(const std::string& str, const std::string& find, const std::string& replace);
 
+// replace some keywords with their meaning in a condition
+std::string replaceKeywords(const std::string& cond);
+
 #endif

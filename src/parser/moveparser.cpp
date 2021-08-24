@@ -251,46 +251,16 @@ string MoveParser::processCond(const string& cond) {
 
     result = findAndReplace(result, "#COND", "");
 
-    if (result.find("#EMPTY") != string::npos) {
-        result = findAndReplace(result, "#EMPTY", "game->getBoard()->getSquare");
-        result += ".isEmpty()";
-    } else if (result.find("#NONEMPTY") != string::npos) {
-        result = findAndReplace(result, "#NONEMPTY", "game->getBoard()->getSquare");
-        result += ".isEmpty()";
-        result = "!" + result;
-    } else if (result.find("#FRIENDLY") != string::npos) {
-        result = findAndReplace(result, "#FRIENDLY", "game->getBoard()->getSquare");
-        string additional = result;
-        result += ".isEmpty()";
-        result = "!" + result;
-        additional += ".getPiece().getPlayer() == getCurrentPlayer()";
-        result += " && ";
-        result += additional;
-    } else if (result.find("#UNFRIENDLY") != string::npos) {
-        result = findAndReplace(result, "#UNFRIENDLY", "game->getBoard()->getSquare");
-        string additional = result;
-        result += ".isEmpty()";
-        result = "!" + result;
-        additional += ".getPiece().getPlayer() != getCurrentPlayer()";
-        result += " && ";
-        result += additional;
-    } else if (result.find("#NONEMPTY") != string::npos) {
-        result = findAndReplace(result, "#NONEMPTY", "game->getBoard()->getSquare");
-        result += ".isEmpty()";
-        result = "!" + result;
-    } else if (result.find("#FREE") != string::npos) {
-        result = findAndReplace(result, "#FREE", "game->getBoard()->getSquare");
-        result = "squaresControlled(getOppositePlayer()).count(" + result + ") == 0";
-    }
+    replaceKeywords(result);
 
-    return result;
+    return "(" + result + ")";
 }
         
 // process an or-condition
-string MoveParser::processOrCond(vector <string>& orcond) {
+string MoveParser::processOrCond(vector <string>& orCond) {
     string result;
-    for (vector <string> :: iterator it = orcond.begin() + 1; it != orcond.end() - 1; it++) {
-        if (it != orcond.begin() + 1) {
+    for (vector <string> :: iterator it = orCond.begin() + 1; it != orCond.end() - 1; it++) {
+        if (it != orCond.begin() + 1) {
             result += " || ";
         }
         result += processCond(*it);

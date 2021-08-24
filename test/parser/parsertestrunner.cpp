@@ -3,6 +3,7 @@
 #include "parserutilstest.h"
 #include "pieceparsertest.h"
 #include "moveparsertest.h"
+#include "trackerupdateparsertest.h"
 
 // run the unit tests for elements
 bool testRunner() {
@@ -10,6 +11,7 @@ bool testRunner() {
     result = runParserUtilsTests() && result;
     result = runPieceParserTests() && result;
     result = runMoveParserTests() && result;
+    result = runTrackerUpdateParserTests() && result;
     return result;
 }
 

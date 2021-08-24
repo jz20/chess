@@ -54,7 +54,7 @@ class MoveParser {
         // process a condition
         std::string processCond(const std::string& cond);
         // process an or-condition
-        std::string processOrCond(std::vector <std::string>& cond);
+        std::string processOrCond(std::vector <std::string>& orCond);
 };
 
 #endif

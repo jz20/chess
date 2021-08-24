@@ -6,9 +6,9 @@ void Bar::enpassant() {
 			piece = *it;
 			if (piece.getName() == pawn) {
 				bool cond = true;
-				cond = cond && (EP_COL!=-1);
-				cond = cond && (piece->getSquare()->getRow()==4);
-				cond = cond && ((piece->getSquare()->getCol()-EP_COL==1) || (piece->getSquare()->getCol()-EP_COL==-1));
+				cond = cond && ((EP_COL!=-1));
+				cond = cond && ((piece->getSquare()->getRow()==4));
+				cond = cond && (((piece->getSquare()->getCol()-EP_COL==1)) || ((piece->getSquare()->getCol()-EP_COL==-1)));
 				if (cond) {
 					GameMove move;
 					move.piece = game->getBoard()->getSquare(4,piece->getSquare()->getCol()).getPiece();

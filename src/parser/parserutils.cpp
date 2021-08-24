@@ -99,3 +99,42 @@ string findAndReplace(const string& str, const string& find, const string& repla
     }
     return result;
 }
+
+// replace some keywords with their meaning in a condition
+string replaceKeywords(const string& cond) {
+    string result = cond;
+
+    if (result.find("#EMPTY") != string::npos) {
+        result = findAndReplace(result, "#EMPTY", "game->getBoard()->getSquare");
+        result += ".isEmpty()";
+    } else if (result.find("#NONEMPTY") != string::npos) {
+        result = findAndReplace(result, "#NONEMPTY", "game->getBoard()->getSquare");
+        result += ".isEmpty()";
+        result = "!" + result;
+    } else if (result.find("#FRIENDLY") != string::npos) {
+        result = findAndReplace(result, "#FRIENDLY", "game->getBoard()->getSquare");
+        string additional = result;
+        result += ".isEmpty()";
+        result = "!" + result;
+        additional += ".getPiece().getPlayer() == getCurrentPlayer()";
+        result += " && ";
+        result += additional;
+    } else if (result.find("#UNFRIENDLY") != string::npos) {
+        result = findAndReplace(result, "#UNFRIENDLY", "game->getBoard()->getSquare");
+        string additional = result;
+        result += ".isEmpty()";
+        result = "!" + result;
+        additional += ".getPiece().getPlayer() != getCurrentPlayer()";
+        result += " && ";
+        result += additional;
+    } else if (result.find("#NONEMPTY") != string::npos) {
+        result = findAndReplace(result, "#NONEMPTY", "game->getBoard()->getSquare");
+        result += ".isEmpty()";
+        result = "!" + result;
+    } else if (result.find("#FREE") != string::npos) {
+        result = findAndReplace(result, "#FREE", "game->getBoard()->getSquare");
+        result = "squaresControlled(getOppositePlayer()).count(" + result + ") == 0";
+    }
+
+    return result;
+}
