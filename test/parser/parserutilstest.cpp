@@ -74,6 +74,18 @@ bool findAndReplaceTest() {
     return result == "pig.getName() 1234";
 }
 
+// test the increaseIndent function
+bool increaseIndentTest() {
+    vector <string> sample;
+    sample.push_back("1");
+    sample.push_back("\t2");
+    sample.push_back("\t\t3");
+    increaseIndent(sample, 2);
+    return sample[0] == "\t\t1"
+            && sample[1] == "\t\t\t2"
+            && sample[2] == "\t\t\t\t3";
+}
+
 // run the tests using the template in testutil
 // print in the standard output whether the tests were successful
 bool runParserUtilsTests() {
@@ -84,5 +96,6 @@ bool runParserUtilsTests() {
     TEST(readFileTest, "file reading");
     TEST(blockSizeTest, "block size");
     TEST(findAndReplaceTest, "find and replace");
+    TEST(increaseIndentTest, "increase indent");
     return result;
 }

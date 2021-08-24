@@ -51,8 +51,10 @@ GameParser::GameParser(vector <string>& input) {
             PUSH_BLOCK(pieceDef, pieceDefs);
             PieceParser pieceParser = PieceParser(name, pieceDef);
             pieceParsers.push_back(pieceParser);
-        } else if (line == "#MOVE{") {
+        } else if (regex_match(line, regex("\\#MOVE\\((.*)\\)\\{"))) {
             PUSH_BLOCK(move, moves);
+        } else if (line == "#PROMOTION{") {
+            PUSH_BLOCK(promotion, promotions);
         } else if (line == "#PREMOVE{") {
             PUSH_BLOCK(premoveUpdate, premoveUpdates);
         } else if (line == "#POSTMOVE{") {

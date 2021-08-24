@@ -32,6 +32,8 @@ class GameParser {
         std::vector <PieceParser> pieceParsers;
         // the move definitions
         std::vector <std::vector <std::string>> moves;
+        // the promotion definitions
+        std::vector <std::vector <std::string>> promotions;
         // the pre-move updates
         std::vector <std::vector <std::string>> premoveUpdates;
         // the pre-move updates

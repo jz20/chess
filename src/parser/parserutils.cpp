@@ -100,6 +100,13 @@ string findAndReplace(const string& str, const string& find, const string& repla
     return result;
 }
 
+// increase the indent by the amount in an entire vector of strings
+void increaseIndent(vector <string>& input, int amount) {
+    for (vector <string> :: iterator it = input.begin(); it != input.end(); it++) {
+        *it = string(amount, '\t') + *it;
+    }
+}
+
 // replace some keywords with their meaning in a condition
 string replaceKeywords(const string& cond) {
     string result = cond;

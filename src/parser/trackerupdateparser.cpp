@@ -18,10 +18,10 @@ using namespace std;
 
 // constructor with the input vector of strings
 TrackerUpdateParser::TrackerUpdateParser(std::vector <std::string>& input) {
-
+    instr = input;
     string line = "";
 
-    for (vector <string> :: iterator it = input.begin() + 1; it != input.end() - 1; it++) {
+    for (vector <string> :: iterator it = instr.begin() + 1; it != instr.end() - 1; it++) {
         line = *it;
         if (regex_match(line, regex("\\#COND\\((.*)\\)"))) {
             conds.push_back(line);
@@ -35,8 +35,6 @@ TrackerUpdateParser::TrackerUpdateParser(std::vector <std::string>& input) {
                 count++;
             }
             orConds.push_back(orCond);
-        } else {
-            instr.push_back(line);
         }
     }
 }
