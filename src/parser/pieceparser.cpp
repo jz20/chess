@@ -17,31 +17,6 @@ using namespace std;
         throw error; \
     }
 
-// requires vector <string> content and int indent to be defined
-#define W(line) content.push_back(string(indent, '\t') + line);
-
-// requires vector <string> content and int indent to be defined
-#define W_(line) \
-    content.push_back(string(indent, '\t') + line); \
-    indent++;
-
-// requires vector <string> content and int indent to be defined
-#define _W(line) \
-    indent--; \
-    content.push_back(string(indent, '\t') + line);
-
-// requires vector <string> content and int indent to be defined
-#define _W_(line) \
-    indent--; \
-    content.push_back(string(indent, '\t') + line); \
-    indent++;
-
-// requires vector <string> content and int indent to be defined
-#define _WE indent--; 
-
-// requires vector <string> content to be defined
-#define WN content.push_back("");
-
 // requires string current to be defined
 #define PARSE_MOVEMENT(map, coefficient) \
     for (vector <string> :: iterator it = movement.begin(); it != movement.end(); it++) { \

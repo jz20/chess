@@ -20,10 +20,11 @@ using namespace std;
 
 */
 bool readFileTest() {
-    string name = "./sample.txt";
+    string name = "test_examples/sample.txt";
     size_t expected = 3;
     vector <string> lines = readFile(name);
     if (lines.size() != expected) {
+        cout << lines.size() << "waa\n";
         return false;
     }
     return lines[0] == "#PIECE(pig,p){"
@@ -51,6 +52,28 @@ bool tokeniseTest() {
             && tokens[1] == "q";
 }
 
+// test the blockSize fucntion
+bool blockSizeTest() {
+    vector <string> example;
+    example.push_back("123 {");
+    example.push_back("456 {");
+    example.push_back("789 {");
+    example.push_back("0 {");
+    example.push_back("abc");
+    example.push_back("}");
+    example.push_back("}");
+    example.push_back("}");
+    example.push_back("}");
+    return blockSize(example, 1) == 7;
+}
+
+// test the findAndReplace function
+bool findAndReplaceTest() {
+    string original = "#PIG 1234";
+    string result = findAndReplace(original, "#PIG", "pig.getName()");
+    return result == "pig.getName() 1234";
+}
+
 // run the tests using the template in testutil
 // print in the standard output whether the tests were successful
 bool runParserUtilsTests() {
@@ -59,5 +82,7 @@ bool runParserUtilsTests() {
     TEST(tokeniseTest, "tokenise");
     TEST(trimTest, "trim");
     TEST(readFileTest, "file reading");
+    TEST(blockSizeTest, "block size");
+    TEST(findAndReplaceTest, "find and replace");
     return result;
 }

@@ -1,0 +1,28 @@
+void Bar::enpassant() {
+	Player *current = getCurrentPlayer();
+	if (current->getColour() == WHITE) {
+		Piece *piece = NULL;
+		for (vector <Piece *> :: iterator it = current.getPieces().begin(); it != current.getPieces().end(); it ++) {
+			piece = *it;
+			if (piece.getName() == pawn) {
+				bool cond = true;
+				cond = cond && (EP_COL!=-1);
+				cond = cond && (piece->getSquare()->getRow()==4);
+				cond = cond && ((piece->getSquare()->getCol()-EP_COL==1) || (piece->getSquare()->getCol()-EP_COL==-1));
+				if (cond) {
+					GameMove move;
+					move.piece = game->getBoard()->getSquare(4,piece->getSquare()->getCol()).getPiece();
+					move.square = game->getBoard()->getSquare(5,EP_COL);
+					move.instr = enpassant;
+					moves.push_back(move);
+					GameMove *parent = &move;
+					GameMove *aux0 = new GameMove;
+					aux0->piece = NULL;
+					aux0->square = game->getBoard()->getSquare(4,EP_COL);
+					parent->aux->reset(aux0));
+					parent = aux0;
+				}
+			}
+		}
+	}
+}
