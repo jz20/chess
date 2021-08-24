@@ -8,6 +8,15 @@ bool readFileTest();
 // test the trim function
 bool trimTest();
 
+// test the tokenise function
+bool tokeniseTest();
+
+// test the blockSize fucntion
+bool blockSizeTest();
+
+// test the findAndReplace function
+bool findAndReplaceTest();
+
 // run the tests and output the results
 bool runParserUtilsTests();
 

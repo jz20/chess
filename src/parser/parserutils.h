@@ -4,6 +4,31 @@
 #include <vector>
 #include <string>
 
+// requires vector <string> content and int indent to be defined
+#define W(line) content.push_back(string(indent, '\t') + line);
+
+// requires vector <string> content and int indent to be defined
+#define W_(line) \
+    content.push_back(string(indent, '\t') + line); \
+    indent++;
+
+// requires vector <string> content and int indent to be defined
+#define _W(line) \
+    indent--; \
+    content.push_back(string(indent, '\t') + line);
+
+// requires vector <string> content and int indent to be defined
+#define _W_(line) \
+    indent--; \
+    content.push_back(string(indent, '\t') + line); \
+    indent++;
+
+// requires vector <string> content and int indent to be defined
+#define _WE indent--; 
+
+// requires vector <string> content to be defined
+#define WN content.push_back("");
+
 // read the content of a file and put it into a vector of strings
 // removes all spaces
 std::vector <std::string> readFile(const std::string& name);
@@ -17,7 +42,14 @@ std::string trim(const std::string& str, const std::string& space = " \t\n");
 
 // tokenise the text between the first occurrence of opener and the first
 // occurrence of closer, seperated by the delimiter
-std::vector <std::string> tokenise(const std::string& str, const char& opener, 
-        const char& closer, const char& delimiter);
+std::vector <std::string> tokenise(const std::string& str, const char& opener = '(', 
+        const char& closer = ')', const char& delimiter = ',');
+
+// return the number of lines, after which the current block {} finishes
+// start denotes the index of the start of the block
+int blockSize(std::vector <std::string>& content, size_t start);
+
+// find the target find in str and replace it with replace
+std::string findAndReplace(const std::string& str, const std::string& find, const std::string& replace);
 
 #endif

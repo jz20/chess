@@ -10,7 +10,7 @@
 using namespace std;
 
 // test the header is created correctly
-bool headerTest() {
+bool pieceHeaderTest() {
     vector <string> pieceContent = readFile("test_examples/pieceexample.txt");
     PieceParser p("bar", pieceContent);
     writeFile("test_examples/barfoo.h", p.headerContent());
@@ -19,7 +19,7 @@ bool headerTest() {
 }
 
 // test the cpp implementation is created correctly
-bool implTest() {
+bool pieceImplTest() {
     vector <string> pieceContent = readFile("test_examples/pieceexample.txt");
     PieceParser p("bar", pieceContent);
     writeFile("test_examples/barfoo.cpp", p.implContent());
@@ -31,7 +31,7 @@ bool implTest() {
 bool runPieceParserTests() {
     cout << "Piece Parser Test: \n";
     bool result = true;
-    TEST(headerTest, "header")
-    TEST(implTest, "implementation file")
+    TEST(pieceHeaderTest, "header")
+    TEST(pieceImplTest, "implementation file")
     return result;
 }
