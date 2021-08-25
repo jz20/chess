@@ -6,7 +6,6 @@
 #include <string>
 #include <cstdlib>
 #include <iostream>
-#include <sstream>
 #include <algorithm>
 #include "piece.h"
 #include "square.h"
@@ -111,16 +110,6 @@ void ChessGame::tryMove(GameMove& move, bool isAux) {
 // try the input move, store the move on the stack so that it can be reversed
 void ChessGame::tryMove(GameMove& move) {
     ChessGame::tryMove(move, false);
-}
-
-// reverse last move on the moveStack, returns false if the moveStack is empty
-bool ChessGame::reverseLast() {
-    if (!Game::reverseLast()) {
-        return false;
-    }
-    reverseTrackers();
-    boardStateStack.pop_back();
-    return true;
 }
 
 // update the moves that a player can make
@@ -450,5 +439,6 @@ void ChessGame::checkRepetition() {
     int count = getRepetition();
     if (count > trackers[REP]) {
         trackers[REP] = count;
+        trackersStack.back() = trackers;
     }
 }

@@ -59,26 +59,41 @@
         REP = 0
     }
     #SETUP {
-        #MIRROR
-        (rook, 0, 0)
-        (knight, 0, 1)
-        (bishop, 0, 2)
-        (queen, 0, 3)
-        (king, 0, 4)
-        (bishop, 0, 5)
-        (knight, 0, 6)
-        (rook, 0, 7)
-        (pawn, 1, 0)
-        (pawn, 1, 1)
-        (pawn, 1, 2)
-        (pawn, 1, 3)
-        (pawn, 1, 4)
-        (pawn, 1, 5)
-        (pawn, 1, 6)
-        (pawn, 1, 7)
+        (#WHITE, rook, 0, 0)
+        (#WHITE, knight, 0, 1)
+        (#WHITE, bishop, 0, 2)
+        (#WHITE, queen, 0, 3)
+        (#WHITE, king, 0, 4)
+        (#WHITE, bishop, 0, 5)
+        (#WHITE, knight, 0, 6)
+        (#WHITE, rook, 0, 7)
+        (#WHITE, pawn, 1, 0)
+        (#WHITE, pawn, 1, 1)
+        (#WHITE, pawn, 1, 2)
+        (#WHITE, pawn, 1, 3)
+        (#WHITE, pawn, 1, 4)
+        (#WHITE, pawn, 1, 5)
+        (#WHITE, pawn, 1, 6)
+        (#WHITE, pawn, 1, 7)
+        (#BLACK, rook, 0, 0)
+        (#BLACK, knight, 7, 1)
+        (#BLACK, bishop, 7, 2)
+        (#BLACK, queen, 7, 3)
+        (#BLACK, king, 7, 4)
+        (#BLACK, bishop, 7, 5)
+        (#BLACK, knight, 7, 6)
+        (#BLACK, rook, 6, 7)
+        (#BLACK, pawn, 6, 0)
+        (#BLACK, pawn, 6, 1)
+        (#BLACK, pawn, 6, 2)
+        (#BLACK, pawn, 6, 3)
+        (#BLACK, pawn, 6, 4)
+        (#BLACK, pawn, 6, 5)
+        (#BLACK, pawn, 6, 6)
+        (#BLACK, pawn, 6, 7)
     }
-    #MOVE (shortcastling) {
-        #MIRROR
+    #MOVE (wshortcastling) {
+        #WHITE
         #COND(WSC == 1, BSC == 1)
         #COND(#EMPTY(0, 5))
         #COND(#EMPTY(0, 6))
@@ -105,8 +120,8 @@
             #DESTINATION(0, 3)
         }
     }
-    #MOVE (pawntwosquares) {
-        #MIRROR
+    #MOVE (wpawntwosquares) {
+        #WHITE
         #EACHPIECE(pawn)
         #COND(#ROWOF == $1)
         #COND(#EMPTY($2, #COLOF))
@@ -114,7 +129,7 @@
         #ORIGIN($1, #COLOF)
         #DESTINATION($3, #COLOF)
     }
-    #MOVE (enpassant) {
+    #MOVE (wenpassant) {
         #WHITE
         #COND(EP_COL != -1)
         #EACHPIECE(pawn)
@@ -125,15 +140,15 @@
         }
         #ORIGIN(4, #COLOF)
         #DESTINATION(5, EP_COL)
-        #AUX {
+        #AUXMOVE {
             #ORIGIN(#NONE)
             #DESTINATION(4, EP_COL)
         }
     }
-    #PROMOTION() {
+    #PROMOTION {
     	#WHITE
         #COND(#ROWOF == 7)
-        #CADIDATE(pawn)
+        #CANDIDATE(pawn)
         #TARGET(queen)
         #TARGET(rook)
         #TARGET(bishop)

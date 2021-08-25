@@ -30,6 +30,14 @@ typedef struct GameMove {
     std::shared_ptr <GameMove> aux;
     std::string instr;
     std::vector <Positioning> restoration; // used for trial and reverse
+
+    GameMove(const GameMove& clone) {
+        piece = clone.piece;
+        square = clone.square;
+        instr = clone.instr;
+        restoration = clone.restoration;
+        aux.reset(new GameMove(*(clone.aux)));
+    }
 } GameMove;
 
 class Game {
@@ -123,7 +131,7 @@ class Game {
         // empty
         virtual bool reverseLast();
         // update trackers
-        virtual void updateTrackers(GameMove& move) {}
+        virtual void updateTrackers();
         // reverse trackers to the previous state
         virtual void reverseTrackers();
         // promote a piece to a different piece

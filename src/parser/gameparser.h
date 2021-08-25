@@ -5,7 +5,11 @@ class GameParser;
 
 #include <vector>
 #include <string>
+#include <unordered_map>
 #include "pieceparser.h"
+#include "moveparser.h"
+#include "promotionparser.h"
+#include "trackerupdateparser.h"
 
 class GameParser {
     public:
@@ -30,16 +34,30 @@ class GameParser {
         std::vector <std::vector <std::string>> pieceDefs;
         // the piece parsers
         std::vector <PieceParser> pieceParsers;
+        // the pieces' names
+        std::vector <std::string> pieces;
         // the move definitions
-        std::vector <std::vector <std::string>> moves;
+        std::vector <std::vector <std::string>> moveDefs;
+        // the move parsers
+        std::vector <MoveParser> moveParsers;
         // the promotion definitions
-        std::vector <std::vector <std::string>> promotions;
+        std::vector <std::vector <std::string>> promotionDefs;
+        // the promotion parsers
+        std::vector <PromotionParser> promotionParsers;
         // the pre-move updates
-        std::vector <std::vector <std::string>> premoveUpdates;
-        // the pre-move updates
-        std::vector <std::vector <std::string>> postmoveUpdates;
+        std::vector <std::vector <std::string>> preMoveDefs;
+        // the pre-move update parsers
+        std::vector <TrackerUpdateParser> preMoveParsers;
+        // the post-move updates
+        std::vector <std::vector <std::string>> postMoveDefs;
+        // the post-move update parsers
+        std::vector <TrackerUpdateParser> postMoveParsers;
+        // the tracker definitions
+        std::vector <std::string> trackerDefs;
         // the trackers
         std::vector <std::string> trackers;
+        // the initial value of each tracker
+        std::unordered_map <std::string, std::string> trackerValues;
         // the board setup
         std::vector <std::string> setup;
         // the win conditions
