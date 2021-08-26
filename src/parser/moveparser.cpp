@@ -8,9 +8,10 @@
 
 using namespace std;
 
-#define CHECK(cond, error) \
+#define CHECK(cond, error, msg) \
     if (cond) { \
         cout << "incorrect #MOVE definition\n"; \
+        cout << msg << "\n"; \
         throw error; \
     }
 
@@ -19,12 +20,6 @@ using namespace std;
         name = findAndReplace(name, "#ROWOF", "piece->getSquare()->getRow()"); \
         name = findAndReplace(name, "#COLOF", "piece->getSquare()->getCol()"); \
     }
-
-#define POP_FRONT(name) \
-    if (!name.empty()) { \
-        name.erase(name.begin()); \
-    }
-    
 
 #define PROCESS_MOVE \
     W("bool cond = true;"); \
@@ -68,7 +63,7 @@ using namespace std;
                     flag1 = true; \
                 } \
             } \
-            CHECK(!(flag0 && flag1), current); \
+            CHECK(!(flag0 && flag1), current, "INCORRECT #AUXMOVE"); \
             W("parent->aux->reset(aux" + to_string(count) + "));"); \
             W("parent = aux" + to_string(count) + ";"); \
             count++; \
@@ -85,8 +80,7 @@ MoveParser::MoveParser(const string gName, vector <string>& input,
 
     string open = input.front();
     string close = input.back();
-    CHECK(!regex_match(open, regex("\\#MOVE\\([A-Za-z]*\\)\\{")), open);
-    CHECK(close != "}", close);
+    CHECK(!regex_match(open, regex("\\#MOVE\\([A-Za-z]*\\)\\{")), open, "UNSUPPORTED NAME");
 
     name = tokenise(open)[0];
 
@@ -94,20 +88,20 @@ MoveParser::MoveParser(const string gName, vector <string>& input,
     POP_FRONT(instr);
     instr.pop_back();
 
-    movePlayer = MIRROR;
+    movePlayer = MIRROR_MOVE;
     eachPiece = false;
     pieceName = "";
     string line = "";
     while (!instr.empty()) {
         line = instr.front();
         if (line == "#MIRROR") {
-            movePlayer = MIRROR;
+            movePlayer = MIRROR_MOVE;
             POP_FRONT(instr);
         } else if (line == "#WHITE") {
-            movePlayer = WHITE;
+            movePlayer = WHITE_MOVE;
             POP_FRONT(instr);
         } else if (line == "#BLACK") {
-            movePlayer = BLACK;
+            movePlayer = BLACK_MOVE;
             POP_FRONT(instr);
         } else if (regex_match(line, regex("\\#EACHPIECE\\([A-Za-z]*\\)"))) {
             eachPiece = true;
@@ -145,12 +139,11 @@ MoveParser::MoveParser(const string gName, vector <string>& input,
             orConds.push_back(orCond);
         } else {
             cout << line << "\n";
-            CHECK(true, line);
+            CHECK(true, line, line);
         }
     }
-    if (movePlayer == MIRROR) {
-        CHECK(true, "OPERATION NOT SUPPORTED");
-    }
+    CHECK(movePlayer == MIRROR_MOVE, "OPERATION NOT SUPPORTED", "MIRROR OPERATION NOT SUPPORTED");
+
 
     processOrigin(origin);
     processDestination(destination);
@@ -169,7 +162,7 @@ vector <string> MoveParser::implContent() {
     int indent = 0;
     W_("void " + gameName + "::" + name + "() {");
     W("Player *current = getCurrentPlayer();");
-    if (movePlayer == MIRROR) {
+    if (movePlayer == MIRROR_MOVE) {
         /*
         W_("if (current->getColour() == WHITE) {");
         W("Piece *piece = NULL;");
@@ -198,7 +191,7 @@ vector <string> MoveParser::implContent() {
             }
         _W("}");
         */
-    } else if (movePlayer == WHITE) {
+    } else if (movePlayer == WHITE_MOVE) {
         W_("if (current->getColour() == WHITE) {");
         if (eachPiece) {
             W("Piece *piece = NULL;");
@@ -212,7 +205,7 @@ vector <string> MoveParser::implContent() {
             PROCESS_MOVE;
         }
         _W("}");
-    } else if (movePlayer == BLACK) {
+    } else if (movePlayer == BLACK_MOVE) {
         W_("if (current->getColour() == BLACK) {");
         W("Piece *piece = NULL;");
         if (eachPiece) {
@@ -230,6 +223,11 @@ vector <string> MoveParser::implContent() {
     }
     _W("}");
     return content;
+}
+
+// function call: the line to call this move to be processed
+string MoveParser::functionCall() {
+    return name + "();";
 }
 
 // process the origin
@@ -251,46 +249,16 @@ string MoveParser::processCond(const string& cond) {
 
     result = findAndReplace(result, "#COND", "");
 
-    if (result.find("#EMPTY") != string::npos) {
-        result = findAndReplace(result, "#EMPTY", "game->getBoard()->getSquare");
-        result += ".isEmpty()";
-    } else if (result.find("#NONEMPTY") != string::npos) {
-        result = findAndReplace(result, "#NONEMPTY", "game->getBoard()->getSquare");
-        result += ".isEmpty()";
-        result = "!" + result;
-    } else if (result.find("#FRIENDLY") != string::npos) {
-        result = findAndReplace(result, "#FRIENDLY", "game->getBoard()->getSquare");
-        string additional = result;
-        result += ".isEmpty()";
-        result = "!" + result;
-        additional += ".getPiece().getPlayer() == getCurrentPlayer()";
-        result += " && ";
-        result += additional;
-    } else if (result.find("#UNFRIENDLY") != string::npos) {
-        result = findAndReplace(result, "#UNFRIENDLY", "game->getBoard()->getSquare");
-        string additional = result;
-        result += ".isEmpty()";
-        result = "!" + result;
-        additional += ".getPiece().getPlayer() != getCurrentPlayer()";
-        result += " && ";
-        result += additional;
-    } else if (result.find("#NONEMPTY") != string::npos) {
-        result = findAndReplace(result, "#NONEMPTY", "game->getBoard()->getSquare");
-        result += ".isEmpty()";
-        result = "!" + result;
-    } else if (result.find("#FREE") != string::npos) {
-        result = findAndReplace(result, "#FREE", "game->getBoard()->getSquare");
-        result = "squaresControlled(getOppositePlayer()).count(" + result + ") == 0";
-    }
+    result = replaceKeywords(result);
 
-    return result;
+    return "(" + result + ")";
 }
         
 // process an or-condition
-string MoveParser::processOrCond(vector <string>& orcond) {
+string MoveParser::processOrCond(vector <string>& orCond) {
     string result;
-    for (vector <string> :: iterator it = orcond.begin() + 1; it != orcond.end() - 1; it++) {
-        if (it != orcond.begin() + 1) {
+    for (vector <string> :: iterator it = orCond.begin() + 1; it != orCond.end() - 1; it++) {
+        if (it != orCond.begin() + 1) {
             result += " || ";
         }
         result += processCond(*it);

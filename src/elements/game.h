@@ -123,7 +123,7 @@ class Game {
         // empty
         virtual bool reverseLast();
         // update trackers
-        virtual void updateTrackers(GameMove& move) {}
+        virtual void updateTrackers();
         // reverse trackers to the previous state
         virtual void reverseTrackers();
         // promote a piece to a different piece

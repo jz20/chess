@@ -17,6 +17,9 @@ bool blockSizeTest();
 // test the findAndReplace function
 bool findAndReplaceTest();
 
+// test the increaseIndent function
+bool increaseIndentTest();
+
 // run the tests and output the results
 bool runParserUtilsTests();
 

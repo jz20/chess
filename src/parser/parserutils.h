@@ -29,6 +29,11 @@
 // requires vector <string> content to be defined
 #define WN content.push_back("");
 
+#define POP_FRONT(name) \
+    if (!name.empty()) { \
+        name.erase(name.begin()); \
+    }
+
 // read the content of a file and put it into a vector of strings
 // removes all spaces
 std::vector <std::string> readFile(const std::string& name);
@@ -51,5 +56,14 @@ int blockSize(std::vector <std::string>& content, size_t start);
 
 // find the target find in str and replace it with replace
 std::string findAndReplace(const std::string& str, const std::string& find, const std::string& replace);
+
+// find the target find in str and replace it with replace in place
+void findAndReplaceInPlace(std::string& str, const std::string& find, const std::string& replace);
+
+// increase the indent by the amount in an entire vector of strings
+void increaseIndent(std::vector <std::string>& input, int amount);
+
+// replace some keywords with their meaning in a condition
+std::string replaceKeywords(const std::string& cond);
 
 #endif

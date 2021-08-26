@@ -122,6 +122,8 @@ bool Game::reverseLast() {
     GameMove move = moveStack.back();
     reverseMove(move);
     moveStack.pop_back();
+    reverseTrackers();
+    boardStateStack.pop_back();
     return true;
 }
 
@@ -249,6 +251,11 @@ void Game::removeIllegalMoves() {
         }
         reverseLast();
     }
+}
+
+// update trackers
+void Game::updateTrackers() {
+    trackersStack.push_back(trackers);
 }
 
 // reverse trackers to the previous state
