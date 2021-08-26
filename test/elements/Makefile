@@ -16,9 +16,11 @@ chesspiecestest.o:		chesspiecestest.h
 
 clean:		
 				$(RM) $(BUILD) *.o core
+				cd $(LIBCHESS); make
 				cd $(LIB); make clean
 
 libs:
+				cd $(LIBCHESS); make
 				cd $(LIB); make
 
 run:			elementstestrunner
