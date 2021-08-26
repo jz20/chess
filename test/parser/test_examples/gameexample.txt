@@ -94,7 +94,7 @@
     }
     #MOVE (wshortcastling) {
         #WHITE
-        #COND(WSC == 1, BSC == 1)
+        #COND($WSC$ == 1, $BSC$ == 1)
         #COND(#EMPTY(0, 5))
         #COND(#EMPTY(0, 6))
         #COND(#FREE(0, 5))
@@ -108,7 +108,7 @@
     }
     #MOVE (wlongcastling) {
         #WHITE
-        #COND(WLC == 1)
+        #COND($WLC$ == 1)
         #COND(#EMPTY(0, 2))
         #COND(#EMPTY(0, 3))
         #COND(#FREE(0, 2))
@@ -131,18 +131,18 @@
     }
     #MOVE (wenpassant) {
         #WHITE
-        #COND(EP_COL != -1)
+        #COND($EP_COL$ != -1)
         #EACHPIECE(pawn)
         #COND(#ROWOF == 4)
         #ORCOND {
-            #COND(#COLOF - EP_COL == 1) 
-            #COND(#COLOF - EP_COL == -1)
+            #COND(#COLOF - $EP_COL$ == 1) 
+            #COND(#COLOF - $EP_COL$ == -1)
         }
         #ORIGIN(4, #COLOF)
-        #DESTINATION(5, EP_COL)
+        #DESTINATION(5, $EP_COL$)
         #AUXMOVE {
             #ORIGIN(#NONE)
-            #DESTINATION(4, EP_COL)
+            #DESTINATION(4, $EP_COL$)
         }
     }
     #PROMOTION {
@@ -159,23 +159,23 @@
     }
     #DRAW {
         #STALEMATE
-        #COND(REP >= 3)
-        #COND(FIFTY / 2 >= 50)
+        #COND($REP$ >= 3)
+        #COND($FIFTY$ / 2 >= 50)
     }
     #PREMOVE {
         #COND(#ROWOFORIGIN == 0)
         #COND(#COLOFORIGIN == 4)
-        WSC = 0
-        WLC = 0
+        $WSC$ = 0
+        $WLC$ = 0
     }
     #PREMOVE {
         #COND(#ROWOF == 7)
         #COND(#COLOF == 4)
-        BSC = 0
-        BLC = 0
+        $BSC$ = 0
+        $BLC$ = 0
     }
     #POSTMOVE {
-        #COND(#REPETITION > REP)
-        REP = #REPETITION
+        #COND(#REPETITION > $REP$)
+        $REP$ = #REPETITION
     }
 }

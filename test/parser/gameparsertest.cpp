@@ -24,6 +24,10 @@ bool gameHeaderTest() {
 
 // test the cpp implementation is created correctly
 bool gameImplTest() {
+    vector <string> gameContent = readFile("test_examples/gameexample.txt");
+    GameParser p(gameContent);
+    writeFile("test_examples/examplegame.cpp", p.implContent());
+    cout << "\tfor details check test_examples/examplegame.cpp: ";
     return true;
 }
 
@@ -32,5 +36,6 @@ bool runGameParserTests() {
     cout << "Game Parser Test: \n";
     bool result = true;
     TEST(gameHeaderTest, "header")
+    TEST(gameImplTest, "implementation")
     return result;
 }

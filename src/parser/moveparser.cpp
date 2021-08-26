@@ -249,7 +249,7 @@ string MoveParser::processCond(const string& cond) {
 
     result = findAndReplace(result, "#COND", "");
 
-    replaceKeywords(result);
+    result = replaceKeywords(result);
 
     return "(" + result + ")";
 }

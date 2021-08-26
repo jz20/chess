@@ -100,6 +100,19 @@ string findAndReplace(const string& str, const string& find, const string& repla
     return result;
 }
 
+// find the target find in str and replace it with replace in place
+void findAndReplaceInPlace(string& str, const string& find, const string& replace) {
+    size_t index = 0;
+    while (true) {
+        index = str.find(find, index);
+        if (index == string::npos) {
+            break;
+        }
+        str.erase(index, find.length());
+        str.insert(index, replace);
+    }
+}
+
 // increase the indent by the amount in an entire vector of strings
 void increaseIndent(vector <string>& input, int amount) {
     for (vector <string> :: iterator it = input.begin(); it != input.end(); it++) {

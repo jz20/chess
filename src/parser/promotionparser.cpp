@@ -16,6 +16,7 @@ using namespace std;
         throw error; \
     }
 
+// could move back to main code, leaving it here for now because it could be useful for #MIRROR
 #define PARSE_PROMOTION(colour) \
     W_("if (getCurrentPlayer().getColour == " + colour + ") {") \
         W("cond = true;") \
@@ -27,10 +28,12 @@ using namespace std;
         } \
         W("cond = cond && " + parseCandidateCheck() + ";") \
         W_("if (cond) {") \
+            int count = 0; \
             for (vector <string> :: iterator it = targets.begin(); it != targets.end(); it++) { \
-                W("GameMove promotion" + *it + " = GameMove(move);") \
-                W("promotion" + *it + ".instr = \"" + *it + "\";") \
+                W("GameMove promotion" + to_string(count) + " = GameMove(move);") \
+                W("promotion" + to_string(count) + ".instr = \"" + *it + "\";") \
                 W("temp.push_back(promotion);") \
+                count++; \
             } \
             W("moves.erase(it);") \
             W("it--;") \
@@ -114,7 +117,7 @@ string PromotionParser::processCond(const string& cond) {
     result = findAndReplace(result, "#ROWOF", "move.square->getRow()");
     result = findAndReplace(result, "#COLOF", "move.square->getCol()");
 
-    replaceKeywords(result);
+    result = replaceKeywords(result);
 
     return "(" + result + ")";
 }

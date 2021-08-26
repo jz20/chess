@@ -21,6 +21,8 @@ class GameParser {
         std::vector <std::string> implContent();
         // produce the content of the make file in the form of a vector of strings
         std::vector <std::string> makeFile();
+        // get the name that the file should have without extension
+        std::string getFileName();
     private:
         // number of rows
         int rows;

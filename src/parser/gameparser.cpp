@@ -90,7 +90,7 @@ GameParser::GameParser(vector <string>& input) {
 
     for (vector <string> :: iterator it = trackerDefs.begin() + 1; it != trackerDefs.end() - 1; it++) {
         string current = *it;
-        CHECK(regex_match(current, regex("[A-Z]*\\=(\\-)?[0-9]*")), current, "INCORRECT #TRACKER INSTRUCTION");
+        CHECK(!regex_match(current, regex("[A-Z\\_]*\\=(\\-)?[0-9]*")), current, "INCORRECT #TRACKER INSTRUCTION");
         string name = current.substr(0, current.find_first_of("="));
         string value = current.substr(current.find_first_of("=") + 1);
         trackers.push_back(current.substr(0, current.find_first_of("=")));
@@ -98,8 +98,9 @@ GameParser::GameParser(vector <string>& input) {
     }
     for (vector <vector <string>> :: iterator it = pieceDefs.begin(); it != pieceDefs.end(); it++) {
         vector <string> current = *it;
-        transform(current.begin(), current.end(), current.begin(), ::tolower);
-        pieces.push_back(tokenise(current[0])[0]);
+        string line = current[0];
+        transform(line.begin(), line.end(), line.begin(), ::tolower);
+        pieces.push_back(tokenise(line)[0]);
     }
     for (vector <vector <string>> :: iterator it = moveDefs.begin(); it != moveDefs.end(); it++) {
         MoveParser parser = MoveParser(name, *it, pieces, trackers);
@@ -194,7 +195,7 @@ std::vector <std::string> GameParser::implContent() {
     string className = name + "Game";
     className[0] = toupper(className[0]);
 
-    W("#include \"\"")
+    W("#include \"" + getFileName() + ".h\"")
     WN
     W("#include <cstddef>")
     W("#include <vector>")
@@ -214,14 +215,17 @@ std::vector <std::string> GameParser::implContent() {
     WN
     W("using namespace std;");
     WN
+
     // Constructor with the board and the players
     W_(className + "::" + className + "(): Game(new Board(" + to_string(rows) + ", " + to_string(cols) +")) {")
     _W("}")
     WN
+
     // Destructor
     W_(className + "::~" + className + "() {")
     _W("}")
     WN
+
     // try the input move, store the move on the stack so that it can be 
     // reversed
     W_("void " + className + "::tryMove(GameMove& move, bool isAux) {")
@@ -245,10 +249,13 @@ std::vector <std::string> GameParser::implContent() {
         _W("}")
     _W("}")
     WN
+
     // try the input move, store the move on the stack so that it can be reversed
     W_("void " + className + "::tryMove(GameMove& move) {")
         W(className + "::tryMove(move, false);")
     _W("}")
+    WN
+
     // update the moves that a player can make
     W_("void " + className + "::updateMoves() {")
         W("moves.clear();")
@@ -266,17 +273,19 @@ std::vector <std::string> GameParser::implContent() {
             W("promotion();")
         }
     _W("}")
+    WN
+
     // set up the pieces for the board and the players
     W_("void " + className + "::setUp() {")
         W("trackers = vector <int>(num_TRACKERS);")
         for (vector <string> :: iterator it = trackers.begin(); it != trackers.end(); it++) {
-            W("trackers[" + *it + "] =" + trackerValues[*it] + " ;")
+            W("trackers[" + *it + "] = " + trackerValues[*it] + ";")
         }
         W("trackersStack.push_back(trackers);")
         int setupCount = 0;
         for (vector <string> :: iterator it = setup.begin() + 1; it != setup.end() - 1; it++) {
             vector <string> elements = tokenise(*it);
-            CHECK(elements.size() == 4, *it, "WRONG NUMBER OF ARGUMENTS IN SETUP")
+            CHECK(elements.size() != 4, *it, "WRONG NUMBER OF ARGUMENTS IN SETUP")
             string pPlayer = "black";
             if (elements[0] == "#WHITE") {
                 pPlayer = "white";
@@ -291,17 +300,48 @@ std::vector <std::string> GameParser::implContent() {
             W("board->getSquare(" + pRow + ", " + pCol + ")->setPiece(piece" + to_string(setupCount) + ");")
             W(pPlayer + "->addPiece(piece" + to_string(setupCount) + ");")
             W_("if (piece" + to_string(setupCount) + ".isKing()) {")
-                W("whiteKings.push_back(piece" + to_string(setupCount) + ");")
+                if (elements[0] == "#WHITE") {
+                    W("whiteKings.push_back(piece" + to_string(setupCount) + ");")
+                } else {
+                    W("blackKings.push_back(piece" + to_string(setupCount) + ");")
+                }
             _W("}")
+            setupCount++;
         }
         W("storeBoardState();")
     _W("}")
+    WN
+
     // check if the game is over, set finished to be true if so, return
     // true if a player wins and false if there is a draw, the result is 
     // meaningless unless finished is true
     W_("bool " + className + "::checkResult() {")
         W("bool winCond = false;")
+        for (vector <string> :: iterator it = winConds.begin() + 1; it != winConds.end() - 1; it++) {
+            if (*it != "#CHECKMATE" && *it != "#STALEMATE") {
+                string current = *it;
+                cout << current << "\n";
+                findAndReplaceInPlace(current, "#COND", "");
+                cout << current << "\n";
+                W("winCond = winCond || " + current + ";")
+            }
+        }
+        W_("if (winCond) {")
+            W("finished = true;")
+            W("return true;")
+        _W("}")
         W("bool drawCond = false;")
+        for (vector <string> :: iterator it = drawConds.begin() + 1; it != drawConds.end() - 1; it++) {
+            if (*it != "#CHECKMATE" && *it != "#STALEMATE") {
+                string current = *it;
+                findAndReplaceInPlace(current, "#COND", "");
+                W("drawCond = drawCond || " + current + ";")
+            }
+        }
+        W_("if (drawCond) {")
+            W("finished = true;")
+            W("return false;")
+        _W("}")
         W("updateMoves();")
         W_("if (moves.empty()) {")
             W("finished = true;")
@@ -319,5 +359,78 @@ std::vector <std::string> GameParser::implContent() {
             }
         _W("}")
     _W("}")
+    WN
+
+    // the special moves
+    for (vector <MoveParser> :: iterator it = moveParsers.begin(); it != moveParsers.end(); it++) {
+        vector <string> functionContent = it->implContent();
+        increaseIndent(functionContent, indent);
+        content.insert(content.end(), functionContent.begin(), functionContent.end());
+        WN
+    }
+
+    if (promotionDefs.size() != 0) {
+        // update the promotion moves
+        W_("void " + className + "::promotion() {")
+            W("bool cond = true;")
+            W("vector <GameMove> temp;")
+            for (vector <PromotionParser> :: iterator it = promotionParsers.begin(); it != promotionParsers.end(); it++) {
+                vector <string> functionContent = it->implContent();
+                increaseIndent(functionContent, indent);
+                content.insert(content.end(), functionContent.begin(), functionContent.end());
+                WN
+            }
+            W_("for (vector <GameMove> :: iterator it = temp.begin(); it != temp.end(); it++) {")
+                W("moves.push_back(*it)")
+            _W("}")
+        _W("}")
+        WN
+    }
+
+    // update the trackers before a move
+    W_("void " + className + "::preMove(GameMove& move) {")
+        W("bool cond = true;")
+        for (vector <TrackerUpdateParser> :: iterator it = preMoveParsers.begin(); it != preMoveParsers.end(); it++) {
+            vector <string> functionContent = it->implContent();
+            increaseIndent(functionContent, indent);
+            content.insert(content.end(), functionContent.begin(), functionContent.end());
+            WN
+        }
+        W("trackersStack.push_back(trackers);")
+    _W("}")
+    WN
+
+    // update the trackers after a move
+    W_("void " + className + "::postMove(GameMove& move) {")
+        W("bool cond = true;")
+        for (vector <TrackerUpdateParser> :: iterator it = postMoveParsers.begin(); it != postMoveParsers.end(); it++) {
+            vector <string> functionContent = it->implContent();
+            increaseIndent(functionContent, indent);
+            content.insert(content.end(), functionContent.begin(), functionContent.end());
+            WN
+        }
+        W("trackersStack.back() = trackers;")
+    _W("}")
+    WN
+    /*
+    for (vector <string> :: iterator it = content.begin(); it != content.end(); it++) {
+        cout << *it << "\n";
+    }
+    */
+
+    // correctly parse the trackers
+    for (vector <string> :: iterator it = content.begin(); it != content.end(); it++) {
+        for (vector <string> :: iterator tracker = trackers.begin(); tracker != trackers.end(); tracker++) {
+            string find = "$" + *tracker + "$";
+            string replace = "trackers[" + *tracker + "]";
+            findAndReplaceInPlace(*it, find, replace);
+        }
+    }
+
     return content;
+}
+
+// get the name that the file should have without extension
+string GameParser::getFileName() {
+    return name + "game";
 }

@@ -57,6 +57,9 @@ int blockSize(std::vector <std::string>& content, size_t start);
 // find the target find in str and replace it with replace
 std::string findAndReplace(const std::string& str, const std::string& find, const std::string& replace);
 
+// find the target find in str and replace it with replace in place
+void findAndReplaceInPlace(std::string& str, const std::string& find, const std::string& replace);
+
 // increase the indent by the amount in an entire vector of strings
 void increaseIndent(std::vector <std::string>& input, int amount);
 

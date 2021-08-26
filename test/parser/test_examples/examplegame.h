@@ -26,6 +26,8 @@ class PartialchessGame: public Game {
 		void wlongcastling();
 		void wpawntwosquares();
 		void wenpassant();
-		virtual void updateTrackers(GameMove& move);
+		void preMove(GameMove& move);
+		void postMove(GameMove& move);
 };
+
 #endif

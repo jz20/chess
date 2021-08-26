@@ -40,6 +40,9 @@ TrackerUpdateParser::TrackerUpdateParser(std::vector <std::string>& input) {
 }
 
 // produce the content of the implementation cpp file in the form of a vector of strings
+/*
+requires bool cond to be defined
+*/
 vector <string> TrackerUpdateParser::implContent() {
     vector <string> content;
     int indent = 0;
@@ -68,7 +71,7 @@ string TrackerUpdateParser::processCond(const string& cond) {
 
     REPLACE(result);
 
-    replaceKeywords(result);
+    result = replaceKeywords(result);
 
     return '(' + result + ')';
 }
