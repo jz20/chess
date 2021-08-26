@@ -44,6 +44,7 @@ using namespace std;
 GameParser::GameParser(vector <string>& input) {
     string open = input.front();
     name = tokenise(open)[0];
+    CHECK(name == "chess", name, "chess is a reserved name for the original game");
     transform(name.begin(), name.end(), name.begin(), ::tolower);
     string line = "";
 
@@ -428,6 +429,53 @@ std::vector <std::string> GameParser::implContent() {
     }
 
     return content;
+}
+
+// produce the content of the make file in the form of a vector of strings
+vector <string> GameParser::makeFile() {
+    vector <string> content;
+    int indent = 0;
+    W("CC\t= g++")
+    W("CPPFLAGS\t= -g -Wall -I$(COMMON)")
+    W("LDLIBS\t= -L$(COMMON) -lelements")
+    W("COMMON\t= ..")
+    W("BUILD\t= common run" + name)
+    WN
+    W(".PHONY:\tall clean")
+    WN
+    W("all:\t$(BUILD)")
+    WN
+    string linking = "run" + name + ":\t run" + name + ".o";
+    linking += " " + name + "game.o";
+    for (vector <PieceParser> :: iterator it = pieceParsers.begin(); it != pieceParsers.end(); it++) {
+        linking += " " + it->getFileName() + ".o";
+    }
+    W(linking)
+    W("run" + name + ".o:\trun" + name + ".h")
+    WN
+    W(name + "game.o:\t" + name + "game.h")
+    WN
+    for (vector <PieceParser> :: iterator it = pieceParsers.begin(); it != pieceParsers.end(); it++) {
+        W(it->getFileName() + ".o:\t" + it->getFileName() + ".h")
+    }
+    WN
+    W("common:")
+    W("\t\tcd $(COMMON); make")
+    WN
+    W("clean:")
+    W("\t\t$(RM) $(BUILD) *.o core")
+    W("\t\tcd $(COMMON); make clean")
+    return content;
+}
+
+// get name
+string GameParser::getName() {
+    return name;
+}
+
+// get the name that the file should have without extension
+vector <PieceParser> *GameParser::getReferenceToPieceParsers() {
+    return &pieceParsers;
 }
 
 // get the name that the file should have without extension

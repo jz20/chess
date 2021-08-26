@@ -6,7 +6,11 @@ BUILD		= $(LIB)
 
 .PHONY: 	all clean
 
-all:	$(BUILD)
+all:	$(BUILD) parse
+
+parse: parse.o $(LIBOBJS)
+
+parse.o: parse.h
 
 parserutils.o:	parserutils.h
 pieceparser.o:	pieceparser.h

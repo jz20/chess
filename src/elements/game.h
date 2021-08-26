@@ -30,14 +30,6 @@ typedef struct GameMove {
     std::shared_ptr <GameMove> aux;
     std::string instr;
     std::vector <Positioning> restoration; // used for trial and reverse
-
-    GameMove(const GameMove& clone) {
-        piece = clone.piece;
-        square = clone.square;
-        instr = clone.instr;
-        restoration = clone.restoration;
-        aux.reset(new GameMove(*(clone.aux)));
-    }
 } GameMove;
 
 class Game {
