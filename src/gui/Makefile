@@ -17,9 +17,11 @@ chesspiecebitmap.o:		chesspiecebitmap.h
 clean:		
 			$(RM) $(BUILD) *.o core
 #			cd $(LIB); make clean
+#			cd $(CHESSLIB); make clean
 
 lib:		
 			cd $(LIB); make
+			cd $(CHESSLIB); make
 
 run:		chessgamerunner
 			mv chessgamerunner run
