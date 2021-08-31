@@ -1,0 +1,16 @@
+#MOVE (enpassant) {
+        #WHITE
+        #COND(EP_COL != -1)
+        #EACHPIECE(pawn)
+        #COND(#ROWOF == 4)
+        #ORCOND {
+            #COND(#COLOF - EP_COL == 1) 
+            #COND(#COLOF - EP_COL == -1)
+        }
+        #ORIGIN(4, #COLOF)
+        #DESTINATION(5, EP_COL)
+        #AUXMOVE {
+            #ORIGIN(#NONE)
+            #DESTINATION(4, EP_COL)
+        }
+    }

@@ -11,36 +11,12 @@
 
 using namespace std;
 
-#define CHECK(cond, error) \
+#define CHECK(cond, error, msg) \
     if (cond) { \
         cout << "incorrect #PIECE definition\n"; \
+        cout << msg << "\n"; \
         throw error; \
     }
-
-// requires vector <string> content and int indent to be defined
-#define W(line) content.push_back(string(indent, '\t') + line);
-
-// requires vector <string> content and int indent to be defined
-#define W_(line) \
-    content.push_back(string(indent, '\t') + line); \
-    indent++;
-
-// requires vector <string> content and int indent to be defined
-#define _W(line) \
-    indent--; \
-    content.push_back(string(indent, '\t') + line);
-
-// requires vector <string> content and int indent to be defined
-#define _W_(line) \
-    indent--; \
-    content.push_back(string(indent, '\t') + line); \
-    indent++;
-
-// requires vector <string> content and int indent to be defined
-#define _WE indent--; 
-
-// requires vector <string> content to be defined
-#define WN content.push_back("");
 
 // requires string current to be defined
 #define PARSE_MOVEMENT(map, coefficient) \
@@ -59,7 +35,7 @@ using namespace std;
             int rowOffset = stoi(coordinates[0]); \
             W(functionName + "(&targets, " + to_string(coefficient * rowOffset) + ", " + coordinates[1] + ");") \
         } else { \
-            CHECK(true, movement) \
+            CHECK(true, movement, "INCORRECT PIECE MOVEMENT") \
         } \
     }
 
@@ -68,11 +44,10 @@ PieceParser::PieceParser(const std::string& gameName, const std::vector <std::st
     this->gameName = gameName;
     string open = input.front();
     string close = input.back();
-    CHECK(!regex_match(open, regex("\\#PIECE\\([A-Za-z]*\\,[A-Za-z]\\)\\{")), open);
-    CHECK(close != "}", close);
+    CHECK(!regex_match(open, regex("\\#PIECE\\([A-Za-z]*\\,[A-Za-z]\\)\\{")), open, open);
 
     this->movement = input;
-    movement.erase(movement.begin());
+    POP_FRONT(movement)
     movement.pop_back();
     this->king = false;
     for (vector <string> :: iterator it = movement.begin(); it != movement.end(); it++) {
@@ -84,9 +59,10 @@ PieceParser::PieceParser(const std::string& gameName, const std::vector <std::st
 
     vector <string> info = tokenise(open, '(', ')', ',');
     size_t expectedSize = 2;
-    CHECK(info.size() != expectedSize, open);
+    CHECK(info.size() != expectedSize, open, "INCORRECT SQUARE COORDINATE");
     name = info[0];
     transform(name.begin(), name.end(), name.begin(), ::tolower);
+    CHECK(name == "game", name, "nameing the piece \"game\" will cause name clashes")
     symbol = info[1][0];
 
     setUpMoveMapWhite();

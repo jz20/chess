@@ -1,8 +1,9 @@
 CC			= g++
-CPPFLAGS	= -g -Wall -I$(LIB) -I$(COMMON)
-LDLIBS		= -L$(LIB) -lelements
+CPPFLAGS	= -g -Wall -I$(LIB) -I$(LIBCHESS) -I$(COMMON)
+LDLIBS		= -L$(LIB) -lelements -L$(LIBCHESS) -lchesselements
 BUILD		= libs run
 LIB			= ../../src/elements
+LIBCHESS	= ../../src/elements/chess
 COMMON		= ..
 
 all:			$(BUILD)
@@ -15,9 +16,11 @@ chesspiecestest.o:		chesspiecestest.h
 
 clean:		
 				$(RM) $(BUILD) *.o core
+				cd $(LIBCHESS); make
 				cd $(LIB); make clean
 
 libs:
+				cd $(LIBCHESS); make
 				cd $(LIB); make
 
 run:			elementstestrunner

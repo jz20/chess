@@ -7,11 +7,15 @@ COMMON		= ..
 
 all:			$(BUILD)
 
-parsertestrunner:	parsertestrunner.o parserutilstest.o pieceparsertest.o
+parsertestrunner:	parsertestrunner.o parserutilstest.o pieceparsertest.o moveparsertest.o\
+					trackerupdateparsertest.o gameparsertest.o
 
 parsertestrunner.o:	parsertestrunner.h
 parserutilstest.o:	parserutilstest.h
 pieceparsertest.o:	pieceparsertest.h
+moveparsertest.o:	moveparsertest.h
+trackerupdateparsertest.o:	trackerupdateparsertest.h
+gameparsertest.o:	gameparsertest.h
 
 clean:		
 				$(RM) $(BUILD) *.o core

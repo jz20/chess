@@ -60,3 +60,101 @@ vector <string> tokenise(const string& str, const char& opener,
     }
     return tokens;
 }
+
+// return the number of lines, after which the current block {} finishes
+// start denotes the index of the start of the block
+int blockSize(vector <string>& content, size_t start) {
+    if (content.size() <= start) {
+        return 0;
+    }
+    int count = 0;
+    int bracket = 0;
+    string current = "";
+    for (vector <string> :: iterator it = content.begin() + start; it != content.end(); it++) {
+        current = *it;
+        if (current.find('{') != string::npos) {
+            bracket++;
+        } else if (current.find('}') != string::npos) {
+            bracket--;
+        }
+        count++;
+        if (bracket == 0) {
+            return count;
+        }
+    }
+    return 0;
+}
+
+// find the target find in str and replace it with replace
+string findAndReplace(const string& str, const string& find, const string& replace) {
+    string result = str;
+    size_t index = 0;
+    while (true) {
+        index = result.find(find, index);
+        if (index == string::npos) {
+            break;
+        }
+        result.erase(index, find.length());
+        result.insert(index, replace);
+    }
+    return result;
+}
+
+// find the target find in str and replace it with replace in place
+void findAndReplaceInPlace(string& str, const string& find, const string& replace) {
+    size_t index = 0;
+    while (true) {
+        index = str.find(find, index);
+        if (index == string::npos) {
+            break;
+        }
+        str.erase(index, find.length());
+        str.insert(index, replace);
+    }
+}
+
+// increase the indent by the amount in an entire vector of strings
+void increaseIndent(vector <string>& input, int amount) {
+    for (vector <string> :: iterator it = input.begin(); it != input.end(); it++) {
+        *it = string(amount, '\t') + *it;
+    }
+}
+
+// replace some keywords with their meaning in a condition
+string replaceKeywords(const string& cond) {
+    string result = cond;
+
+    if (result.find("#EMPTY") != string::npos) {
+        result = findAndReplace(result, "#EMPTY", "game->getBoard()->getSquare");
+        result += ".isEmpty()";
+    } else if (result.find("#NONEMPTY") != string::npos) {
+        result = findAndReplace(result, "#NONEMPTY", "game->getBoard()->getSquare");
+        result += ".isEmpty()";
+        result = "!" + result;
+    } else if (result.find("#FRIENDLY") != string::npos) {
+        result = findAndReplace(result, "#FRIENDLY", "game->getBoard()->getSquare");
+        string additional = result;
+        result += ".isEmpty()";
+        result = "!" + result;
+        additional += ".getPiece().getPlayer() == getCurrentPlayer()";
+        result += " && ";
+        result += additional;
+    } else if (result.find("#UNFRIENDLY") != string::npos) {
+        result = findAndReplace(result, "#UNFRIENDLY", "game->getBoard()->getSquare");
+        string additional = result;
+        result += ".isEmpty()";
+        result = "!" + result;
+        additional += ".getPiece().getPlayer() != getCurrentPlayer()";
+        result += " && ";
+        result += additional;
+    } else if (result.find("#NONEMPTY") != string::npos) {
+        result = findAndReplace(result, "#NONEMPTY", "game->getBoard()->getSquare");
+        result += ".isEmpty()";
+        result = "!" + result;
+    } else if (result.find("#FREE") != string::npos) {
+        result = findAndReplace(result, "#FREE", "game->getBoard()->getSquare");
+        result = "squaresControlled(getOppositePlayer()).count(" + result + ") == 0";
+    }
+
+    return result;
+}

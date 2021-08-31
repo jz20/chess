@@ -1,8 +1,9 @@
 CC			= g++
-CPPFLAGS	= -g -Wall -I$(LIB)
-LDLIBS		= -L$(LIB) -lelements $(WXLINK)
+CPPFLAGS	= -g -Wall -I$(LIB) -I$(LIBCHESS) $(WXPATH)
+LDLIBS		= -L$(LIB) -lelements -L$(LIBCHESS) -lchesselements $(WXLINK)
 BUILD		= lib run
-LIB			= ../elements $(WXPATH)
+LIB			= ../elements
+LIBCHESS	= ../elements/chess
 WXLINK		= `wx-config --cxxflags --libs std`
 WXPATH		= `wx-config --cxxflags std`
 

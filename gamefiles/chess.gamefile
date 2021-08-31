@@ -1,0 +1,181 @@
+#GAME (partialchess) {
+    #ROW = 8
+    #COL = 8
+    #PIECE (queen, q) {
+        UP
+        DOWN
+        LEFT
+        RIGHT
+        UP_LEFT
+        UP_RIGHT
+        DOWN_LEFT
+        DOWN_RIGHT
+    }
+    #PIECE (rook, r) {
+        UP
+        DOWN
+        LEFT
+        RIGHT
+    }
+    #PIECE (bishop, b) {
+        UP_LEFT
+        UP_RIGHT
+        DOWN_LEFT
+        DOWN_RIGHT
+    }
+    #PIECE (knight, n) {
+        (1, 2)
+        (2, 1)
+        (1, -2)
+        (-2, 1)
+        (-1, 2)
+        (2, -1)
+        (-1, -2)
+        (-2, -1)
+    }
+    #PIECE (pawn, p) {
+        (1, 0) *C*
+        (1, -1) *NC*
+        (1, 1) *C*
+    }
+    #PIECE (king, k) {
+        #KING
+        (1, 0)
+        (1, 1)
+        (1, -1)
+        (0, 1)
+        (0, -1)
+        (-1, 1)
+        (-1, 0)
+        (-1, -1)
+    }
+    #TRACKERS {
+        WSC = 1
+        WLC = 1
+        BSC = 1
+        BLC = 1
+        EP_COL = -1
+        FIFTY = 0
+        REP = 0
+    }
+    #SETUP {
+        (#WHITE, rook, 0, 0)
+        (#WHITE, knight, 0, 1)
+        (#WHITE, bishop, 0, 2)
+        (#WHITE, queen, 0, 3)
+        (#WHITE, king, 0, 4)
+        (#WHITE, bishop, 0, 5)
+        (#WHITE, knight, 0, 6)
+        (#WHITE, rook, 0, 7)
+        (#WHITE, pawn, 1, 0)
+        (#WHITE, pawn, 1, 1)
+        (#WHITE, pawn, 1, 2)
+        (#WHITE, pawn, 1, 3)
+        (#WHITE, pawn, 1, 4)
+        (#WHITE, pawn, 1, 5)
+        (#WHITE, pawn, 1, 6)
+        (#WHITE, pawn, 1, 7)
+        (#BLACK, rook, 0, 0)
+        (#BLACK, knight, 7, 1)
+        (#BLACK, bishop, 7, 2)
+        (#BLACK, queen, 7, 3)
+        (#BLACK, king, 7, 4)
+        (#BLACK, bishop, 7, 5)
+        (#BLACK, knight, 7, 6)
+        (#BLACK, rook, 6, 7)
+        (#BLACK, pawn, 6, 0)
+        (#BLACK, pawn, 6, 1)
+        (#BLACK, pawn, 6, 2)
+        (#BLACK, pawn, 6, 3)
+        (#BLACK, pawn, 6, 4)
+        (#BLACK, pawn, 6, 5)
+        (#BLACK, pawn, 6, 6)
+        (#BLACK, pawn, 6, 7)
+    }
+    #MOVE (wshortcastling) {
+        #WHITE
+        #COND($WSC$ == 1, $BSC$ == 1)
+        #COND(#EMPTY(0, 5))
+        #COND(#EMPTY(0, 6))
+        #COND(#FREE(0, 5))
+        #COND(#FREE(0, 6))
+        #ORIGIN(0, 4)
+        #DESTINATION(0, 6)
+        #AUXMOVE {
+            #ORIGIN(0, 7)
+            #DESTINATION(0, 5)
+        }
+    }
+    #MOVE (wlongcastling) {
+        #WHITE
+        #COND($WLC$ == 1)
+        #COND(#EMPTY(0, 2))
+        #COND(#EMPTY(0, 3))
+        #COND(#FREE(0, 2))
+        #COND(#FREE(0, 3))
+        #ORIGIN(0, 4)
+        #DESTINATION(0, 2)
+        #AUXMOVE {
+            #ORIGIN(0, 0)
+            #DESTINATION(0, 3)
+        }
+    }
+    #MOVE (wpawntwosquares) {
+        #WHITE
+        #EACHPIECE(pawn)
+        #COND(#ROWOF == $1)
+        #COND(#EMPTY($2, #COLOF))
+        #COND(#EMPTY($3, #COLOF))
+        #ORIGIN($1, #COLOF)
+        #DESTINATION($3, #COLOF)
+    }
+    #MOVE (wenpassant) {
+        #WHITE
+        #COND($EP_COL$ != -1)
+        #EACHPIECE(pawn)
+        #COND(#ROWOF == 4)
+        #ORCOND {
+            #COND(#COLOF - $EP_COL$ == 1) 
+            #COND(#COLOF - $EP_COL$ == -1)
+        }
+        #ORIGIN(4, #COLOF)
+        #DESTINATION(5, $EP_COL$)
+        #AUXMOVE {
+            #ORIGIN(#NONE)
+            #DESTINATION(4, $EP_COL$)
+        }
+    }
+    #PROMOTION {
+    	#WHITE
+        #COND(#ROWOF == 7)
+        #CANDIDATE(pawn)
+        #TARGET(queen)
+        #TARGET(rook)
+        #TARGET(bishop)
+        #TARGET(knight)
+    }
+    #WIN {
+        #CHECKMATE
+    }
+    #DRAW {
+        #STALEMATE
+        #COND($REP$ >= 3)
+        #COND($FIFTY$ / 2 >= 50)
+    }
+    #PREMOVE {
+        #COND(#ROWOFORIGIN == 0)
+        #COND(#COLOFORIGIN == 4)
+        $WSC$ = 0
+        $WLC$ = 0
+    }
+    #PREMOVE {
+        #COND(#ROWOF == 7)
+        #COND(#COLOF == 4)
+        $BSC$ = 0
+        $BLC$ = 0
+    }
+    #POSTMOVE {
+        #COND(#REPETITION > $REP$)
+        $REP$ = #REPETITION
+    }
+}
