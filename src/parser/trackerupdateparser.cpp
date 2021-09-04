@@ -14,7 +14,7 @@ using namespace std;
     name = findAndReplace(name, "#COLOFDESTINATION", "move.square->getCol()"); \
     name = findAndReplace(name, "#INSTR", "move.instr"); \
     name = findAndReplace(name, "#NAME", "move.piece->name()"); \
-    name = findAndReplace(name, "#REPETITION", "getRepetition"); \
+    name = findAndReplace(name, "#REPETITION", "getRepetition()"); \
 
 // constructor with the input vector of strings
 TrackerUpdateParser::TrackerUpdateParser(std::vector <std::string>& input) {
@@ -25,15 +25,18 @@ TrackerUpdateParser::TrackerUpdateParser(std::vector <std::string>& input) {
         line = *it;
         if (regex_match(line, regex("\\#COND\\((.*)\\)"))) {
             conds.push_back(line);
+            instr.erase(it);
+            it--;
         } else if (line == "#ORCOND{") {
             int size = blockSize(instr, it - instr.begin());
             vector <string> orCond;
             int count = 0;
             while (count < size) {
-                orCond.push_back(instr.front());
-                instr.erase(instr.begin());
+                orCond.push_back(*it);
+                instr.erase(it);
                 count++;
             }
+            it--;
             orConds.push_back(orCond);
         }
     }
@@ -55,7 +58,7 @@ vector <string> TrackerUpdateParser::implContent() {
     }
     W_("if (cond) {");
         string current;
-        for (vector <string> :: iterator it = instr.begin(); it != instr.end(); it++) {
+        for (vector <string> :: iterator it = instr.begin() + 1; it != instr.end() - 1; it++) {
             current = *it;
             REPLACE(current);
             W(current + ";");
