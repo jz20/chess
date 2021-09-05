@@ -20,7 +20,7 @@
 using namespace std;
 
 #define PROMOTE_TO(Type) \
-        Piece *promotion = new Queen(move.square, move.piece->getPlayer()); \
+        Piece *promotion = new Type(move.square, move.piece->getPlayer()); \
         promote(move.piece, promotion);
 
 #define EMPTY_AND_FREE(y, x) \
