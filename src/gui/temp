@@ -9,12 +9,10 @@ WXPATH		= `wx-config --cxxflags std`
 
 all:		$(BUILD)
 
-chessgamerunner:	gamerunner.o piecebitmap.o gameframe.o chessgamerunner.o
+chessgamerunner:		chessgamerunner.o chesspiecebitmap.o
 
-chessgamerunner.o:	chessgamerunner.h
-gameframe.o:	gameframe.h
-gamerunner.o:	gamerunner.h
-piecebitmap.o:	piecebitmap.h
+chessgamerunner.o:		chessgamerunner.h
+chesspiecebitmap.o:		chesspiecebitmap.h
 
 clean:		
 			$(RM) $(BUILD) *.o core
