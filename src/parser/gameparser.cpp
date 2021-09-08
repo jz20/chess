@@ -11,6 +11,7 @@
 #include "moveparser.h"
 #include "promotionparser.h"
 #include "trackerupdateparser.h"
+#include "runnerparser.h"
 
 using namespace std;
 
@@ -42,6 +43,7 @@ using namespace std;
 
 // constructor with the vector of string input
 GameParser::GameParser(vector <string>& input) {
+
     string open = input.front();
     name = tokenise(open)[0];
     CHECK(name == "chess", name, "chess is a reserved name for the original game");
@@ -84,6 +86,8 @@ GameParser::GameParser(vector <string>& input) {
             PUSH_LINE(winConds);
         } else if (line == "#DRAW{") {
             PUSH_LINE(drawConds);
+        } else if (line == "#PATHS{") {
+            PUSH_LINE(paths);
         } else {
             CHECK(true, line, "unrecognised instruction");
         }
@@ -111,6 +115,12 @@ GameParser::GameParser(vector <string>& input) {
         PromotionParser parser = PromotionParser(*it, pieces, trackers);
         promotionParsers.push_back(parser);
     }
+
+    if (paths.empty()) {
+        paths.push_back("PATHS{");
+        paths.push_back("}");
+    }
+    runnerParser.reset(new RunnerParser(name, paths));
 }
 
 // produce the content of the header file in the form of a vector of strings
@@ -476,6 +486,11 @@ string GameParser::getName() {
 // get the name that the file should have without extension
 vector <PieceParser> *GameParser::getReferenceToPieceParsers() {
     return &pieceParsers;
+}
+
+// get the pointer to the runner parser
+RunnerParser *GameParser::getReferenceToRunnerParser() {
+    return runnerParser.get();
 }
 
 // get the name that the file should have without extension

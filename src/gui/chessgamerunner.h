@@ -5,7 +5,7 @@ class ChessGameRunner;
 
 #include <wx/wxprec.h>
 #ifndef WX_PRECOMP
-    #include <wx/wx.h>
+#include <wx/wx.h>
 #endif
 #include <vector>
 #include <unordered_map>
@@ -13,14 +13,12 @@ class ChessGameRunner;
 #include "chessgame.h"
 #include "gamerunner.h"
 #include "gameframe.h"
-#include "chesspiecebitmap.h"
-
+#include "piecebitmap.h"
 
 class ChessGameRunner: public GameRunner {
     public:
         // initialise the game
         virtual bool OnInit();
-    private:
 };
 
 #endif

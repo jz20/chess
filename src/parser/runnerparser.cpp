@@ -24,7 +24,7 @@ RunnerParser::RunnerParser(const string& gameName, vector <string> input) {
             name += tokens[1];
             paths[name] = tokens[2];
         }
-    } catch (exception e) {
+    } catch (exception& e) {
         cout << "incorrect paths for pieces" << "\n";
     }
 }
@@ -69,11 +69,52 @@ vector <string> RunnerParser::headerContent() {
 }
 
 // produce the content of the implementation cpp file in the form of a vector of strings
-std::vector <std::string> RunnerParser::implContent() {
+vector <string> RunnerParser::implContent() {
+    vector <string> content;
+    int indent = 0;
 
+    string className = name + "Runner";
+    className[0] = toupper(className[0]);
+
+    string gameClass = name + "Game";
+    gameClass[0] = toupper(gameClass[0]);
+
+    W("#include \"" + getFileName() + ".h\"")
+    WN
+    W("#include <wx/wxprec.h>")
+    W("#ifndef WX_PRECOMP")
+    W("#include <wx/wx.h>")
+    W("#endif")
+    W("#include <vector>")
+    W("#include <unordered_map>")
+    W("#include \"game.h\"")
+    W("#include \"gamerunner.h\"")
+    W("#include \"gameframe.h\"")
+    W("#include \"piecebitmap.h\"")
+    W("#include \"" + name + "game.h\"")
+    WN
+    W("using namespace std;")
+    WN
+    W_("bool " + className + "::OnInit() {")
+        W("wxInitAllImageHandlers();")
+        W("game = new " + gameClass + "();")
+        W("unordered_map <string, string> paths;")
+        for (auto path:paths) {
+            W("paths[\"" + path.first + "\"] = \"" + path.second + "\";")
+        }
+        W("frame = new GameFrame(\"" + gameClass + "\", game, this, paths);")
+        W("game->setUp();")
+        W("frame->updatePieces();")
+        W("frame->Show(true);")
+        W("return true;")
+    _W("}")
+    WN
+    W("wxIMPLEMENT_APP(" + className + ");")
+
+    return content;
 }
 
 // get the file name according to gamename and name
-std::string RunnerParser::getFileName() {
+string RunnerParser::getFileName() {
     return name + "runner";
 }

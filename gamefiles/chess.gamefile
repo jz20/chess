@@ -171,11 +171,18 @@
     #PREMOVE {
         #COND(#ROWOF == 7)
         #COND(#COLOF == 4)
+        #ORCOND{
+            #COND(#COLOF == 4)
+            #COND(#COLOF == 5)
+        }
         $BSC$ = 0
         $BLC$ = 0
     }
     #POSTMOVE {
         #COND(#REPETITION > $REP$)
         $REP$ = #REPETITION
+    }
+    #PATHS {
+    	(#WHITE, king, chess/white_king.png)
     }
 }
