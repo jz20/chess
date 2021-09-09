@@ -5,7 +5,7 @@
 #include "moveparsertest.h"
 #include "trackerupdateparsertest.h"
 #include "gameparsertest.h"
-#include "runnerparsertest.h"
+#include "guiparsertest.h"
 
 // run the unit tests for elements
 bool testRunner() {
@@ -14,8 +14,8 @@ bool testRunner() {
     result = runPieceParserTests() && result;
     result = runMoveParserTests() && result;
     result = runTrackerUpdateParserTests() && result;
+    result = runGUIParserTests() && result;
     result = runGameParserTests() && result;
-    result = runRunnerParserTests() && result;
     return result;
 }
 
