@@ -16,10 +16,11 @@ using namespace std;
 
 //wxFrame(NULL, wxID_ANY, title, pos, size)
 GameFrame::GameFrame(const wxString title, Game* game, GameRunner *runner, 
-        unordered_map <string, string> paths) {
+        unordered_map <string, string> paths, string imgSource) {
     Connect(wxEVT_CLOSE_WINDOW, wxCommandEventHandler(GameFrame::onClose), NULL, this);
     this->runner = runner;
     this->paths = paths;
+    this->imgSource = imgSource;
     this->game = game;
     squareSize = SQUARE_SIZE;
     Board *board = game->getBoard();
@@ -44,7 +45,7 @@ GameFrame::GameFrame(const wxString title, Game* game, GameRunner *runner,
             }
             pSquares.push_back(pSquare);
             PieceBitmap *img;
-            wxString path = "../../img/chess/empty.png";
+            wxString path = imgSource + "empty.png";
             img = new PieceBitmap(pSquare, wxNewId(), 
             wxBitmap(wxImage(path).Rescale(squareSize, squareSize)),
                     wxPoint(0, 0), wxSize(squareSize, squareSize), 0, board->getSquare(i, j), runner);
@@ -68,7 +69,7 @@ void GameFrame::updatePieces() {
         row = count / rows;
         col = count % rows;
         Piece *piece = board->getSquare(row, col)->getPiece();
-        wxString path = "../../img/";
+        wxString path = imgSource;
         string name = "";
         if (piece != NULL) {
             if (piece->getPlayer()->getColour() == WHITE) {
@@ -79,11 +80,12 @@ void GameFrame::updatePieces() {
             name += piece->getName();
             if (paths.find(name) != paths.end()) {
                 path += paths[name];
+            } else {
+                path += "empty.png";
             }
         } else {
             path += "empty.png";
         }
-        cout << path << "\n";
         pieceMap[*it]->SetBitmap(wxBitmap(wxImage(path).Rescale(squareSize, squareSize)));
         count++;
     }

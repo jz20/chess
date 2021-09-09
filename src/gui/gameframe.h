@@ -16,7 +16,7 @@ class GameFrame;
 class GameFrame: public wxFrame {
     public: 
         GameFrame(const wxString title, Game *game, GameRunner *runner,
-                std::unordered_map <std::string, std::string> paths);
+                std::unordered_map <std::string, std::string> paths, std::string imgSource);
         // update the pieces in the board
         void updatePieces();
         // take the mouse input
@@ -30,6 +30,8 @@ class GameFrame: public wxFrame {
         int rows;
         // the number of columns
         int cols;
+        // the source of the images
+        std::string imgSource;
         // the square panels
         std::vector <wxPanel *> pSquares;
         // the map from the square to the pieces

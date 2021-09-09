@@ -30,7 +30,7 @@ bool ChessGameRunner::OnInit() {
     paths["black_rook"] = "chess/black_rook.png";
     paths["black_bishop"] = "chess/black_bishop.png";
     paths["black_pawn"] = "chess/black_pawn.png";
-    frame = new GameFrame("Chess Game", game, this, paths);
+    frame = new GameFrame("Chess Game", game, this, paths, "../../img/");
     game->setUp();
     frame->updatePieces();
     frame->Show(true);

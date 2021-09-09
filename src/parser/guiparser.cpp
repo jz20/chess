@@ -102,7 +102,7 @@ vector <string> GUIParser::implContent() {
         for (auto path:paths) {
             W("paths[\"" + path.first + "\"] = \"" + path.second + "\";")
         }
-        W("frame = new GameFrame(\"" + gameClass + "\", game, this, paths);")
+        W("frame = new GameFrame(\"" + gameClass + "\", game, this, paths, \"../../../../img/\");")
         W("game->setUp();")
         W("frame->updatePieces();")
         W("frame->Show(true);")
@@ -119,25 +119,31 @@ vector <string> GUIParser::makeFile() {
     vector <string> content;
     int indent = 0;
     W("CC\t= g++")
-    W("CPPFLAGS\t= -g -Wall -I$(COMMON)")
-    W("LDLIBS\t= -L$(COMMON) -lelements")
-    W("COMMON\t= ..")
-    W("BUILD\t= common run" + name)
+    W("CPPFLAGS\t= -g -Wall -I$(COMMON) -I$(GAME) -I$(GUI) $(WXPATH)")
+    W("LDLIBS\t= -L$(GAME) -lpartialchess -L$(COMMON) -lelements -L$(GUI) -lgui $(WXLINK)")
+    W("GAME\t= ..")
+    W("COMMON\t= ../..")
+    W("GUI\t= ../../../gui")
+    W("WXLINK\t= `wx-config --cxxflags --libs std`")
+    W("WXPATH\t= `wx-config --cxxflags std`")
+    W("BUILD\t= game gui run")
     WN
     W(".PHONY:\tall clean")
     WN
     W("all:\t$(BUILD)")
     WN
-    string linking = "run" + name + ":\t run" + name + ".o";
-    linking += " " + name + "game.o";
-    W(linking)
-    W("run" + name + ".o:\trun" + name + ".h")
+    W(getFileName() + ":\t" + getFileName() + ".o")
     WN
-    W(name + "game.o:\t" + name + "game.h")
+    W(getFileName() + ".o:\t" + getFileName() + ".h")
     WN
+    W("run:\t" + getFileName())
+    W("\t\tmv " + getFileName() + " run")
     WN
-    W("common:")
-    W("\t\tcd $(COMMON); make")
+    W("game:")
+    W("\t\tcd $(GAME); make")
+    WN
+    W("gui:")
+    W("\t\tcd $(GUI); make")
     WN
     W("clean:")
     W("\t\t$(RM) $(BUILD) *.o core")
