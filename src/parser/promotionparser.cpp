@@ -18,7 +18,7 @@ using namespace std;
 
 // could move back to main code, leaving it here for now because it could be useful for #MIRROR
 #define PARSE_PROMOTION(colour) \
-    W_("if (getCurrentPlayer().getColour == " + colour + ") {") \
+    W_("if (getCurrentPlayer()->getColour() == " + colour + ") {") \
         W("cond = true;") \
         for (vector <string> :: iterator it = conds.begin(); it != conds.end(); it++) { \
             W("cond = cond && " + processCond(*it) + ";") \
@@ -30,9 +30,12 @@ using namespace std;
         W_("if (cond) {") \
             int count = 0; \
             for (vector <string> :: iterator it = targets.begin(); it != targets.end(); it++) { \
-                W("GameMove promotion" + to_string(count) + " = GameMove(move);") \
-                W("promotion" + to_string(count) + ".instr = \"" + *it + "\";") \
-                W("temp.push_back(promotion);") \
+                W("GameMove promotion" + to_string(count) + ";") \
+                W("promotion" + to_string(count) + ".square = move.square;") \
+                W("promotion" + to_string(count) + ".piece = move.piece;") \
+                W("promotion" + to_string(count) + ".aux.reset(move.aux.get());") \
+                W("promotion" + to_string(count) + ".instr = \"" + tokenise(*it)[0] + "\";") \
+                W("temp.push_back(promotion" + to_string(count) + ");") \
                 count++; \
             } \
             W("moves.erase(it);") \

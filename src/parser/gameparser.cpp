@@ -11,7 +11,7 @@
 #include "moveparser.h"
 #include "promotionparser.h"
 #include "trackerupdateparser.h"
-#include "runnerparser.h"
+#include "guiparser.h"
 
 using namespace std;
 
@@ -116,11 +116,9 @@ GameParser::GameParser(vector <string>& input) {
         promotionParsers.push_back(parser);
     }
 
-    if (paths.empty()) {
-        paths.push_back("PATHS{");
-        paths.push_back("}");
+    if (!paths.empty()) {
+        guiParser.reset(new GUIParser(name, paths));
     }
-    runnerParser.reset(new RunnerParser(name, paths));
 }
 
 // produce the content of the header file in the form of a vector of strings
@@ -135,8 +133,8 @@ vector <string> GameParser::headerContent() {
     transform(def.begin(), def.end(), def.begin(), ::toupper);
 
     string trackerIds = "";
-    for (vector <string> :: iterator it = trackers.begin() + 1; it != trackers.end() - 1; it++) {
-        if (it != trackers.begin() + 1) {
+    for (vector <string> :: iterator it = trackers.begin(); it != trackers.end(); it++) {
+        if (it != trackers.begin()) {
             trackerIds += ", ";
         }
         trackerIds += *it;
@@ -169,7 +167,7 @@ vector <string> GameParser::headerContent() {
             // check if the game is over, set finished to be true if so, return
             // true if a player wins and false if there is a draw, the result is 
             // meaningless unless finished is true
-            W("virtual bool checkResults();")
+            W("virtual bool checkResult();")
             // try the input move, store the move on the stack so that it can be 
             // reversed
             W("virtual void tryMove(GameMove& move, bool isAux);")
@@ -310,7 +308,7 @@ std::vector <std::string> GameParser::implContent() {
                     + "(board->getSquare(" + pRow + ", " + pCol + "), " + pPlayer + ");");
             W("board->getSquare(" + pRow + ", " + pCol + ")->setPiece(piece" + to_string(setupCount) + ");")
             W(pPlayer + "->addPiece(piece" + to_string(setupCount) + ");")
-            W_("if (piece" + to_string(setupCount) + ".isKing()) {")
+            W_("if (piece" + to_string(setupCount) + "->isAsKing()) {")
                 if (elements[0] == "#WHITE") {
                     W("whiteKings.push_back(piece" + to_string(setupCount) + ");")
                 } else {
@@ -369,6 +367,7 @@ std::vector <std::string> GameParser::implContent() {
                 W("return false;")
             }
         _W("}")
+        W("return false;")
     _W("}")
     WN
 
@@ -385,14 +384,18 @@ std::vector <std::string> GameParser::implContent() {
         W_("void " + className + "::promotion() {")
             W("bool cond = true;")
             W("vector <GameMove> temp;")
-            for (vector <PromotionParser> :: iterator it = promotionParsers.begin(); it != promotionParsers.end(); it++) {
-                vector <string> functionContent = it->implContent();
-                increaseIndent(functionContent, indent);
-                content.insert(content.end(), functionContent.begin(), functionContent.end());
-                WN
-            }
+            W("updateMoves();")
+            W_("for (vector <GameMove> :: iterator it = moves.begin(); it != moves.end(); it++) {")
+                W("GameMove& move = *it;")
+                for (vector <PromotionParser> :: iterator it = promotionParsers.begin(); it != promotionParsers.end(); it++) {
+                    vector <string> functionContent = it->implContent();
+                    increaseIndent(functionContent, indent);
+                    content.insert(content.end(), functionContent.begin(), functionContent.end());
+                    WN
+                }
+            _W("}")
             W_("for (vector <GameMove> :: iterator it = temp.begin(); it != temp.end(); it++) {")
-                W("moves.push_back(*it)")
+                W("moves.push_back(*it);")
             _W("}")
         _W("}")
         WN
@@ -447,14 +450,22 @@ vector <string> GameParser::makeFile() {
     int indent = 0;
     W("CC\t= g++")
     W("CPPFLAGS\t= -g -Wall -I$(COMMON)")
+    // create lib for gui
+    W("LIB\t= lib" + name + ".a")
+    string libobjs = name + "game.o";
+    for (vector <PieceParser> :: iterator it = pieceParsers.begin(); it != pieceParsers.end(); it++) {
+        libobjs += " " + it->getFileName() + ".o";
+    }
+    W("LIBOBJS\t= " + libobjs)
     W("LDLIBS\t= -L$(COMMON) -lelements")
     W("COMMON\t= ..")
-    W("BUILD\t= common run" + name)
+    W("BUILD\t= common") // run" + name)
     WN
     W(".PHONY:\tall clean")
     WN
-    W("all:\t$(BUILD)")
+    W("all:\t$(BUILD) $(LIB)")
     WN
+    /*
     string linking = "run" + name + ":\t run" + name + ".o";
     linking += " " + name + "game.o";
     for (vector <PieceParser> :: iterator it = pieceParsers.begin(); it != pieceParsers.end(); it++) {
@@ -463,6 +474,7 @@ vector <string> GameParser::makeFile() {
     W(linking)
     W("run" + name + ".o:\trun" + name + ".h")
     WN
+    */
     W(name + "game.o:\t" + name + "game.h")
     WN
     for (vector <PieceParser> :: iterator it = pieceParsers.begin(); it != pieceParsers.end(); it++) {
@@ -471,6 +483,9 @@ vector <string> GameParser::makeFile() {
     WN
     W("common:")
     W("\t\tcd $(COMMON); make")
+    WN
+    W("$(LIB):		$(LIBOBJS)")
+	W("\t\tar rcs $(LIB) $(LIBOBJS)")
     WN
     W("clean:")
     W("\t\t$(RM) $(BUILD) *.o core")
@@ -489,8 +504,8 @@ vector <PieceParser> *GameParser::getReferenceToPieceParsers() {
 }
 
 // get the pointer to the runner parser
-RunnerParser *GameParser::getReferenceToRunnerParser() {
-    return runnerParser.get();
+GUIParser *GameParser::getReferenceToGUIParser() {
+    return guiParser.get();
 }
 
 // get the name that the file should have without extension

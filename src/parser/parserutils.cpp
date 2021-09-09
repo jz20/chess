@@ -125,34 +125,34 @@ string replaceKeywords(const string& cond) {
     string result = cond;
 
     if (result.find("#EMPTY") != string::npos) {
-        result = findAndReplace(result, "#EMPTY", "game->getBoard()->getSquare");
-        result += ".isEmpty()";
+        result = findAndReplace(result, "#EMPTY", "getBoard()->getSquare");
+        result += "->isEmpty()";
     } else if (result.find("#NONEMPTY") != string::npos) {
-        result = findAndReplace(result, "#NONEMPTY", "game->getBoard()->getSquare");
-        result += ".isEmpty()";
+        result = findAndReplace(result, "#NONEMPTY", "getBoard()->getSquare");
+        result += "->isEmpty()";
         result = "!" + result;
     } else if (result.find("#FRIENDLY") != string::npos) {
-        result = findAndReplace(result, "#FRIENDLY", "game->getBoard()->getSquare");
+        result = findAndReplace(result, "#FRIENDLY", "getBoard()->getSquare");
         string additional = result;
-        result += ".isEmpty()";
+        result += "->isEmpty()";
         result = "!" + result;
-        additional += ".getPiece().getPlayer() == getCurrentPlayer()";
+        additional += "->getPiece()->getPlayer() == getCurrentPlayer()";
         result += " && ";
         result += additional;
     } else if (result.find("#UNFRIENDLY") != string::npos) {
-        result = findAndReplace(result, "#UNFRIENDLY", "game->getBoard()->getSquare");
+        result = findAndReplace(result, "#UNFRIENDLY", "getBoard()->getSquare");
         string additional = result;
-        result += ".isEmpty()";
+        result += "->isEmpty()";
         result = "!" + result;
-        additional += ".getPiece().getPlayer() != getCurrentPlayer()";
+        additional += "->getPiece()->getPlayer() != getCurrentPlayer()";
         result += " && ";
         result += additional;
     } else if (result.find("#NONEMPTY") != string::npos) {
-        result = findAndReplace(result, "#NONEMPTY", "game->getBoard()->getSquare");
-        result += ".isEmpty()";
+        result = findAndReplace(result, "#NONEMPTY", "getBoard()->getSquare");
+        result += "->isEmpty()";
         result = "!" + result;
     } else if (result.find("#FREE") != string::npos) {
-        result = findAndReplace(result, "#FREE", "game->getBoard()->getSquare");
+        result = findAndReplace(result, "#FREE", "getBoard()->getSquare");
         result = "squaresControlled(getOppositePlayer()).count(" + result + ") == 0";
     }
 

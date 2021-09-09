@@ -1,4 +1,4 @@
-#include "runnerparser.h"
+#include "guiparser.h"
 
 #include "parserutils.h"
 #include <string>
@@ -10,7 +10,7 @@
 using namespace std;
 
 // Constructor with the game name and the input vector of string
-RunnerParser::RunnerParser(const string& gameName, vector <string> input) {
+GUIParser::GUIParser(const string& gameName, vector <string> input) {
     this->name = gameName;
     try {
         for (vector <string> :: iterator it = input.begin() + 1; it != input.end() - 1; it++) {
@@ -30,7 +30,7 @@ RunnerParser::RunnerParser(const string& gameName, vector <string> input) {
 }
 
 // produce the content of the header file in the form of a vector of strings
-vector <string> RunnerParser::headerContent() {
+vector <string> GUIParser::headerContent() {
     string def = name;
     def += "_RUNNER_H";
     transform(def.begin(), def.end(), def.begin(), ::toupper);
@@ -57,11 +57,11 @@ vector <string> RunnerParser::headerContent() {
     W("#include \"gameframe.h\"")
     W("#include \"piecebitmap.h\"")
     WN
-    W_("class ChessGameRunner: public GameRunner {")
+    W_("class " + className + ": public GameRunner {")
     W_("public:")
     W("virtual bool OnInit();")
     _WE
-    _W("}")
+    _W("};")
     WN
     W("#endif")
 
@@ -69,7 +69,7 @@ vector <string> RunnerParser::headerContent() {
 }
 
 // produce the content of the implementation cpp file in the form of a vector of strings
-vector <string> RunnerParser::implContent() {
+vector <string> GUIParser::implContent() {
     vector <string> content;
     int indent = 0;
 
@@ -114,7 +114,38 @@ vector <string> RunnerParser::implContent() {
     return content;
 }
 
+// produce the content of the make file in the form of a vector of strings
+vector <string> GUIParser::makeFile() {
+    vector <string> content;
+    int indent = 0;
+    W("CC\t= g++")
+    W("CPPFLAGS\t= -g -Wall -I$(COMMON)")
+    W("LDLIBS\t= -L$(COMMON) -lelements")
+    W("COMMON\t= ..")
+    W("BUILD\t= common run" + name)
+    WN
+    W(".PHONY:\tall clean")
+    WN
+    W("all:\t$(BUILD)")
+    WN
+    string linking = "run" + name + ":\t run" + name + ".o";
+    linking += " " + name + "game.o";
+    W(linking)
+    W("run" + name + ".o:\trun" + name + ".h")
+    WN
+    W(name + "game.o:\t" + name + "game.h")
+    WN
+    WN
+    W("common:")
+    W("\t\tcd $(COMMON); make")
+    WN
+    W("clean:")
+    W("\t\t$(RM) $(BUILD) *.o core")
+    W("\t\tcd $(COMMON); make clean")
+    return content;
+}
+
 // get the file name according to gamename and name
-string RunnerParser::getFileName() {
+string GUIParser::getFileName() {
     return name + "runner";
 }

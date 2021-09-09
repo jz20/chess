@@ -1,20 +1,22 @@
-#ifndef RUNNER_PARSER_H
-#define RUNNER_PARSER_H
+#ifndef GUI_PARSER_H
+#define GUI_PARSER_H
 
-class RunnerParser;
+class GUIParser;
 
 #include <string>
 #include <vector>
 #include <unordered_map>
 
-class RunnerParser {
+class GUIParser {
     public:
         // Constructor with the game name and the input vector of string
-        RunnerParser(const std::string& gameName, std::vector <std::string> input);
+        GUIParser(const std::string& gameName, std::vector <std::string> input);
         // produce the content of the header file in the form of a vector of strings
         std::vector <std::string> headerContent();
         // produce the content of the implementation cpp file in the form of a vector of strings
         std::vector <std::string> implContent();
+        // produce the content of the make file in the form of a vector of strings
+        std::vector <std::string> makeFile();
         // get the file name according to gamename and name
         std::string getFileName();
     private:
