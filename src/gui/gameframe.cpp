@@ -83,6 +83,7 @@ void GameFrame::updatePieces() {
         } else {
             path += "empty.png";
         }
+        cout << path << "\n";
         pieceMap[*it]->SetBitmap(wxBitmap(wxImage(path).Rescale(squareSize, squareSize)));
         count++;
     }
