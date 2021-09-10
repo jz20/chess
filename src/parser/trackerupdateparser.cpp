@@ -36,6 +36,7 @@ TrackerUpdateParser::TrackerUpdateParser(std::vector <std::string>& input) {
                 instr.erase(it);
                 count++;
             }
+            it--;
             orConds.push_back(orCond);
             it--;
         }

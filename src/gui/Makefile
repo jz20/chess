@@ -21,12 +21,14 @@ piecebitmap.o:	piecebitmap.h
 clean:		
 			$(RM) $(BUILD) *.o core
 #			cd $(LIB); make clean
+#			cd $(LIBCHESS); make clean
 
 elem:		
 			cd $(ELEM); make
 
 $(LIB):		$(LIBOBJS)
 		ar rcs $(LIB) $(LIBOBJS)
+
 
 run:		chessgamerunner
 			mv chessgamerunner run
