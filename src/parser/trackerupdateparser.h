@@ -6,6 +6,10 @@ class TrackerUpdateParser;
 #include <vector>
 #include <string>
 
+#define BOTH 0
+#define WHITE 1
+#define BLACK -1
+
 class TrackerUpdateParser {
     public:
         // constructor with the input vector of strings
@@ -19,6 +23,8 @@ class TrackerUpdateParser {
         std::vector <std::string> conds;
         // the or conditions
         std::vector <std::vector <std::string>> orConds;
+        // the colour that the update applies to: 0 for both, 1 for white, -1 for black
+        int colour;
         // process a condition
         std::string processCond(const std::string& cond);
         // process an or-condition
