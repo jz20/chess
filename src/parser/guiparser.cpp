@@ -120,7 +120,7 @@ vector <string> GUIParser::makeFile() {
     int indent = 0;
     W("CC\t= g++")
     W("CPPFLAGS\t= -g -Wall -I$(COMMON) -I$(GAME) -I$(GUI) $(WXPATH)")
-    W("LDLIBS\t= -L$(GAME) -lpartialchess -L$(COMMON) -lelements -L$(GUI) -lgui $(WXLINK)")
+    W("LDLIBS\t= -L$(GAME) -l" + name + " -L$(COMMON) -lelements -L$(GUI) -lgui $(WXLINK)")
     W("GAME\t= ..")
     W("COMMON\t= ../..")
     W("GUI\t= ../../../gui")

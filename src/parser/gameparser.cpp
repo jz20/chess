@@ -253,6 +253,7 @@ std::vector <std::string> GameParser::implContent() {
         }
         W_("if (!isAux) {")
             W("postMove(move);")
+            W("storeBoardState();")
             W("Player *opposite = current == white ? black : white;")
             W("inCheck = checkTest(opposite);")
         _W("}")
@@ -384,7 +385,6 @@ std::vector <std::string> GameParser::implContent() {
         W_("void " + className + "::promotion() {")
             W("bool cond = true;")
             W("vector <GameMove> temp;")
-            W("updateMoves();")
             W_("for (vector <GameMove> :: iterator it = moves.begin(); it != moves.end(); it++) {")
                 W("GameMove& move = *it;")
                 for (vector <PromotionParser> :: iterator it = promotionParsers.begin(); it != promotionParsers.end(); it++) {
