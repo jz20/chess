@@ -32,9 +32,9 @@ using namespace std;
     } \
     W_("if (cond) {"); \
         W("GameMove move;"); \
-        W("move.piece = " + origin + ".getPiece();"); \
+        W("move.piece = " + origin + "->getPiece();"); \
         W("move.square = " + destination + ";"); \
-        W("move.instr = " + name + ";"); \
+        W("move.instr = \"" + name + "\";"); \
         W("moves.push_back(move);"); \
         vector <string> current; \
         int count = 0; \
@@ -53,7 +53,7 @@ using namespace std;
                     if (auxOrigin.find("#NONE") != string::npos) { \
                         W("aux" + to_string(count) + "->piece = NULL;"); \
                     } else { \
-                        W("aux" + to_string(count) + "->piece = " + auxOrigin + ".getPiece();"); \
+                        W("aux" + to_string(count) + "->piece = " + auxOrigin + "->getPiece();"); \
                     } \
                     flag0 = true; \
                 } else if (regex_match(*it1, regex("\\#DESTINATION\\((.*)\\)"))) { \
@@ -64,7 +64,7 @@ using namespace std;
                 } \
             } \
             CHECK(!(flag0 && flag1), current, "INCORRECT #AUXMOVE"); \
-            W("parent->aux->reset(aux" + to_string(count) + "));"); \
+            W("parent->aux.reset(aux" + to_string(count) + ");"); \
             W("parent = aux" + to_string(count) + ";"); \
             count++; \
         } \
@@ -160,7 +160,7 @@ vector <string> MoveParser::headerContent() {
 vector <string> MoveParser::implContent() {
     vector <string> content;
     int indent = 0;
-    W_("void " + gameName + "::" + name + "() {");
+    W_("void " + gameName + "Game::" + name + "() {");
     W("Player *current = getCurrentPlayer();");
     if (movePlayer == MIRROR_MOVE) {
         /*
@@ -195,9 +195,9 @@ vector <string> MoveParser::implContent() {
         W_("if (current->getColour() == WHITE) {");
         if (eachPiece) {
             W("Piece *piece = NULL;");
-            W_("for (vector <Piece *> :: iterator it = current.getPieces().begin(); it != current.getPieces().end(); it ++) {");
+            W_("for (vector <Piece *> :: iterator it = current->getPieces().begin(); it != current->getPieces().end(); it ++) {");
                 W("piece = *it;");
-                W_("if (piece.getName() == " + pieceName + ") {");
+                W_("if (piece->getName() == \"" + pieceName + "\") {");
                     PROCESS_MOVE;
                 _W("}");
             _W("}");
@@ -232,13 +232,13 @@ string MoveParser::functionCall() {
 
 // process the origin
 void MoveParser::processOrigin(std::string& ori) {
-    ori = findAndReplace(ori, "#ORIGIN", "game->getBoard()->getSquare");
+    ori = findAndReplace(ori, "#ORIGIN", "getBoard()->getSquare");
     EACH_PIECE(ori);
 }
 
 // process the destination
 void MoveParser::processDestination(std::string& des) {
-    des = findAndReplace(des, "#DESTINATION", "game->getBoard()->getSquare");
+    des = findAndReplace(des, "#DESTINATION", "getBoard()->getSquare");
     EACH_PIECE(des);
 }
 

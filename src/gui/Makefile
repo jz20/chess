@@ -1,9 +1,11 @@
 CC			= g++
-CPPFLAGS	= -g -Wall -I$(LIB) -I$(LIBCHESS) $(WXPATH)
-LDLIBS		= -L$(LIB) -lelements -L$(LIBCHESS) -lchesselements $(WXLINK)
-BUILD		= lib run
-LIB			= ../elements
-LIBCHESS	= ../elements/chess
+CPPFLAGS	= -g -Wall -I$(ELEM) -I$(CHESS) $(WXPATH)
+LDLIBS		= -L$(ELEM) -lelements -L$(CHESS) -lchesselements $(WXLINK)
+LIB			= libgui.a
+LIBOBJS		= gamerunner.o piecebitmap.o gameframe.o
+BUILD		= $(LIB) elem run
+ELEM		= ../elements
+CHESS		= ../elements/chess
 WXLINK		= `wx-config --cxxflags --libs std`
 WXPATH		= `wx-config --cxxflags std`
 
@@ -21,9 +23,12 @@ clean:
 #			cd $(LIB); make clean
 #			cd $(LIBCHESS); make clean
 
-lib:		
-			cd $(LIB); make
-			cd $(CHESSLIBCHESS); make
+elem:		
+			cd $(ELEM); make
+
+$(LIB):		$(LIBOBJS)
+		ar rcs $(LIB) $(LIBOBJS)
+
 
 run:		chessgamerunner
 			mv chessgamerunner run

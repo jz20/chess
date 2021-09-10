@@ -1,0 +1,89 @@
+#GAME (test) {
+	#ROW = 6
+	#COL = 5
+	#PIECE (king, k) {
+		#KING
+		(1, 0)
+        (0, 1)
+        (0, -1)
+        (-1, 0)
+	}
+	#PIECE (pig, p) {
+		UP_LEFT
+        UP_RIGHT
+        DOWN_LEFT
+        DOWN_RIGHT
+		(1, 0)
+        (0, 1)
+        (0, -1)
+        (-1, 0)
+	}
+	#PIECE (fighter, f) {
+		(1, 0)
+        (0, 1)
+        (0, -1)
+        (-1, 0)
+	}
+	#PIECE (mouse, m) {
+		(1, 0)
+	}
+	#TRACKERS {
+		MOVES = 0
+	}
+	#SETUP {
+		(#WHITE, fighter, 0, 0)
+		(#WHITE, pig, 0, 1)
+		(#WHITE, king, 0, 2)
+		(#WHITE, pig, 0, 3)
+		(#WHITE, fighter, 0, 4)
+		(#WHITE, mouse, 1, 0)
+		(#WHITE, mouse, 1, 1)
+		(#WHITE, mouse, 1, 2)
+		(#WHITE, mouse, 1, 3)
+		(#WHITE, mouse, 1, 4)
+		(#BLACK, fighter, 5, 0)
+		(#BLACK, pig, 5, 1)
+		(#BLACK, king, 5, 2)
+		(#BLACK, pig, 5, 3)
+		(#BLACK, fighter, 5, 4)
+		(#BLACK, mouse, 4, 0)
+		(#BLACK, mouse, 4, 1)
+		(#BLACK, mouse, 4, 2)
+		(#BLACK, mouse, 4, 3)
+		(#BLACK, mouse, 4, 4)
+	}
+	#PROMOTION {
+		#WHITE
+		#COND(#ROWOF == 5)
+		#CANDIDATE(mouse)
+		#TARGET(pig)
+		#TARGET(fighter)
+	}
+	#PROMOTION {
+		#BLACK
+		#COND(#ROWOF == 0)
+		#CANDIDATE(mouse)
+		#TARGET(pig)
+		#TARGET(fighter)
+	}
+	#WIN {
+        #CHECKMATE
+    }
+    #DRAW {
+        #STALEMATE
+        #COND($MOVES$ >= 100)
+    }
+	#PREMOVE {
+		$MOVES$ = $MOVES$ + 1
+	}
+	#PATHS {
+    	(#WHITE, king, chess/white_king.png)
+		(#WHITE, pig, chess/white_bishop.png)
+		(#WHITE, fighter, chess/white_rook.png)
+		(#WHITE, mouse, chess/white_pawn.png)
+		(#BLACK, king, chess/black_king.png)
+		(#BLACK, pig, chess/black_bishop.png)
+		(#BLACK, fighter, chess/black_rook.png)
+		(#BLACK, mouse, chess/black_pawn.png)
+    }
+}

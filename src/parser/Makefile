@@ -1,7 +1,8 @@
 CC			= g++
 CPPFLAGS	= -g -Wall
 LIB			= libparser.a
-LIBOBJS		= parserutils.o pieceparser.o moveparser.o trackerupdateparser.o promotionparser.o gameparser.o
+LIBOBJS		= parserutils.o pieceparser.o moveparser.o trackerupdateparser.o\
+				promotionparser.o gameparser.o guiparser.o
 BUILD		= $(LIB)
 
 .PHONY: 	all clean
@@ -17,6 +18,7 @@ pieceparser.o:	pieceparser.h
 moveparser.o:	moveparser.h
 trackerupdateparser.o:	trackerupdateparser.h
 promotionparser.o:	promotionparser.h
+guiparser.o:	guiparser.h
 gameparser.o:	gameparser.h
 
 $(LIB):		$(LIBOBJS)

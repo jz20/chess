@@ -16,10 +16,11 @@ using namespace std;
 
 //wxFrame(NULL, wxID_ANY, title, pos, size)
 GameFrame::GameFrame(const wxString title, Game* game, GameRunner *runner, 
-        unordered_map <string, string> paths) {
+        unordered_map <string, string> paths, string imgSource) {
     Connect(wxEVT_CLOSE_WINDOW, wxCommandEventHandler(GameFrame::onClose), NULL, this);
     this->runner = runner;
     this->paths = paths;
+    this->imgSource = imgSource;
     this->game = game;
     squareSize = SQUARE_SIZE;
     Board *board = game->getBoard();
@@ -30,7 +31,7 @@ GameFrame::GameFrame(const wxString title, Game* game, GameRunner *runner,
     int extra = 50;
     wxColour light = wxColour(240,176,87);
     wxColour dark = wxColour(137,82,23);
-    Create(0, wxID_ANY, title, wxPoint(0, 0), wxSize(rows * squareSize, cols * squareSize + extra), wxDEFAULT_FRAME_STYLE, _T("wxID_ANY"));
+    Create(0, wxID_ANY, title, wxPoint(0, 0), wxSize(cols * squareSize, rows * squareSize + extra), wxDEFAULT_FRAME_STYLE, _T("wxID_ANY"));
     pBoard = new wxPanel(this, wxNewId(), wxPoint(0, 0));
     for (int i = 0; i < rows; i++) {
         for (int j = 0; j < cols; j++) {
@@ -44,7 +45,7 @@ GameFrame::GameFrame(const wxString title, Game* game, GameRunner *runner,
             }
             pSquares.push_back(pSquare);
             PieceBitmap *img;
-            wxString path = "../../img/chess/empty.png";
+            wxString path = imgSource + "empty.png";
             img = new PieceBitmap(pSquare, wxNewId(), 
             wxBitmap(wxImage(path).Rescale(squareSize, squareSize)),
                     wxPoint(0, 0), wxSize(squareSize, squareSize), 0, board->getSquare(i, j), runner);
@@ -65,10 +66,10 @@ void GameFrame::updatePieces() {
     Board *board = game->getBoard();
     count = 0;
     for (vector <wxPanel *> :: iterator it = pSquares.begin(); it != pSquares.end(); it++) {
-        row = count / rows;
-        col = count % rows;
+        row = count / cols;
+        col = count % cols;
         Piece *piece = board->getSquare(row, col)->getPiece();
-        wxString path = "../../img/";
+        wxString path = imgSource;
         string name = "";
         if (piece != NULL) {
             if (piece->getPlayer()->getColour() == WHITE) {
@@ -79,6 +80,8 @@ void GameFrame::updatePieces() {
             name += piece->getName();
             if (paths.find(name) != paths.end()) {
                 path += paths[name];
+            } else {
+                path += "empty.png";
             }
         } else {
             path += "empty.png";

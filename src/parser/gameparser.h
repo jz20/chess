@@ -6,10 +6,12 @@ class GameParser;
 #include <vector>
 #include <string>
 #include <unordered_map>
+#include <memory>
 #include "pieceparser.h"
 #include "moveparser.h"
 #include "promotionparser.h"
 #include "trackerupdateparser.h"
+#include "guiparser.h"
 
 class GameParser {
     public:
@@ -27,6 +29,8 @@ class GameParser {
         std::string getFileName();
         // get the pointer to the vector of piece parsers
         std::vector <PieceParser> *getReferenceToPieceParsers();
+        // get the pointer to the gui parser
+        GUIParser *getReferenceToGUIParser();
     private:
         // number of rows
         int rows;
@@ -64,6 +68,10 @@ class GameParser {
         std::vector <std::string> trackers;
         // the initial value of each tracker
         std::unordered_map <std::string, std::string> trackerValues;
+        // the pieces' image paths
+        std::vector <std::string> paths;
+        // the gui parser
+        std::shared_ptr <GUIParser> guiParser;
         // the board setup
         std::vector <std::string> setup;
         // the win conditions

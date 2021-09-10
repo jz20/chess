@@ -1,0 +1,6 @@
+PATHS{
+    (#WHITE, king, chess/white_king.png)
+    (#BLACK, king, chess/black_king.png)
+    (#WHITE, queen, chess/white_queen.png)
+    (#BLACK, queen, chess/black_queen.png)
+}

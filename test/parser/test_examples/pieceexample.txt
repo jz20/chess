@@ -1,6 +1,6 @@
 #PIECE (foo, f) {
-    UPLEFT
-    UPRIGHT
+    UP_LEFT
+    UP_RIGHT
     (1, 0)
     (-1, 1) *NC*
     (-1, -1) *NC*

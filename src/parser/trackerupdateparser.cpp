@@ -38,6 +38,7 @@ TrackerUpdateParser::TrackerUpdateParser(std::vector <std::string>& input) {
             }
             it--;
             orConds.push_back(orCond);
+            it--;
         }
     }
 }

@@ -94,7 +94,7 @@
     }
     #MOVE (wshortcastling) {
         #WHITE
-        #COND($WSC$ == 1, $BSC$ == 1)
+        #COND($WSC$ == 1)
         #COND(#EMPTY(0, 5))
         #COND(#EMPTY(0, 6))
         #COND(#FREE(0, 5))
@@ -123,11 +123,11 @@
     #MOVE (wpawntwosquares) {
         #WHITE
         #EACHPIECE(pawn)
-        #COND(#ROWOF == $1)
-        #COND(#EMPTY($2, #COLOF))
-        #COND(#EMPTY($3, #COLOF))
-        #ORIGIN($1, #COLOF)
-        #DESTINATION($3, #COLOF)
+        #COND(#ROWOF == 1)
+        #COND(#EMPTY(2, #COLOF))
+        #COND(#EMPTY(3, #COLOF))
+        #ORIGIN(1, #COLOF)
+        #DESTINATION(3, #COLOF)
     }
     #MOVE (wenpassant) {
         #WHITE
@@ -169,13 +169,20 @@
         $WLC$ = 0
     }
     #PREMOVE {
-        #COND(#ROWOF == 7)
-        #COND(#COLOF == 4)
+        #COND(#ROWOFORIGIN == 7)
+        #COND(#COLOFORIGIN == 4)
+        #ORCOND{
+            #COND(#COLOFORIGIN == 4)
+            #COND(#COLOFORIGIN == 5)
+        }
         $BSC$ = 0
         $BLC$ = 0
     }
     #POSTMOVE {
         #COND(#REPETITION > $REP$)
         $REP$ = #REPETITION
+    }
+    #PATHS {
+    	(#WHITE, king, chess/white_king.png)
     }
 }

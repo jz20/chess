@@ -2,10 +2,6 @@ cond = true;
 cond = cond && ((move.piece->getSquare()->getRow()==0));
 cond = cond && ((move.piece->getSquare()->getCol()==4));
 if (cond) {
-	#PREMOVE{;
-	#COND(move.piece->getSquare()->getRow()==0);
-	#COND(move.piece->getSquare()->getCol()==4);
 	WSC=0;
 	WLC=0;
-	};
 }

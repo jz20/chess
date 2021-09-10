@@ -35,6 +35,7 @@ using namespace std;
             int rowOffset = stoi(coordinates[0]); \
             W(functionName + "(&targets, " + to_string(coefficient * rowOffset) + ", " + coordinates[1] + ");") \
         } else { \
+            cout << current << "\n"; \
             CHECK(true, movement, "INCORRECT PIECE MOVEMENT") \
         } \
     }
@@ -126,6 +127,9 @@ vector <string> PieceParser::implContent() {
         _W_("} else {")
             W("symbol = '" + string(1, toupper(symbol)) + "';")
         _W("}")
+        if (king) {
+            W("asKing = true;")
+        }
     _W("}")
     WN
     W_("void " + className + "::updateTargets() {")
@@ -152,10 +156,10 @@ void PieceParser::setUpMoveMapWhite() {
     moveMapWhite["DOWN"] = "downCol";
     moveMapWhite["LEFT"] = "leftRow";
     moveMapWhite["RIGHT"] = "rightRow";
-    moveMapWhite["UPLEFT"] = "upLeftDiag";
-    moveMapWhite["UPRIGHT"] = "upRightDiag";
-    moveMapWhite["DOWNLEFT"] = "downLeftDiag";
-    moveMapWhite["DOWNRIGHT"] = "downRightDiag";
+    moveMapWhite["UP_LEFT"] = "upLeftDiag";
+    moveMapWhite["UP_RIGHT"] = "upRightDiag";
+    moveMapWhite["DOWN_LEFT"] = "downLeftDiag";
+    moveMapWhite["DOWN_RIGHT"] = "downRightDiag";
 }
 
 // set up the moveMapBlack for BLACK
@@ -164,8 +168,8 @@ void PieceParser::setUpMoveMapBlack() {
     moveMapBlack["DOWN"] = "upCol";
     moveMapBlack["LEFT"] = "leftRow";
     moveMapBlack["RIGHT"] = "rightRow";
-    moveMapBlack["UPLEFT"] = "downLeftDiag";
-    moveMapBlack["UPRIGHT"] = "downRightDiag";
-    moveMapBlack["DOWNLEFT"] = "upLeftDiag";
-    moveMapBlack["DOWNRIGHT"] = "downRightDiag";
+    moveMapBlack["UP_LEFT"] = "downLeftDiag";
+    moveMapBlack["UP_RIGHT"] = "downRightDiag";
+    moveMapBlack["DOWN_LEFT"] = "upLeftDiag";
+    moveMapBlack["DOWN_RIGHT"] = "upRightDiag";
 }
