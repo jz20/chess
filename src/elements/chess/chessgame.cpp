@@ -328,15 +328,21 @@ void ChessGame::updateTrackers(GameMove& move) {
         trackers[WSC] = false;
     }
     if (trackers[WLC]
-            && piece->getName() == "rook" 
+            && 
+            ((piece->getName() == "rook" 
             && piece->getPlayer() == white
-            && piece->getSquare() == board->getSquare(0, 0)) {
+            && piece->getSquare() == board->getSquare(0, 0))
+            ||
+            move.square == board->getSquare(0, 0))) {
         trackers[WLC] = false;
     }
-    if (trackers[WSC] 
-            && piece->getName() == "rook" 
+    if (trackers[WLC]
+            && 
+            ((piece->getName() == "rook" 
             && piece->getPlayer() == white
-            && piece->getSquare() == board->getSquare(0, 7)) {
+            && piece->getSquare() == board->getSquare(0, 7))
+            ||
+            move.square == board->getSquare(0, 7))) {
         trackers[WSC] = false;
     }
     if (piece == blackKing) {
@@ -344,15 +350,21 @@ void ChessGame::updateTrackers(GameMove& move) {
         trackers[BSC] = false;
     }
     if (trackers[BLC] 
-            && piece->getName() == "rook" 
+            &&
+            ((piece->getName() == "rook" 
             && piece->getPlayer() == black
-            && piece->getSquare() == board->getSquare(7, 0)) {
+            && piece->getSquare() == board->getSquare(7, 0))
+            ||
+            move.square == board->getSquare(7, 0))) {
         trackers[BLC] = false;
     }
-    if (trackers[BSC] 
-            && piece->getName() == "rook" 
+    if (trackers[BLC] 
+            &&
+            ((piece->getName() == "rook" 
             && piece->getPlayer() == black
-            && piece->getSquare() == board->getSquare(7, 7)) {
+            && piece->getSquare() == board->getSquare(7, 7))
+            ||
+            move.square == board->getSquare(7, 7))) {
         trackers[BSC] = false;
     }
     if (piece->getName() == "pawn"
