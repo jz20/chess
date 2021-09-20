@@ -14,10 +14,10 @@ Rook::Rook(Square *square, Player *player): Piece(square, player) {
 }
 
 // update the possible squares for a piece to move to
-void Rook::updateTargets() {
+void Rook::updateTargets(bool ownPieces) {
     targets.clear();
-    upCol(&targets);
-    downCol(&targets);
-    leftRow(&targets);
-    rightRow(&targets);
+    upCol(&targets, ownPieces);
+    downCol(&targets, ownPieces);
+    leftRow(&targets, ownPieces);
+    rightRow(&targets, ownPieces);
 }

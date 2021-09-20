@@ -10,7 +10,7 @@ class Bishop: public Piece {
         // Constructor of a bishop at a specific Square belonging to a player
         Bishop(Square *square, Player *player);
         // update the possible squares for a piece to move to
-        void updateTargets();
+        void updateTargets(bool ownPieces = false);
 };
 
 #endif

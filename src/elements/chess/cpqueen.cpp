@@ -14,16 +14,16 @@ Queen::Queen(Square *square, Player *player): Piece(square, player) {
 }
 
 // update the possible squares for a piece to move to
-void Queen::updateTargets() {
+void Queen::updateTargets(bool ownPieces) {
     targets.clear();
     // straight line targets
-    upCol(&targets);
-    downCol(&targets);
-    leftRow(&targets);
-    rightRow(&targets);
+    upCol(&targets, ownPieces);
+    downCol(&targets, ownPieces);
+    leftRow(&targets, ownPieces);
+    rightRow(&targets, ownPieces);
     // diagonal targets
-    upLeftDiag(&targets);
-    upRightDiag(&targets);
-    downLeftDiag(&targets);
-    downRightDiag(&targets);
+    upLeftDiag(&targets, ownPieces);
+    upRightDiag(&targets, ownPieces);
+    downLeftDiag(&targets, ownPieces);
+    downRightDiag(&targets, ownPieces);
 }

@@ -15,14 +15,14 @@ Knight::Knight(Square *square, Player *player): Piece(square, player) {
 }
 
 // update the possible squares for a piece to move to
-void Knight::updateTargets() {
+void Knight::updateTargets(bool ownPieces) {
     targets.clear();
-    targetSquare(&targets, 1, 2);
-    targetSquare(&targets, 2, 1);
-    targetSquare(&targets, 2, -1);
-    targetSquare(&targets, 1, -2);
-    targetSquare(&targets, -1, -2);
-    targetSquare(&targets, -2, -1);
-    targetSquare(&targets, -2, 1);
-    targetSquare(&targets, -1, 2);
+    targetSquare(&targets, 1, 2, ownPieces);
+    targetSquare(&targets, 2, 1, ownPieces);
+    targetSquare(&targets, 2, -1, ownPieces);
+    targetSquare(&targets, 1, -2, ownPieces);
+    targetSquare(&targets, -1, -2, ownPieces);
+    targetSquare(&targets, -2, -1, ownPieces);
+    targetSquare(&targets, -2, 1, ownPieces);
+    targetSquare(&targets, -1, 2, ownPieces);
 }

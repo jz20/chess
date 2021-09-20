@@ -59,7 +59,7 @@ ostream& operator<<(ostream &strm, const Piece &piece) {
     to the targets vector
 */
 
-void Piece::upLeftDiag(vector <Square *> *targets) {
+void Piece::upLeftDiag(vector <Square *> *targets, bool ownPieces) {
     int i = square->getRow() + 1;
     int j = square->getCol() - 1;
     bool flag = true;
@@ -68,7 +68,7 @@ void Piece::upLeftDiag(vector <Square *> *targets) {
         if (board->getSquare(i, j)->isEmpty()) {
             targets->push_back(board->getSquare(i, j));
         } else {
-            if (board->getSquare(i, j)->getPiece()->getPlayer() != player) {
+            if (ownPieces || board->getSquare(i, j)->getPiece()->getPlayer() != player) {
                 targets->push_back(board->getSquare(i, j));
             }
             flag = false;
@@ -78,7 +78,7 @@ void Piece::upLeftDiag(vector <Square *> *targets) {
     }
 }
 
-void Piece::downLeftDiag(vector <Square *> *targets) {
+void Piece::downLeftDiag(vector <Square *> *targets, bool ownPieces) {
     int i = square->getRow() - 1;
     int j = square->getCol() - 1;
     bool flag = true;
@@ -87,7 +87,7 @@ void Piece::downLeftDiag(vector <Square *> *targets) {
         if (board->getSquare(i, j)->isEmpty()) {
             targets->push_back(board->getSquare(i, j));
         } else {
-            if (board->getSquare(i, j)->getPiece()->getPlayer() != player) {
+            if (ownPieces || board->getSquare(i, j)->getPiece()->getPlayer() != player) {
                 targets->push_back(board->getSquare(i, j));
             }
             flag = false;
@@ -97,7 +97,7 @@ void Piece::downLeftDiag(vector <Square *> *targets) {
     }
 }
 
-void Piece::upRightDiag(vector <Square *> *targets) {
+void Piece::upRightDiag(vector <Square *> *targets, bool ownPieces) {
     int i = square->getRow() + 1;
     int j = square->getCol() + 1;
     bool flag = true;
@@ -106,7 +106,7 @@ void Piece::upRightDiag(vector <Square *> *targets) {
         if (board->getSquare(i, j)->isEmpty()) {
             targets->push_back(board->getSquare(i, j));
         } else {
-            if (board->getSquare(i, j)->getPiece()->getPlayer() != player) {
+            if (ownPieces || board->getSquare(i, j)->getPiece()->getPlayer() != player) {
                 targets->push_back(board->getSquare(i, j));
             }
             flag = false;
@@ -116,7 +116,7 @@ void Piece::upRightDiag(vector <Square *> *targets) {
     }
 }
 
-void Piece::downRightDiag(vector <Square *> *targets) {
+void Piece::downRightDiag(vector <Square *> *targets, bool ownPieces) {
     int i = square->getRow() - 1;
     int j = square->getCol() + 1;
     bool flag = true;
@@ -125,7 +125,7 @@ void Piece::downRightDiag(vector <Square *> *targets) {
         if (board->getSquare(i, j)->isEmpty()) {
             targets->push_back(board->getSquare(i, j));
         } else {
-            if (board->getSquare(i, j)->getPiece()->getPlayer() != player) {
+            if (ownPieces || board->getSquare(i, j)->getPiece()->getPlayer() != player) {
                 targets->push_back(board->getSquare(i, j));
             }
             flag = false;
@@ -135,7 +135,7 @@ void Piece::downRightDiag(vector <Square *> *targets) {
     }
 }
 
-void Piece::upCol(vector <Square *> *targets) {
+void Piece::upCol(vector <Square *> *targets, bool ownPieces) {
     int col = square->getCol();
     int i = square->getRow() + 1;
     bool flag = true;
@@ -144,7 +144,7 @@ void Piece::upCol(vector <Square *> *targets) {
         if (board->getSquare(i, col)->isEmpty()) {
             targets->push_back(board->getSquare(i, col));
         } else {
-            if (board->getSquare(i, col)->getPiece()->getPlayer() != player) {
+            if (ownPieces || board->getSquare(i, col)->getPiece()->getPlayer() != player) {
                 targets->push_back(board->getSquare(i, col));
             }
             flag = false;
@@ -153,7 +153,7 @@ void Piece::upCol(vector <Square *> *targets) {
     }
 }
 
-void Piece::downCol(vector <Square *> *targets) {
+void Piece::downCol(vector <Square *> *targets, bool ownPieces) {
     int col = square->getCol();
     int i = square->getRow() - 1;
     bool flag = true;
@@ -162,7 +162,7 @@ void Piece::downCol(vector <Square *> *targets) {
         if (board->getSquare(i, col)->isEmpty()) {
             targets->push_back(board->getSquare(i, col));
         } else {
-            if (board->getSquare(i, col)->getPiece()->getPlayer() != player) {
+            if (ownPieces || board->getSquare(i, col)->getPiece()->getPlayer() != player) {
                 targets->push_back(board->getSquare(i, col));
             }
             flag = false;
@@ -171,7 +171,7 @@ void Piece::downCol(vector <Square *> *targets) {
     }
 }
 
-void Piece::leftRow(vector <Square *> *targets) {
+void Piece::leftRow(vector <Square *> *targets, bool ownPieces) {
     int row = square->getRow();
     int j = square->getCol() - 1;
     bool flag = true;
@@ -180,7 +180,7 @@ void Piece::leftRow(vector <Square *> *targets) {
         if (board->getSquare(row, j)->isEmpty()) {
             targets->push_back(board->getSquare(row, j));
         } else {
-            if (board->getSquare(row, j)->getPiece()->getPlayer() != player) {
+            if (ownPieces || board->getSquare(row, j)->getPiece()->getPlayer() != player) {
                 targets->push_back(board->getSquare(row, j));
             }
             flag = false;
@@ -189,7 +189,7 @@ void Piece::leftRow(vector <Square *> *targets) {
     }
 }
 
-void Piece::rightRow(vector <Square *> *targets) {
+void Piece::rightRow(vector <Square *> *targets, bool ownPieces) {
     int row = square->getRow();
     int j = square->getCol() + 1;
     bool flag = true;
@@ -198,7 +198,7 @@ void Piece::rightRow(vector <Square *> *targets) {
         if (board->getSquare(row, j)->isEmpty()) {
             targets->push_back(board->getSquare(row, j));
         } else {
-            if (board->getSquare(row, j)->getPiece()->getPlayer() != player) {
+            if (ownPieces || board->getSquare(row, j)->getPiece()->getPlayer() != player) {
                 targets->push_back(board->getSquare(row, j));
             }
             flag = false;
@@ -207,21 +207,21 @@ void Piece::rightRow(vector <Square *> *targets) {
     }
 }
 
-void Piece::targetSquare(std::vector <Square *> *targets, int rowOffset, int colOffset) {
+void Piece::targetSquare(std::vector <Square *> *targets, int rowOffset, int colOffset, bool ownPieces) {
     int row = square->getRow() + rowOffset;
     int col = square->getCol() + colOffset;
     Board *board = square->getBoard();
     int rowLimit = board->getRows();
     int colLimit = board->getCols();
     if (row  >= 0 && row < rowLimit && col >= 0 && col < colLimit
-            && (board->getSquare(row, col)->isEmpty() 
+            && (ownPieces || board->getSquare(row, col)->isEmpty() 
             || board->getSquare(row, col)->getPiece()->getPlayer() != player)) {
         targets->push_back(board->getSquare(row, col));
     }
 }
 
 // the piece can only move to the target if it causes a capture
-void Piece::targetCaptureSquare(std::vector <Square *> *targets, int rowOffset, int colOffset) {
+void Piece::targetCaptureSquare(std::vector <Square *> *targets, int rowOffset, int colOffset, bool ownPieces) {
     int row = square->getRow() + rowOffset;
     int col = square->getCol() + colOffset;
     Board *board = square->getBoard();
@@ -229,7 +229,7 @@ void Piece::targetCaptureSquare(std::vector <Square *> *targets, int rowOffset, 
     int colLimit = board->getCols();
     if (row  >= 0 && row < rowLimit && col >= 0 && col < colLimit
             && (!(board->getSquare(row, col)->isEmpty()) 
-            && board->getSquare(row, col)->getPiece()->getPlayer() != player)) {
+            && (ownPieces || board->getSquare(row, col)->getPiece()->getPlayer() != player))) {
         targets->push_back(board->getSquare(row, col));
     }
 }

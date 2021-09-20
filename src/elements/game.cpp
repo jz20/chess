@@ -48,6 +48,11 @@ std::string Game::getNote() {
     return note;
 }
 
+// get trackers
+std::vector <int> Game::getTrackers() {
+    return trackers;
+}
+
 // set note
 void Game::setNote(std::string note) {
     this->note = note;
@@ -115,10 +120,10 @@ void Game::tryMove(GameMove& move, bool isAux) {
 
 // reverse last move on the moveStack, returns false if the moveStack is empty
 bool Game::reverseLast() {
-    moveNo--;
     if (moveStack.empty()) {
         return false;
     }
+    moveNo--;
     GameMove move = moveStack.back();
     reverseMove(move);
     moveStack.pop_back();
@@ -286,4 +291,9 @@ int Game::getRepetition() {
         }
     }
     return count;
+}
+
+// set finished
+void Game::setFinished(bool finished) {
+    this->finished = finished;
 }

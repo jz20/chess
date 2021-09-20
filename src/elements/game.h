@@ -71,6 +71,13 @@ class Game {
         // try the input move, store the move on the stack so that it can be 
         // reversed, default non-aux move
         virtual void tryMove(GameMove& move);
+        // reverse last move on the moveStack, returns false if the moveStack is 
+        // empty
+        bool reverseLast();
+        // get trackers
+        std::vector <int> getTrackers();
+        // set finished
+        void setFinished(bool finished);
     protected:
         // whether the game is finished;
         bool finished;
@@ -119,9 +126,6 @@ class Game {
         void removeIllegalMoves();
         // get the size of the moveStack
         int getMoveStackSize();
-        // reverse last move on the moveStack, returns false if the moveStack is 
-        // empty
-        virtual bool reverseLast();
         // update trackers
         virtual void updateTrackers();
         // reverse trackers to the previous state

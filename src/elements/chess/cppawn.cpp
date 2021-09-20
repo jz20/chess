@@ -16,16 +16,16 @@ Pawn::Pawn(Square *square, Player *player): Piece(square, player) {
 }
 
 // update the possible squares for a piece to move to
-void Pawn::updateTargets() {
+void Pawn::updateTargets(bool ownPieces) {
     targets.clear();
     if (player && (player->getColour() == WHITE)) {
         targetNonCaptureSquare(&targets, 1, 0);
-        targetCaptureSquare(&targets, 1, 1);
-        targetCaptureSquare(&targets, 1, -1);
+        targetCaptureSquare(&targets, 1, 1, ownPieces);
+        targetCaptureSquare(&targets, 1, -1, ownPieces);
     } else {
         targetNonCaptureSquare(&targets, -1, 0);
-        targetCaptureSquare(&targets, -1, 1);
-        targetCaptureSquare(&targets, -1, -1);
+        targetCaptureSquare(&targets, -1, 1, ownPieces);
+        targetCaptureSquare(&targets, -1, -1, ownPieces);
     }
     
 }

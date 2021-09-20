@@ -20,7 +20,7 @@ class Piece {
         // set the square
         void setSquare(Square *square);
         // update the possible squares for a piece to move to
-        virtual void updateTargets() {}
+        virtual void updateTargets(bool ownPieces = false) {}
         // get the legal targets
         std::vector <Square *> getTargets();
         // get the player
@@ -47,17 +47,17 @@ class Piece {
         /*
         These are auxiliary function that help find the targets
         */
-        void upLeftDiag(std::vector <Square *> *targets);
-        void downLeftDiag(std::vector <Square *> *targets);
-        void upRightDiag(std::vector <Square *> *targets);
-        void downRightDiag(std::vector <Square *> *targets);
-        void upCol(std::vector <Square *> *targets);
-        void downCol(std::vector <Square *> *targets);
-        void leftRow(std::vector <Square *> *targets);
-        void rightRow(std::vector <Square *> *targets);
-        void targetSquare(std::vector <Square *> *targets, int rowOffset, int colOffset);
+        void upLeftDiag(std::vector <Square *> *targets, bool ownPieces = false);
+        void downLeftDiag(std::vector <Square *> *targets, bool ownPieces = false);
+        void upRightDiag(std::vector <Square *> *targets, bool ownPieces = false);
+        void downRightDiag(std::vector <Square *> *targets, bool ownPieces = false);
+        void upCol(std::vector <Square *> *targets, bool ownPieces = false);
+        void downCol(std::vector <Square *> *targets, bool ownPieces = false);
+        void leftRow(std::vector <Square *> *targets, bool ownPieces = false);
+        void rightRow(std::vector <Square *> *targets, bool ownPieces = false);
+        void targetSquare(std::vector <Square *> *targets, int rowOffset, int colOffset, bool ownPieces = false);
         // the piece can only move to the target if it causes a capture
-        void targetCaptureSquare(std::vector <Square *> *targets, int rowOffset, int colOffset);
+        void targetCaptureSquare(std::vector <Square *> *targets, int rowOffset, int colOffset, bool ownPieces = false);
         // the piece can only move to the target if it does not cause a capture
         void targetNonCaptureSquare(std::vector <Square *> *targets, int rowOffset, int colOffset);
 };

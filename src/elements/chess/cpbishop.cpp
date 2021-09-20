@@ -14,10 +14,10 @@ Bishop::Bishop(Square *square, Player *player): Piece(square, player) {
 }
 
 // update the possible squares for a piece to move to
-void Bishop::updateTargets() {
+void Bishop::updateTargets(bool ownPieces) {
     targets.clear();
-    upLeftDiag(&targets);
-    upRightDiag(&targets);
-    downLeftDiag(&targets);
-    downRightDiag(&targets);
+    upLeftDiag(&targets, ownPieces);
+    upRightDiag(&targets, ownPieces);
+    downLeftDiag(&targets, ownPieces);
+    downRightDiag(&targets, ownPieces);
 }

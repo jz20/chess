@@ -327,9 +327,10 @@ void ChessGame::updateTrackers(GameMove& move) {
         trackers[WLC] = false;
         trackers[WSC] = false;
     }
+    string name = piece->getName();
     if (trackers[WLC]
             && 
-            ((piece->getName() == "rook" 
+            ((name == "rook" 
             && piece->getPlayer() == white
             && piece->getSquare() == board->getSquare(0, 0))
             ||
@@ -338,7 +339,7 @@ void ChessGame::updateTrackers(GameMove& move) {
     }
     if (trackers[WLC]
             && 
-            ((piece->getName() == "rook" 
+            ((name == "rook" 
             && piece->getPlayer() == white
             && piece->getSquare() == board->getSquare(0, 7))
             ||
@@ -351,7 +352,7 @@ void ChessGame::updateTrackers(GameMove& move) {
     }
     if (trackers[BLC] 
             &&
-            ((piece->getName() == "rook" 
+            ((name == "rook" 
             && piece->getPlayer() == black
             && piece->getSquare() == board->getSquare(7, 0))
             ||
@@ -360,20 +361,20 @@ void ChessGame::updateTrackers(GameMove& move) {
     }
     if (trackers[BLC] 
             &&
-            ((piece->getName() == "rook" 
+            ((name == "rook" 
             && piece->getPlayer() == black
             && piece->getSquare() == board->getSquare(7, 7))
             ||
             move.square == board->getSquare(7, 7))) {
         trackers[BSC] = false;
     }
-    if (piece->getName() == "pawn"
+    if (name == "pawn"
             && abs(piece->getSquare()->getRow() - move.square->getRow()) == 2) {
         trackers[EP_COL] = piece->getSquare()->getCol();
     } else {
         trackers[EP_COL] = -1;
     }
-    if (piece->getName() != "pawn"
+    if (name != "pawn"
             && move.square->getPiece() == NULL) {
         trackers[FIFTY]++;
     } else {

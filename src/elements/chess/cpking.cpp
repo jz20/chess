@@ -15,14 +15,14 @@ King::King(Square *square, Player *player): Piece(square, player) {
 }
 
 // update the possible squares for a piece to move to
-void King::updateTargets() {
+void King::updateTargets(bool ownPieces) {
     targets.clear();
-    targetSquare(&targets, 1, 0);
-    targetSquare(&targets, 0, -1);
-    targetSquare(&targets, -1, 0);
-    targetSquare(&targets, 0, 1);
-    targetSquare(&targets, 1, 1);
-    targetSquare(&targets, 1, -1);
-    targetSquare(&targets, -1, -1);
-    targetSquare(&targets, -1, 1);
+    targetSquare(&targets, 1, 0, ownPieces);
+    targetSquare(&targets, 0, -1, ownPieces);
+    targetSquare(&targets, -1, 0, ownPieces);
+    targetSquare(&targets, 0, 1, ownPieces);
+    targetSquare(&targets, 1, 1, ownPieces);
+    targetSquare(&targets, 1, -1, ownPieces);
+    targetSquare(&targets, -1, -1, ownPieces);
+    targetSquare(&targets, -1, 1, ownPieces);
 }

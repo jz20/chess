@@ -27,13 +27,17 @@ using namespace std;
         } else if (regex_match(current, regex("^\\(\\-?[0-9]*\\,\\-?[0-9]*\\)(.*)"))) { \
             vector <string> coordinates = tokenise(current, '(', ')', ','); \
             string functionName = "targetSquare"; \
+            bool needOP = true; \
             if (current.find("*C*") != string::npos) { \
                 functionName = "targetCaptureSquare"; \
             } else if (current.find("*NC*") != string::npos) { \
                 functionName = "targetNonCaptureSquare"; \
+                needOP = false; \
             } \
             int rowOffset = stoi(coordinates[0]); \
-            W(functionName + "(&targets, " + to_string(coefficient * rowOffset) + ", " + coordinates[1] + ");") \
+            if (needOP) { \
+                W(functionName + "(&targets, " + to_string(coefficient * rowOffset) + ", " + coordinates[1] + ", ownPieces);") \
+            } \
         } else { \
             cout << current << "\n"; \
             CHECK(true, movement, "INCORRECT PIECE MOVEMENT") \
@@ -93,7 +97,7 @@ vector <string> PieceParser::headerContent() {
     W_("class " + className + ": public Piece {")
         W_("public:")
             W(className + "(Square *square, Player *player);")
-            W("void updateTargets();")
+            W("void updateTargets(bool ownPieces = false);")
         _WE
     _W("};")
     WN
@@ -132,7 +136,7 @@ vector <string> PieceParser::implContent() {
         }
     _W("}")
     WN
-    W_("void " + className + "::updateTargets() {")
+    W_("void " + className + "::updateTargets(bool ownPieces) {")
         W("targets.clear();")
         W_("if (player && player->getColour() == WHITE) {")
             string current = "";

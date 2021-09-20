@@ -1,3 +1,6 @@
+# PyTorch directory
+/libtorch
+
 # Prerequisites
 *.d
 
