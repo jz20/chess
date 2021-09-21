@@ -1,0 +1,3 @@
+/home/jianz/Documents/project/chess/chessai/CMakeFiles/rebuild_cache.dir
+/home/jianz/Documents/project/chess/chessai/CMakeFiles/edit_cache.dir
+/home/jianz/Documents/project/chess/chessai/CMakeFiles/chessai.dir
