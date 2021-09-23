@@ -29,13 +29,13 @@ using namespace std;
 // majority of the parameters won't change but I don't know what a good way to
 // detect the unchanged parameters without redoing all the work is
 
-#define V_EMPTY 27
-#define V_KING 18
-#define V_QUEEN 9
-#define V_ROOK 5
-#define V_BISHOP 3.1
-#define V_KNIGHT 3
-#define V_PAWN 1
+#define V_EMPTY 2.7
+#define V_KING 1.8
+#define V_QUEEN 0.9
+#define V_ROOK 0.5
+#define V_BISHOP 0.31
+#define V_KNIGHT 0.3
+#define V_PAWN 0.1
 
 double avgLoss;
 
@@ -59,19 +59,28 @@ struct EvaluatorImpl : nn::Module {
         square_centric(nn::LinearOptions(SQUARE_CENTRIC, SQUARE_CENTRIC)), 
         second(nn::LinearOptions(TOTAL, 100)), 
         third(nn::LinearOptions(100, 1)) {
-            // register_module("global", global);
-            // register_module("piece_centric", piece_centric);
-            // register_module("square_centric", square_centric);
-            // register_module("second", second);
-            // register_module("third", third);
+            register_module("global", global);
+            register_module("piece_centric", piece_centric);
+            register_module("square_centric", square_centric);
+            register_module("second", second);
+            register_module("third", third);
     }
     Tensor forward(Tensor global_tensor, Tensor piece_tensor, Tensor square_tensor) {
+        // cout << global_tensor << endl;
         global_tensor = relu(global(global_tensor));
+        // cout << global_tensor << endl;
+        // cout << piece_tensor << endl;
         piece_tensor = relu(piece_centric(piece_tensor));
+        // cout << piece_tensor << endl;
+        // cout << square_tensor << endl;
         square_tensor = relu(square_centric(square_tensor));
+        // cout << square_tensor << endl;
         Tensor total = torch::cat({global_tensor, piece_tensor, square_tensor}, 0);
+        // cout << total << endl;
         total = relu(second(total));
+        // cout << total << endl;
         total = tanh(third(total));
+        cout << total << endl;
         return total;
     }
     nn::Linear global, piece_centric, square_centric, second, third;
@@ -103,7 +112,7 @@ struct ChessBot {
             vector <Tensor> data = parameterise(game);
 
             evaluator->zero_grad();
-            Tensor t_eval = evaluator->forward(data[0], data[1], data[2]);
+            Tensor t_eval = evaluator->forward(data[0], data[1], data[2]); // AA
             double eval = t_eval.item().toDouble();
             double target = heuristic(game);
             // if (!white) {
@@ -114,10 +123,13 @@ struct ChessBot {
             //     target = -target;
             // }
                 
-            Tensor t_target = torch::full({1}, target);
+            Tensor t_target = torch::full({1}, target); // AA
             // cout << eval << "," << target << endl;
-            Tensor d_loss = l1_loss(t_eval, t_target);
-            total_loss += d_loss.item().toDouble();
+            Tensor d_loss = l1_loss(t_eval, t_target); // AA
+        // cout << eval << ", " << target << ", " << d_loss.item().toDouble() << endl;
+        // ofstream file("training.log", ios_base::app);
+        // file << d_loss.item().toDouble() << endl;
+            total_loss += d_loss.item().toDouble(); // AA
             n++;
             // try l2
             d_loss.backward();
@@ -143,13 +155,19 @@ struct ChessBot {
 int main() {
     
 
-    Evaluator evaluator = Evaluator();
+    Evaluator evaluator;
+    
     optim::Adam evaluator_optimiser(evaluator->parameters(), optim::AdamOptions().lr(0.01));
+    
+    // cout << evaluator->parameters() << endl;
+    // if () {
+        // load(evaluator, "evaluator.pt");
+        // load(evaluator_optimiser, "evaluator_optimiser.pt");
+    // }
+    // cout << evaluator->parameters() << endl;
+    // exit(0);
 
-    load(evaluator, "evaluator.pt");
-    load(evaluator_optimiser, "evaluator_optimiser.pt");
-
-    for (int i = 0; i < 200; i++) {
+    for (int i = 0; i < 2000; i++) {
         // cout << i << endl;
         Game *game = new ChessGame();
         game->setUp();
@@ -163,6 +181,7 @@ int main() {
         
         // cout << game->getBoard()->snapshot() << endl;
         bool result = false;
+        int c = 0;
         while (!game->isFinished()) {
             updateMaps(game);
             whiteBot.makeMove();
@@ -171,13 +190,15 @@ int main() {
 
             evaluator_optimiser.step();
 
-            if (i % 20 == 0) {
+            if (i % 100 == 0) {
                 cout << game->getBoard()->snapshot() << endl;
+                ofstream file("games.log", ios_base::app);
+                file << ((avgOver != 0) ? (avgLoss / avgOver) : -1) << endl;
             }
-
             if (game->isFinished()) {
                 break;
             }
+            updateMaps(game);
             blackBot.makeMove();
             avgOver++;
             result = game->checkResult();
@@ -186,7 +207,14 @@ int main() {
             
             if (i % 20 == 0) {
                 cout << game->getBoard()->snapshot() << endl;
+                ofstream file("games.log", ios_base::app);
+                file << ((avgOver != 0) ? (avgLoss / avgOver) : -1) << endl;
             }
+
+            if (c == 5) {
+                exit(0);
+            }
+            c++;
         }
         if (result) {
             cout << "win\n";
@@ -196,14 +224,17 @@ int main() {
         cout << "loss: " << ((avgOver != 0) ? (avgLoss / avgOver) : -1) << endl;
         ofstream file("training.log", ios_base::app);
         file << ((avgOver != 0) ? (avgLoss / avgOver) : -1) << endl;
+
         // Print values
         // for (const auto& p : evaluator->named_parameters()) {
         //     cout << p.key() << ": " << p.value() << endl;
         // }
-    }
 
-    save(evaluator, "evaluator.pt");
-    save(evaluator_optimiser, "evaluator_optimiser.pt");
+        if (i % 20 == 0) {
+            save(evaluator, "evaluator.pt");
+            save(evaluator_optimiser, "evaluator_optimiser.pt");
+        }
+    }
 
     return 0;
 }
@@ -417,15 +448,15 @@ double heuristic(Game *game) {
         if ((*it)->getSquare() != NULL) {
             string name = (*it)->getName();
             if (name == "queen") {
-                white_pv += V_QUEEN;
+                black_pv += V_QUEEN;
             } else if (name == "rook") {
-                white_pv += V_ROOK;
+                black_pv += V_ROOK;
             } else if (name == "bishop") {
-                white_pv += V_BISHOP;
+                black_pv += V_BISHOP;
             } else if (name == "knight") {
-                white_pv += V_KNIGHT;
+                black_pv += V_KNIGHT;
             } else if (name == "pawn") {
-                white_pv += V_PAWN;
+                black_pv += V_PAWN;
             }
         }
     }
