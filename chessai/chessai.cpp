@@ -80,7 +80,7 @@ struct EvaluatorImpl : nn::Module {
         total = relu(second(total));
         // cout << total << endl;
         total = tanh(third(total));
-        cout << total << endl;
+        // cout << total << endl;
         return total;
     }
     nn::Linear global, piece_centric, square_centric, second, third;
@@ -157,7 +157,7 @@ int main() {
 
     Evaluator evaluator;
     
-    optim::Adam evaluator_optimiser(evaluator->parameters(), optim::AdamOptions().lr(0.01));
+    optim::Adam evaluator_optimiser(evaluator->parameters(), optim::AdamOptions().lr(0.0001));
     
     // cout << evaluator->parameters() << endl;
     // if () {
@@ -181,7 +181,6 @@ int main() {
         
         // cout << game->getBoard()->snapshot() << endl;
         bool result = false;
-        int c = 0;
         while (!game->isFinished()) {
             updateMaps(game);
             whiteBot.makeMove();
@@ -193,7 +192,7 @@ int main() {
             if (i % 100 == 0) {
                 cout << game->getBoard()->snapshot() << endl;
                 ofstream file("games.log", ios_base::app);
-                file << ((avgOver != 0) ? (avgLoss / avgOver) : -1) << endl;
+                file << game->getBoard()->snapshot() << endl;
             }
             if (game->isFinished()) {
                 break;
@@ -208,13 +207,8 @@ int main() {
             if (i % 20 == 0) {
                 cout << game->getBoard()->snapshot() << endl;
                 ofstream file("games.log", ios_base::app);
-                file << ((avgOver != 0) ? (avgLoss / avgOver) : -1) << endl;
+                file << game->getBoard()->snapshot() << endl;
             }
-
-            if (c == 5) {
-                exit(0);
-            }
-            c++;
         }
         if (result) {
             cout << "win\n";
